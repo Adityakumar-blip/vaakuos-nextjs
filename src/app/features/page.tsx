@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CheckCircle2, Zap, Shield, MousePointer2, Gauge, Globe } from "lucide-react";
+import {
+  CheckCircle2,
+  Zap,
+  Shield,
+  MousePointer2,
+  Gauge,
+  Globe,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -22,7 +28,8 @@ export default function FeaturesPage() {
               Features built to recover revenue
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to identify, engage, and convert high-intent shoppers.
+              Everything you need to identify, engage, and convert high-intent
+              shoppers.
             </p>
           </div>
 
@@ -52,7 +59,8 @@ export default function FeaturesPage() {
             Ready to see these features in action?
           </h2>
           <p className="text-xl text-muted-foreground mb-10">
-            Join 500+ brands using VaakuOS to recover millions in lost revenue every month.
+            Join 500+ brands using VaakuOS to recover millions in lost revenue
+            every month.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="rounded-full">

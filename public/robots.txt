@@ -1,0 +1,20 @@
+# VaakuOS Robots.txt
+# This file tells search engine crawlers which URLs they can access on your site
+
+# Allow all user agents to crawl the entire site
+User-agent: *
+Allow: /
+
+# Disallow admin and private paths (if any exist)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+
+# Allow access to important directories and files
+Allow: /_next/static/
+Allow: /public/images/
+Allow: /favicon.ico
+Allow: /manifest.json
+
+# Sitemap location
+Sitemap: https://vaakuos.com/sitemap.xml

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
 import { useBookDemo } from "@/contexts/book-demo-context";
 
 const benefits = [
@@ -15,54 +16,58 @@ export const CTASection = () => {
   const { openBookDemo } = useBookDemo();
 
   return (
-    <section className="py-20 px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-tertiary/10" />
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_100%)] px-4 py-20 md:py-28">
+      <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(135deg,hsl(var(--primary)/0.05)_0_1px,transparent_1px_20px)]" />
+      <div className="container relative z-10 mx-auto max-w-7xl">
+        <div className="rounded-2xl border border-border bg-card/95 p-6 shadow-sm backdrop-blur md:p-10">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+                Recovery launch
+              </p>
+              <h2 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+                Turn missed checkouts into a measurable recovery engine.
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
+                Launch guided recovery workflows, connect your commerce stack,
+                and measure the revenue VaakuOS brings back.
+              </p>
+            </div>
 
-      <div className="container mx-auto max-w-4xl relative z-10">
-        <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-2xl text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-            Ready to Transform Your
-            <br />
-            <span className="text-primary italic">Customer Communication?</span>
-          </h2>
-
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of businesses already using VaakuOS to automate
-            conversations, boost engagement, and drive sales across messaging
-            platforms.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-            <Button
-              size="xl"
-              className="group w-full sm:w-auto"
-              onClick={openBookDemo}
-            >
-              Book Live Demo
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              variant="outline"
-              size="xl"
-              className="w-full sm:w-auto"
-              onClick={openBookDemo}
-            >
-              Contact Sales
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12 pt-8 border-t border-border/50">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 justify-center text-sm font-medium text-muted-foreground"
-              >
-                <div className="h-6 w-6 rounded-full bg-success/15 flex items-center justify-center shrink-0">
-                  <Check className="h-4 w-4 text-success" />
-                </div>
-                <span>{benefit}</span>
+            <div className="lg:pt-2">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button
+                  size="xl"
+                  className="group rounded-lg"
+                  onClick={openBookDemo}
+                >
+                  Book Live Demo
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="rounded-lg border-border bg-background text-foreground hover:border-primary/25 hover:bg-secondary hover:text-foreground"
+                  asChild
+                >
+                  <Link href="/pricing">See Pricing</Link>
+                </Button>
               </div>
-            ))}
+
+              <div className="mt-8 divide-y divide-border rounded-2xl border border-border bg-muted/35">
+                {benefits.map((benefit) => (
+                  <div
+                    key={benefit}
+                    className="flex items-center gap-3 px-4 py-4 text-sm text-foreground"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                      <Check className="h-4 w-4" />
+                    </span>
+                    <span className="font-medium">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

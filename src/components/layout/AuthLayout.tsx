@@ -98,7 +98,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
         <div className="w-full max-w-[420px] space-y-10">
           {/* Logo */}
           <div className="flex justify-center lg:justify-start">
-             <Link to="/" className="flex items-center gap-3 group">
+             <Link href="/" className="flex items-center gap-3 group">
                 <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center  shadow-lg shadow-[#122D22]/20">
                    <img src="/images/white_full.png" alt="Logo" className="w-12 h-12" />
                 </div>

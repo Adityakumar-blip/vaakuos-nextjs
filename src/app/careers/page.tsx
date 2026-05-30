@@ -44,7 +44,8 @@ export default function CareersPage() {
             Join our <span className="text-primary">team</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            We're building the future of e-commerce communication. Come help us make it happen.
+            We&apos;re building the future of e-commerce communication. Come help
+            us make it happen.
           </p>
         </div>
 
@@ -68,7 +69,7 @@ export default function CareersPage() {
 
         <div className="mt-16 text-center">
           <p className="text-muted-foreground mb-4">
-            Don't see a fit? Send us your resume anyway.
+            Don&apos;t see a fit? Send us your resume anyway.
           </p>
           <a
             href="mailto:careers@vaakuos.com"

@@ -1,12 +1,14 @@
-import { Card } from "@/components/ui/card";
-import { TrendingUp, Zap, Target, Sparkles, Layers, Inbox } from "lucide-react";
+import { TrendingUp, Sparkles, Layers, Inbox } from "lucide-react";
 
 const stats = [
   {
     strategy: "Omnichannel Strategy",
     captured: "15% - 25%",
+    capturedMax: 25,
     completion: "18% - 35%",
+    completionMax: 35,
     growth: "10% - 15%",
+    growthMax: 15,
     icon: Sparkles,
     highlight: true,
     note: "Unified customer intelligence with cross-channel communication for maximum recovery.",
@@ -14,140 +16,153 @@ const stats = [
   {
     strategy: "Multi-Channel Strategy",
     captured: "5% - 10%",
+    capturedMax: 10,
     completion: "8% - 15%",
+    completionMax: 15,
     growth: "3% - 5%",
+    growthMax: 5,
     icon: Layers,
+    highlight: false,
     note: "Disconnected flows across multiple apps without shared customer context.",
   },
   {
     strategy: "Single-Channel Strategy",
     captured: "1% - 3%",
+    capturedMax: 3,
     completion: "2% - 5%",
+    completionMax: 5,
     growth: "0.5% - 1%",
+    growthMax: 1,
     icon: Inbox,
+    highlight: false,
     note: "Isolated communication with no visibility into customer behavior across touchpoints.",
   },
 ];
 
+const maxValues = {
+  captured: 25,
+  completion: 35,
+  growth: 15,
+};
+
 export const StatsComparison = () => {
   return (
-    <section className="py-24 px-4 relative overflow-hidden">
-      <div className="container mx-auto max-w-6xl relative z-10">
-        <div className="text-center mb-16 px-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest mb-6">
-            <TrendingUp className="h-3 w-3" /> Recovery Benchmarks
+    <section className="relative overflow-hidden bg-background px-4 py-20 md:py-24">
+      <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(135deg,hsl(var(--primary)/0.06)_0_1px,transparent_1px_18px)]" />
+      <div className="container relative z-10 mx-auto max-w-7xl">
+        <div className="mb-12 grid gap-6 md:mb-16 md:grid-cols-[0.95fr_1.05fr] md:items-end">
+          <div className="max-w-xl">
+            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary">
+              <TrendingUp className="h-4 w-4" />
+              Recovery benchmarks
+            </p>
+            <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+              The measurable lift behind omnichannel recovery.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
+              Benchmarked ranges show how connected recovery workflows perform
+              against fragmented or single-channel approaches.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight text-slate-900 leading-tight">
-            The Advantage of <span className="text-primary italic">Omnichannel</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Compare benchmarked results across different recovery strategies and
-            see how integrated retrieval outperforms fragmented tools.
-          </p>
+          <div className="hidden md:block" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className={`p-6 md:p-8 border transition-all duration-300 relative bg-card h-full flex flex-col ${
-                stat.highlight
-                  ? "border-primary ring-1 ring-primary/20 shadow-lg scale-105"
-                  : "border-border shadow-sm hover:shadow-md"
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-border bg-border md:grid-cols-3">
+            {stats.map((stat) => (
+              <div
+                key={stat.strategy}
+              className={`group bg-card p-6 transition-colors duration-300 hover:bg-background md:p-8 ${
+                stat.highlight ? "md:col-span-1" : ""
               }`}
-            >
-              <div className="flex flex-col mb-8">
-                <div
-                  className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center transition-colors ${
-                    stat.highlight
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <stat.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold tracking-tight text-slate-900">
-                  {stat.strategy}
-                </h3>
-              </div>
-
-              <div className="space-y-6 flex-grow">
-                <MetricRow
-                  label="Revenue Captured"
-                  value={stat.captured}
-                  icon={<Target className="h-4 w-4" />}
-                  percentage={stat.captured.split("-")[1].trim().replace("%", "")}
-                  highlight={stat.highlight}
-                />
-
-                <MetricRow
-                  label="Checkout Completion"
-                  value={stat.completion}
-                  icon={<Zap className="h-4 w-4" />}
-                  percentage={parseInt(stat.completion.split("-")[1])}
-                  highlight={stat.highlight}
-                />
-
-                <div className="pt-6 border-t border-border mt-auto">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                      Growth Lift
-                    </span>
-                    <span
-                      className={`text-2xl font-black ${
-                        stat.highlight ? "text-primary" : "text-slate-900"
-                      }`}
-                    >
-                      {stat.growth}
-                    </span>
+              >
+              <div className="mb-8 flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <span
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:-translate-y-1 ${
+                      stat.highlight
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    <stat.icon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground">
+                        {stat.strategy}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {stat.highlight ? "Best performing benchmark" : "Baseline comparison"}
+                  </p>
                   </div>
                 </div>
+                {stat.highlight && (
+                  <span className="rounded-md bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                    Best
+                  </span>
+                )}
               </div>
 
-              <p className="mt-8 text-sm text-muted-foreground leading-relaxed italic">
+              <div className="space-y-6">
+                <MetricCell
+                  label="Revenue captured"
+                  value={stat.captured}
+                  percentage={stat.capturedMax}
+                  max={maxValues.captured}
+                  highlight={stat.highlight}
+                />
+                <MetricCell
+                  label="Checkout completion"
+                  value={stat.completion}
+                  percentage={stat.completionMax}
+                  max={maxValues.completion}
+                  highlight={stat.highlight}
+                />
+                <MetricCell
+                  label="Growth lift"
+                  value={stat.growth}
+                  percentage={stat.growthMax}
+                  max={maxValues.growth}
+                  highlight={stat.highlight}
+                />
+              </div>
+
+              <p className="mt-8 border-t border-border pt-5 text-sm leading-7 text-muted-foreground">
                 {stat.note}
               </p>
-            </Card>
-          ))}
+              </div>
+            ))}
         </div>
       </div>
     </section>
   );
 };
 
-const MetricRow = ({
+const MetricCell = ({
   label,
   value,
-  icon,
   percentage,
+  max,
   highlight,
 }: {
   label: string;
   value: string;
-  icon: React.ReactNode;
-  percentage: number | string;
+  percentage: number;
+  max: number;
   highlight: boolean;
 }) => (
   <div>
-    <div className="flex justify-between items-center mb-2">
-      <div className="flex items-center gap-2 text-muted-foreground">
-        {icon}
-        <span className="text-[10px] font-bold uppercase tracking-widest">
-          {label}
-        </span>
-      </div>
-      <span
-        className={`font-bold text-sm ${
-          highlight ? "text-primary" : "text-slate-900"
-        }`}
-      >
+    <div className="mb-2 flex items-center justify-between gap-3">
+      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <span className={`text-base font-bold ${highlight ? "text-primary" : "text-foreground"}`}>
         {value}
       </span>
     </div>
-    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
       <div
-        className={`h-full ${highlight ? "bg-primary" : "bg-slate-400"}`}
-        style={{ width: `${percentage}%` }}
+        className={`h-full rounded-full ${highlight ? "bg-primary" : "bg-border"}`}
+        style={{ width: `${(percentage / max) * 100}%` }}
       />
     </div>
   </div>

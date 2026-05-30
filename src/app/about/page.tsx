@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About VaakuOS",
@@ -53,7 +52,7 @@ export default function AboutPage() {
                 <div className="text-center">
                   <div className="text-6xl mb-4">🚀</div>
                   <p className="text-xl font-bold italic text-foreground">
-                    "Building the future of intent-based commerce."
+                    &ldquo;Building the future of intent-based commerce.&rdquo;
                   </p>
                 </div>
               </div>

@@ -1,94 +1,94 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { FrostedBackground } from "@/components/frosted-background";
+import { ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import Link from "next/link";
 import { useBookDemo } from "@/contexts/book-demo-context";
+
+const proofPoints = [
+  "Intent tracking",
+  "WhatsApp recovery",
+  "Checkout sync",
+];
 
 export const HeroSection = () => {
   const { openBookDemo } = useBookDemo();
 
   return (
-    <section className="relative pt-32 md:pt-40 pb-20 px-4 overflow-hidden">
-      <FrostedBackground />
+    <section className="relative isolate min-h-[92vh] overflow-hidden px-4 pb-16 pt-28 md:pb-20 md:pt-36">
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_58%,hsl(var(--background))_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_18%,hsl(var(--tertiary)/0.46),transparent_30%),radial-gradient(circle_at_88%_10%,hsl(var(--primary)/0.20),transparent_28%),linear-gradient(120deg,transparent_0%,hsl(var(--accent)/0.08)_45%,transparent_70%)]" />
+      <div className="absolute inset-0 -z-10 opacity-[0.22] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
 
-      <div className="container mx-auto max-w-6xl relative z-10">
-        <div className="text-center mb-12">
-          <Link
-            href="/login"
-            className="hero-fade-item hero-delay-1 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 mb-8 cursor-pointer hover:bg-primary/20 transition-colors group"
-          >
-            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs md:text-sm font-semibold text-foreground">
-              Join the waitlist and get{" "}
-              <span className="font-bold">10% off</span> launching on 1st April
-            </span>
-            <ArrowRight className="h-3 w-3 text-primary group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-
-          <h1 className="hero-fade-item hero-delay-2 text-4xl sm:text-5xl md:text-7xl font-medium text-foreground mb-6 leading-[1.1] tracking-tight">
-            The Intelligent Engine to
-            <br />
-            Recover Every Abandoned Sale.
+      <div className="container relative z-10 mx-auto max-w-7xl">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="hero-fade-item hero-delay-2 mb-6 text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            Recover abandoned carts before they turn cold.
           </h1>
 
-          <p className="hero-fade-item hero-delay-3 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+          <p className="hero-fade-item hero-delay-3 mx-auto mb-8 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
             VaakuOS tracks intent, re-engages shoppers at the right moment, and
             converts missed purchases across every digital touchpoint.
           </p>
 
-          <div className="hero-fade-item hero-delay-4 flex flex-row items-center justify-center gap-3 px-2 sm:px-0">
+          <div className="hero-fade-item hero-delay-4 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Button
               size="lg"
-              className="group flex-1 sm:flex-none text-sm sm:text-base px-6 py-4 h-auto"
+              className="group h-12 rounded-lg px-7 text-sm font-semibold shadow-lg shadow-primary/15 sm:text-base"
               onClick={openBookDemo}
             >
               Book Live Demo
-              <ArrowRight className="ml-1.5 h-2 w-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
             <Link href="/calculator">
               <Button
                 variant="outline"
                 size="lg"
-                className="flex-1 sm:flex-none text-sm sm:text-base px-6 py-4 h-auto"
+                className="h-12 w-full rounded-lg border-foreground/15 bg-card/70 px-7 text-sm font-semibold text-foreground backdrop-blur-md hover:bg-secondary hover:text-foreground sm:w-auto sm:text-base"
               >
                 Calculate ROI
               </Button>
             </Link>
           </div>
 
-          <div className="hero-fade-item hero-delay-5 mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-success" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-success" />
-              <span>14-day free trial</span>
-            </div>
+          <div className="hero-fade-item hero-delay-5 mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-medium text-muted-foreground">
+            {proofPoints.map((point) => (
+              <span key={point} className="inline-flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                {point}
+              </span>
+            ))}
           </div>
         </div>
 
-        <div className="hero-fade-item hero-delay-5 relative mt-12 md:mt-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl transform scale-105" />
-          <picture>
-            <source
-              media="(max-width: 767px)"
-              srcSet="/images/hero-dashboard-640.jpg"
-            />
-            <img
-              src="/images/hero-dashboard.png"
-              srcSet="/images/hero-dashboard-1280.jpg 1280w, /images/hero-dashboard.png 1600w"
-              sizes="(max-width: 1280px) 80vw, 1200px"
-              alt="Vaakuos Omnichannel Dashboard"
-              width={1600}
-              height={864}
-              fetchPriority="high"
-              decoding="async"
-              className="relative rounded-xl md:rounded-2xl shadow-2xl border border-border w-full"
-            />
-          </picture>
+        <div className="hero-fade-item hero-delay-5 relative mx-auto mt-12 max-w-6xl md:mt-16">
+          <div className="relative overflow-hidden rounded-2xl border border-foreground/10 bg-card shadow-2xl shadow-primary/20">
+            <div className="flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-md">
+              <div className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+                <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+                <span className="h-2.5 w-2.5 rounded-full bg-tertiary" />
+              </div>
+              <div className="hidden rounded-md border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground sm:block">
+                VaakuOS product walkthrough
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                <Clock3 className="h-3.5 w-3.5" />
+                2 min
+              </div>
+            </div>
+
+            <div className="relative aspect-video overflow-hidden bg-card">
+              <video
+                className="h-full w-full object-contain"
+                poster="/images/hero-dashboard-1280.jpg"
+                controls
+                preload="metadata"
+              >
+                <source src="/videos/vaakuos-demo.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
         </div>
       </div>
     </section>

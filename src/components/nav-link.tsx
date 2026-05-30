@@ -2,9 +2,10 @@ import Link, { LinkProps } from "next/link";
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
-interface NavLinkCompatProps extends Omit<LinkProps, "className"> {
+interface NavLinkCompatProps extends Omit<LinkProps, "href" | "className"> {
   className?: string;
   activeClassName?: string;
+  to: LinkProps["href"];
 }
 
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
@@ -12,7 +13,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
     return (
       <Link
         ref={ref}
-        to={to}
+        href={to}
         className={cn(className, activeClassName)}
         {...props}
       />

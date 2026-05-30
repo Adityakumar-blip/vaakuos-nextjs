@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir D:Projectsvaakuos-landing *)"
+      "Bash(dir D:Projectsvaakuos-landing *)",
+      "Bash(powershell *)"
     ]
   }
 }

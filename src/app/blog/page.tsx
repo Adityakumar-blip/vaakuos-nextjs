@@ -93,7 +93,8 @@ export default async function BlogPage() {
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Get conversion insights in your inbox.</h2>
             <p className="opacity-80 mb-8 text-lg">
-              Join 10,000+ marketers who receive our weekly breakdown of what's working in e-commerce.
+              Join 10,000+ marketers who receive our weekly breakdown of what&apos;s
+              working in e-commerce.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input

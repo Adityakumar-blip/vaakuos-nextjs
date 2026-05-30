@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, CheckCircle2, ArrowUpRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { pricingService } from "@/services/pricing-service";
@@ -53,6 +54,7 @@ const renderCell = (value: unknown, rowKey: string) => {
 };
 
 export function PricingContent() {
+  const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   const { data: apiPlans, isLoading } = useQuery({
@@ -79,7 +81,7 @@ export function PricingContent() {
     });
 
   const handleGetStarted = (planId: string) => {
-    window.location.href = `/login?planId=${planId}&billingCycle=${billingCycle}`;
+    router.push(`/login?planId=${planId}&billingCycle=${billingCycle}`);
   };
 
   return (

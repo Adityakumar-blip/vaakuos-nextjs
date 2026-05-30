@@ -17,6 +17,7 @@ const stats = [
     completion: "8% - 15%",
     growth: "3% - 5%",
     icon: Layers,
+    highlight: false,
     note: "Disconnected flows across multiple apps without shared customer context.",
   },
   {
@@ -25,6 +26,7 @@ const stats = [
     completion: "2% - 5%",
     growth: "0.5% - 1%",
     icon: Inbox,
+    highlight: false,
     note: "Isolated communication with no visibility into customer behavior across touchpoints.",
   },
 ];

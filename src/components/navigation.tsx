@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Menu, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useState } from "react";
 import { useBookDemo } from "@/contexts/book-demo-context";
 import { BrandMark } from "@/components/BrandMark";
@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sheet";
 
 export const Navigation = () => {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { openBookDemo } = useBookDemo();
 
@@ -26,33 +25,13 @@ export const Navigation = () => {
     { label: "Blogs", path: "/blog" },
   ];
 
-  const menuVariants = {
-    closed: {
-      opacity: 0,
-      x: "100%",
-    },
-    open: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    closed: { opacity: 0, x: 20 },
-    open: { opacity: 1, x: 0 },
-  };
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div
+          <Link
+            href="/"
             className="flex items-center gap-2 cursor-pointer group"
-            onClick={() => router.push("/")}
           >
             <div className="bg-primary p-[3px] rounded-lg">
               <img src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" />
@@ -60,29 +39,29 @@ export const Navigation = () => {
             <span className="text-xl font-bold text-foreground tracking-tight">
               VaakuOS
             </span>
-          </div>
+          </Link>
 
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <div
+              <Link
                 key={item.path}
-                onClick={() => router.push(item.path)}
+                href={item.path}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer relative group"
               >
                 {item.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-              </div>
+              </Link>
             ))}
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-3">
               <Button
+                asChild
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push("/login")}
               >
-                Sign In
+                <Link href="/login">Sign In</Link>
               </Button>
               <Button variant="hero" size="sm" onClick={openBookDemo}>
                 Book Live Demo
@@ -120,17 +99,15 @@ export const Navigation = () => {
                     <div className="flex-1 px-6 py-10 overflow-y-auto">
                       <div className="flex flex-col gap-2">
                         {navItems.map((item) => (
-                          <div
+                          <Link
                             key={item.path}
-                            onClick={() => {
-                              router.push(item.path);
-                              setIsOpen(false);
-                            }}
+                            href={item.path}
+                            onClick={() => setIsOpen(false)}
                             className="flex items-center justify-between p-4 rounded-2xl hover:bg-primary/5 text-lg font-semibold text-foreground transition-all group active:scale-[0.98] cursor-pointer"
                           >
                             {item.label}
                             <ArrowRight className="h-5 w-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary" />
-                          </div>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -138,14 +115,13 @@ export const Navigation = () => {
                     <div className="p-6 border-t border-border bg-muted/30">
                       <div className="flex flex-col gap-3">
                         <Button
+                          asChild
                           variant="outline"
                           className="w-full h-12 rounded-xl font-bold"
-                          onClick={() => {
-                            router.push("/login");
-                            setIsOpen(false);
-                          }}
                         >
-                          Sign In
+                          <Link href="/login" onClick={() => setIsOpen(false)}>
+                            Sign In
+                          </Link>
                         </Button>
                         <Button
                           variant="hero"

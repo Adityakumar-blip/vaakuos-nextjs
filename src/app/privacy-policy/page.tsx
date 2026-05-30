@@ -17,9 +17,10 @@ export default function PrivacyPolicyPage() {
           <p>Last updated: March 4, 2026</p>
 
           <p>
-            VaakuOS ("we", "our", or "us") is committed to protecting your privacy.
-            This Privacy Policy explains how we collect, use, disclose, and safeguard
-            your information when you visit our website or use our services.
+            VaakuOS (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;)
+            is committed to protecting your privacy. This Privacy Policy explains
+            how we collect, use, disclose, and safeguard your information when
+            you visit our website or use our services.
           </p>
 
           <h2>Information We Collect</h2>

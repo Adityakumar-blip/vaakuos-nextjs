@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/components/hero-section";
 import { StatsComparison } from "@/components/stats-comparison";
 import { FeaturesSection } from "@/components/features-section";
+import { FaqSection, faqItems } from "@/components/faq-section";
+import { HowItWorksSection } from "@/components/how-it-works-section";
 import { IntegrationsSection } from "@/components/integrations-section";
 import { CTASection } from "@/components/cta-section";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { JsonLd } from "@/components/json-ld";
 
 export const metadata: Metadata = {
   title: "Recover every abandoned sale with VaakuOS",
@@ -37,19 +40,23 @@ const websiteSchema = {
   },
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
+
 export default function HomePage() {
   return (
     <>
-      {/* JSON-LD Scripts */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-
+      <JsonLd data={[orgSchema, websiteSchema, faqSchema]} />
       <div className="min-h-screen">
         <HeroSection />
 
@@ -62,7 +69,15 @@ export default function HomePage() {
         </ScrollReveal>
 
         <ScrollReveal>
+          <HowItWorksSection />
+        </ScrollReveal>
+
+        <ScrollReveal>
           <IntegrationsSection />
+        </ScrollReveal>
+
+        <ScrollReveal delay={0.2}>
+          <FaqSection />
         </ScrollReveal>
 
         <ScrollReveal>

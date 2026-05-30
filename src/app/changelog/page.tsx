@@ -40,7 +40,7 @@ export default function ChangelogPage() {
     <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto max-w-4xl px-4">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          What's New
+          What&apos;s New
         </h1>
         <p className="text-xl text-muted-foreground mb-16">
           The latest updates, features, and improvements to VaakuOS.
