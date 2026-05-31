@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const footerLinks = {
   Product: ["Features", "Integrations", "Changelog"],
@@ -14,7 +15,7 @@ export const Footer = () => {
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-primary p-[3px] rounded-lg">
-                <img src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" />
+                <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
               </div>
               <span className="text-xl font-bold text-foreground">VaakuOS</span>
             </div>

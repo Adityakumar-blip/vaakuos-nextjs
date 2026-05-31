@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 interface BookDemoContextType {
   isOpen: boolean;
@@ -14,8 +15,12 @@ const BookDemoContext = createContext<BookDemoContextType | undefined>(
 
 export function BookDemoProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
-  const openBookDemo = useCallback(() => setIsOpen(true), []);
+  const openBookDemo = useCallback(() => {
+    router.push("/demo");
+  }, [router]);
+
   const closeBookDemo = useCallback(() => setIsOpen(false), []);
 
   return (

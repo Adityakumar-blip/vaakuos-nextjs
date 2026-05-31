@@ -23,39 +23,39 @@ export default function DocumentationPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="p-6 rounded-xl border border-border bg-card">
+          <div className="p-6 rounded-xl border border-border bg-card" id="getting-started">
             <h3 className="text-lg font-bold mb-2">Getting Started</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Learn the basics of VaakuOS API and authentication.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#getting-started" className="text-sm text-primary hover:underline">
               Read the guide →
             </a>
           </div>
-          <div className="p-6 rounded-xl border border-border bg-card">
+          <div className="p-6 rounded-xl border border-border bg-card" id="api-reference">
             <h3 className="text-lg font-bold mb-2">API Reference</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Complete reference for all VaakuOS API endpoints.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#api-reference" className="text-sm text-primary hover:underline">
               View reference →
             </a>
           </div>
-          <div className="p-6 rounded-xl border border-border bg-card">
+          <div className="p-6 rounded-xl border border-border bg-card" id="webhooks">
             <h3 className="text-lg font-bold mb-2">Webhooks</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Set up real-time event notifications.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#webhooks" className="text-sm text-primary hover:underline">
               Learn more →
             </a>
           </div>
-          <div className="p-6 rounded-xl border border-border bg-card">
+          <div className="p-6 rounded-xl border border-border bg-card" id="sdks">
             <h3 className="text-lg font-bold mb-2">SDKs & Libraries</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Official SDKs for Node.js, Python, and more.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#sdks" className="text-sm text-primary hover:underline">
               Browse SDKs →
             </a>
           </div>

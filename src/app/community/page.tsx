@@ -22,33 +22,33 @@ export default function CommunityPage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center p-8 rounded-2xl border border-border bg-card">
+          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="whatsapp">
             <div className="text-4xl mb-4">💬</div>
             <h3 className="text-lg font-bold mb-2">WhatsApp Community</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Join our WhatsApp group for real-time discussions and support.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#whatsapp" className="text-sm text-primary hover:underline">
               Join Now →
             </a>
           </div>
-          <div className="text-center p-8 rounded-2xl border border-border bg-card">
+          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="telegram">
             <div className="text-4xl mb-4">📱</div>
             <h3 className="text-lg font-bold mb-2">Telegram Channel</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Get updates, tips, and best practices delivered to your phone.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#telegram" className="text-sm text-primary hover:underline">
               Join Now →
             </a>
           </div>
-          <div className="text-center p-8 rounded-2xl border border-border bg-card">
+          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="office-hours">
             <div className="text-4xl mb-4">🎓</div>
             <h3 className="text-lg font-bold mb-2">Office Hours</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Weekly live sessions with our team and product experts.
             </p>
-            <a href="#" className="text-sm text-primary hover:underline">
+            <a href="#office-hours" className="text-sm text-primary hover:underline">
               Register →
             </a>
           </div>

@@ -5,7 +5,7 @@ import { motion, Variants } from "framer-motion";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRazorpay } from "@/hooks/use-razorpay";
+import Image from "next/image";
 
 
 interface Plan {
@@ -26,13 +26,12 @@ import { useBookDemo } from "@/contexts/book-demo-context";
 export const PricingSection = () => {
   const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const { initiatePurchase } = useRazorpay();
   const { openBookDemo } = useBookDemo();
 
   const { data: apiPlans, isLoading } = useQuery<Plan[]>({
     queryKey: ["plans"],
     queryFn: async () => {
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await fetch(`${baseUrl}/subscriptions/plans`);
       if (!response.ok) throw new Error("Failed to fetch plans");
       return response.json();
@@ -164,9 +163,9 @@ export const PricingSection = () => {
                 {plan.name !== "Free" && plan.name !== "Enterprise" && (
                   <div className="mt-4 flex flex-col items-center gap-1.5">
                     <div className="flex items-center gap-2 opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-default">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" className="h-2.5" loading="lazy" width={48} height={10} />
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo.svg" alt="GPay" className="h-2.5" loading="lazy" width={48} height={10} />
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" className="h-2.5" loading="lazy" width={48} height={10} />
+                      <Image src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" className="h-2.5 w-auto" loading="lazy" width={48} height={10} />
+                      <Image src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Pay_Logo.svg" alt="GPay" className="h-2.5 w-auto" loading="lazy" width={48} height={10} />
+                      <Image src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" className="h-2.5 w-auto" loading="lazy" width={48} height={10} />
                     </div>
                   </div>
                 )}

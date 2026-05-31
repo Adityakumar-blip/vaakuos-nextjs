@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useBookDemo } from "@/contexts/book-demo-context";
 import { BrandMark } from "@/components/BrandMark";
+import Image from "next/image";
 import {
   Sheet,
   SheetContent,
@@ -34,7 +35,7 @@ export const Navigation = () => {
             className="flex items-center gap-2 cursor-pointer group"
           >
             <div className="bg-primary p-[3px] rounded-lg">
-              <img src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" />
+              <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
             </div>
             <span className="text-xl font-bold text-foreground tracking-tight">
               VaakuOS
@@ -89,7 +90,9 @@ export const Navigation = () => {
                   <div className="flex flex-col h-full">
                     <SheetHeader className="p-6 border-b border-border">
                       <SheetTitle className="text-left flex items-center gap-3">
-                        <BrandMark />
+                        <div className="bg-primary p-[3px] rounded-lg">
+                          <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
+                        </div>
                         <span className="font-bold text-xl tracking-tight">
                           VaakuOS
                         </span>

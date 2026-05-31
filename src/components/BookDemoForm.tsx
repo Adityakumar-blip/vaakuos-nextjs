@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +61,7 @@ export const BookDemoForm = ({ onSuccess, isPage = false }: BookDemoFormProps) =
 
     setIsSubmitting(true);
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await fetch(`${baseUrl}/demo-bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,7 +134,7 @@ export const BookDemoForm = ({ onSuccess, isPage = false }: BookDemoFormProps) =
                       Tell us about your brand
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      We'll prepare a custom demo based on your scale.
+                      We&apos;ll prepare a custom demo based on your scale.
                     </p>
                   </div>
 

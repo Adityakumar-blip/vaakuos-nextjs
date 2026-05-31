@@ -44,7 +44,7 @@ export const IntegrationsSection = () => {
 
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">
-            Can't find your tool? We're working on more integrations.
+            Can&apos;t find your tool? We&apos;re working on more integrations.
           </p>
         </div>
       </div>

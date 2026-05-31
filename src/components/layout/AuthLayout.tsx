@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -100,7 +101,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
           <div className="flex justify-center lg:justify-start">
              <Link href="/" className="flex items-center gap-3 group">
                 <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center  shadow-lg shadow-[#122D22]/20">
-                   <img src="/images/white_full.png" alt="Logo" className="w-12 h-12" />
+                   <Image src="/images/white_full.png" alt="Logo" className="w-12 h-12" width={48} height={48} />
                 </div>
                 <div className="flex flex-col">
                    <span className="text-2xl font-bold tracking-tight text-[#0A1A14]">VaakuOS</span>
