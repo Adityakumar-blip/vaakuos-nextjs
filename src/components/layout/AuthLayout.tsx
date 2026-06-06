@@ -100,9 +100,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
           {/* Logo */}
           <div className="flex justify-center lg:justify-start">
              <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center  shadow-lg shadow-[#122D22]/20">
-                   <Image src="/images/white_full.png" alt="Logo" className="w-12 h-12" width={48} height={48} />
-                </div>
+                <Image src="/images/green.svg" alt="Logo" className="w-8 h-8" width={32} height={32} />
                 <div className="flex flex-col">
                    <span className="text-2xl font-bold tracking-tight text-[#0A1A14]">VaakuOS</span>
                 </div>

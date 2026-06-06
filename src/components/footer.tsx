@@ -14,9 +14,7 @@ export const Footer = () => {
         <div className="grid md:grid-cols-5 gap-8 mb-8">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary p-[3px] rounded-lg">
-                <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
-              </div>
+              <Image src="/images/green.svg" className="h-8 w-8" alt="VaakuOS Logo" width={24} height={24} />
               <span className="text-xl font-bold text-foreground">VaakuOS</span>
             </div>
             <p className="text-sm text-muted-foreground">

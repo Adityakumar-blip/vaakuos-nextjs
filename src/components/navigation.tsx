@@ -34,9 +34,7 @@ export const Navigation = () => {
             href="/"
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="bg-primary p-[3px] rounded-lg">
-              <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
-            </div>
+            <Image src="/images/green.svg" className="h-8 w-8" alt="VaakuOS Logo" width={24} height={24} />
             <span className="text-xl font-bold text-foreground tracking-tight">
               VaakuOS
             </span>
@@ -90,9 +88,7 @@ export const Navigation = () => {
                   <div className="flex flex-col h-full">
                     <SheetHeader className="p-6 border-b border-border">
                       <SheetTitle className="text-left flex items-center gap-3">
-                        <div className="bg-primary p-[3px] rounded-lg">
-                          <Image src="/images/white_full.png" className="h-10 w-10" alt="VaakuOS Logo" width={40} height={40} />
-                        </div>
+                        <Image src="/images/green.svg" className="h-8 w-8" alt="VaakuOS Logo" width={24} height={24} />
                         <span className="font-bold text-xl tracking-tight">
                           VaakuOS
                         </span>
