@@ -58,17 +58,21 @@ export default function IntegrationsPage() {
               <Sparkles className="h-4 w-4" />
               Native connectors for revenue recovery
             </div>
-            <h1 className="max-w-4xl text-4xl font-bold leading-[1.08] text-foreground md:text-6xl">
+            <h1 className="max-w-4xl text-3xl font-bold leading-[1.1] text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               All your store signals, routed through one recovery OS.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg md:text-xl">
               Connect VaakuOS to commerce, CRM, marketing, and ops tools without
               brittle glue code. Every plugin keeps its own logo, status, and
               sync method clear so teams can pick the right path fast.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="xl" className="rounded-2xl">
+            <div className="mt-8 flex flex-row gap-3">
+              <Button
+                asChild
+                size="xl"
+                className="flex-1 rounded-2xl px-4 text-sm sm:flex-none sm:px-10 sm:text-base"
+              >
                 <Link href="/demo">
                   Book integration demo
                   <ArrowRight className="h-5 w-5" />
@@ -78,7 +82,7 @@ export default function IntegrationsPage() {
                 asChild
                 variant="outline"
                 size="xl"
-                className="rounded-2xl border-primary/20 bg-white/60"
+                className="flex-1 rounded-2xl border-primary/20 bg-white/60 px-4 text-sm sm:flex-none sm:px-10 sm:text-base"
               >
                 <Link href="#plugins">View plugins</Link>
               </Button>
@@ -102,7 +106,7 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[440px] overflow-hidden rounded-[2rem] border border-foreground/10 bg-[#10130f] p-5 shadow-2xl shadow-primary/20">
+          <div className="relative hidden min-h-[440px] overflow-hidden rounded-[2rem] border border-foreground/10 bg-[#10130f] p-5 shadow-2xl shadow-primary/20 lg:block">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(145,204,170,0.24),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.08),transparent_58%)]" />
             <div className="absolute inset-5 rounded-[1.5rem] border border-white/10" />
             <div className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
@@ -171,36 +175,62 @@ export default function IntegrationsPage() {
       <PluginDirectory integrations={integrations} />
 
       <section className="border-y border-border bg-white/35">
-        <div className="container mx-auto grid max-w-7xl gap-8 px-4 py-16 md:grid-cols-3">
-          {workflow.map((item) => {
-            const Icon = item.icon;
+        <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-20 md:py-24">
+          <div className="mb-10 max-w-2xl md:mb-12">
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+              How it connects
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              From plugin to routed signal in three steps.
+            </h2>
+          </div>
 
-            return (
-              <div
-                key={item.title}
-                className="rounded-3xl border border-border bg-background p-6"
-              >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                  <Icon className="h-6 w-6" />
+          <div className="grid gap-6 md:grid-cols-3 md:gap-5">
+            {workflow.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <div key={item.title} className="relative">
+                  <div className="group relative flex h-full flex-col rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 md:p-7">
+                    <div className="mb-6 flex items-center justify-between">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+                        <Icon className="h-6 w-6" />
+                      </span>
+                      <span className="text-3xl font-bold leading-none tracking-tight text-muted-foreground/15">
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold tracking-tight text-foreground md:text-xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2.5 text-sm leading-7 text-muted-foreground">
+                      {item.body}
+                    </p>
+                  </div>
+
+                  {index < workflow.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-1/2 top-full z-10 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background text-primary shadow-sm md:left-full md:top-1/2"
+                    >
+                      <ArrowRight className="h-4 w-4 rotate-90 md:rotate-0" />
+                    </span>
+                  )}
                 </div>
-                <h3 className="text-2xl font-bold">{item.title}</h3>
-                <p className="mt-3 leading-7 text-muted-foreground">
-                  {item.body}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      <section className="container mx-auto max-w-7xl px-4 py-16 md:py-24">
+      <section className="container mx-auto max-w-7xl px-4 py-16 sm:py-20 md:py-24">
         <div className="grid gap-6 rounded-[2rem] border border-foreground/10 bg-foreground p-6 text-background shadow-2xl md:grid-cols-[1fr_0.75fr] md:p-10">
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-background/10 px-3 py-1.5 text-sm font-bold">
               <ShieldCheck className="h-4 w-4" />
               Secure by default
             </div>
-            <h2 className="max-w-3xl text-3xl font-bold leading-tight md:text-5xl">
+            <h2 className="max-w-3xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
               Need a private app, webhook, or custom marketplace plugin?
             </h2>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-background/70">

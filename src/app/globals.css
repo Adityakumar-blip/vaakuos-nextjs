@@ -311,3 +311,72 @@
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   AUTH PAGES — split-panel sign in / sign up
+============================================================ */
+@keyframes auth-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes auth-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+@keyframes auth-float-tilt {
+  0%, 100% { transform: translateY(0) rotate(-1.4deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+@keyframes auth-aurora {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(7%, -5%) scale(1.12); }
+  66%  { transform: translate(-6%, 6%) scale(0.94); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes auth-ping-ring {
+  0%   { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.55); }
+  70%  { box-shadow: 0 0 0 12px hsl(var(--accent) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0); }
+}
+@keyframes auth-shimmer {
+  0% { background-position: -180% 0; }
+  100% { background-position: 180% 0; }
+}
+@keyframes auth-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.auth-rise { opacity: 0; animation: auth-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+.auth-d1 { animation-delay: 0.06s; }
+.auth-d2 { animation-delay: 0.14s; }
+.auth-d3 { animation-delay: 0.22s; }
+.auth-d4 { animation-delay: 0.30s; }
+.auth-d5 { animation-delay: 0.38s; }
+.auth-d6 { animation-delay: 0.46s; }
+.auth-d7 { animation-delay: 0.54s; }
+.auth-d8 { animation-delay: 0.62s; }
+
+.auth-float { animation: auth-float 6s ease-in-out infinite; }
+.auth-float-tilt { animation: auth-float-tilt 7.5s ease-in-out infinite; }
+.auth-aurora { animation: auth-aurora 18s ease-in-out infinite; }
+.auth-ping-ring { animation: auth-ping-ring 2.4s ease-out infinite; }
+
+.auth-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.auth-shimmer-text {
+  background: linear-gradient(100deg, hsl(var(--accent)) 0%, hsl(var(--tertiary)) 45%, hsl(var(--accent)) 90%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: auth-shimmer 4.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-rise, .auth-float, .auth-float-tilt, .auth-aurora, .auth-ping-ring, .auth-shimmer-text {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

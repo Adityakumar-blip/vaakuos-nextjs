@@ -12,19 +12,31 @@ export const metadata: Metadata = {
 
 export default function DemoPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            See VaakuOS in action
+    <section className="relative isolate overflow-hidden px-4 pb-16 pt-28 md:pb-24 md:pt-32">
+      {/* ── Background — matches hero & contact sections ── */}
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_58%,hsl(var(--background))_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_18%,hsl(var(--tertiary)/0.46),transparent_30%),radial-gradient(circle_at_88%_10%,hsl(var(--primary)/0.20),transparent_28%),linear-gradient(120deg,transparent_0%,hsl(var(--accent)/0.08)_45%,transparent_70%)]" />
+      <div className="absolute inset-0 -z-10 opacity-[0.22] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
+
+      <div className="container relative z-10 mx-auto max-w-5xl">
+        {/* ── Header ── */}
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-primary">
+            Book a demo
+          </p>
+          <h1 className="mb-5 text-3xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
+            See VaakuOS in action.
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Book a personalized demo and see how we can help you recover abandoned revenue.
+          <p className="mx-auto max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
+            Book a personalized walkthrough and see exactly how we recover
+            abandoned revenue for stores like yours.
           </p>
         </div>
 
-        <BookDemoForm isPage={true} />
+        <div className="mt-8 md:mt-14">
+          <BookDemoForm isPage={true} />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -20,7 +20,7 @@ export const IntegrationsSection = () => {
   return (
     <section
       id="integrations"
-      className="relative overflow-hidden px-4 py-20 md:py-28"
+      className="relative overflow-hidden px-4 py-16 sm:py-20 md:py-28"
     >
       <div className="container mx-auto max-w-7xl">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -29,7 +29,7 @@ export const IntegrationsSection = () => {
               <PlugZap className="h-3.5 w-3.5" />
               Commerce stack ready
             </div>
-            <h2 className="text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+            <h2 className="text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               Plug VaakuOS into the tools that already run your store.
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
@@ -37,16 +37,27 @@ export const IntegrationsSection = () => {
               keep recovery workflows aligned with the real order state.
             </p>
 
-            <div className="mt-8 space-y-2">
+            <div className="mt-8">
               {syncSteps.map((step, index) => (
-                <div
-                  key={step}
-                  className="flex items-center gap-3 text-sm font-medium text-foreground"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-                    {index + 1}
-                  </span>
-                  {step}
+                <div key={step} className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm shadow-primary/20">
+                      {index + 1}
+                    </span>
+                    {index < syncSteps.length - 1 && (
+                      <span
+                        className="my-1 w-px flex-1 bg-gradient-to-b from-primary/30 to-border"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                  <p
+                    className={`pt-1.5 text-sm font-medium text-foreground ${
+                      index < syncSteps.length - 1 ? "pb-6" : ""
+                    }`}
+                  >
+                    {step}
+                  </p>
                 </div>
               ))}
             </div>
@@ -62,44 +73,49 @@ export const IntegrationsSection = () => {
 
           <div className="relative">
             <div className="mb-4 flex items-center justify-between">
-              <p></p>
+              <span className="inline-flex items-center gap-2 text-xs font-semibold text-foreground">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                </span>
+                {integrations.length} live connections
+              </span>
               <p className="text-xs font-medium text-muted-foreground">
-                Commerce, data, and ops
+                Commerce, data &amp; ops
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm sm:grid-cols-2 md:p-5">
+            <div className="grid grid-cols-2 gap-2.5 rounded-2xl border border-border bg-card p-2.5 shadow-sm sm:gap-3 sm:p-4 md:p-5">
               {integrations.map((integration) => (
                 <div
                   key={integration.name}
-                  className="group flex min-h-[166px] flex-col justify-between rounded-xl border border-border bg-background p-5 transition-colors duration-300 hover:border-primary/25 hover:bg-card"
+                  className="group relative flex flex-col justify-between gap-6 overflow-hidden rounded-xl border border-border bg-background p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 sm:gap-8 sm:p-5"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div
+                    className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                  <div className="flex items-start justify-between gap-3">
                     <PluginLogo
                       logo={integration.logo}
                       name={integration.name}
-                      className="h-12 w-12 rounded-xl"
+                      className="h-11 w-11 rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-12 sm:w-12"
                     />
-                    <span className="rounded-md bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                       Live
                     </span>
                   </div>
-                  <div className="mt-10">
-                    <h3 className="text-lg font-semibold text-foreground">
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground sm:text-lg">
                       {integration.name}
                     </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
                       {integration.category} sync
                     </p>
                   </div>
                 </div>
               ))}
             </div>
-            {/* <div className="mx-auto mt-4 max-w-lg rounded-lg border border-border bg-muted/40 px-5 py-4">
-              <p className="text-sm leading-6 text-muted-foreground">
-                Unified recovery events flow back into VaakuOS dashboards, revenue
-                attribution, and automated handoff rules.
-              </p>
-            </div> */}
           </div>
         </div>
       </div>

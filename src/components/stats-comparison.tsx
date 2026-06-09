@@ -1,4 +1,4 @@
-import { TrendingUp, Sparkles, Layers, Inbox } from "lucide-react";
+import { TrendingUp, Sparkles, Layers, Inbox, ArrowRight } from "lucide-react";
 
 const stats = [
   {
@@ -47,16 +47,16 @@ const maxValues = {
 
 export const StatsComparison = () => {
   return (
-    <section className="relative overflow-hidden bg-background px-4 py-20 md:py-24">
+    <section className="relative overflow-hidden bg-background px-4 py-16 sm:py-20 md:py-24">
       <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(135deg,hsl(var(--primary)/0.06)_0_1px,transparent_1px_18px)]" />
       <div className="container relative z-10 mx-auto max-w-7xl">
-        <div className="mb-12 grid gap-6 md:mb-16 md:grid-cols-[0.95fr_1.05fr] md:items-end">
+        <div className="mb-8 grid gap-6 sm:mb-12 md:mb-16 md:grid-cols-[0.95fr_1.05fr] md:items-end">
           <div className="max-w-xl">
             <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary">
               <TrendingUp className="h-4 w-4" />
               Recovery benchmarks
             </p>
-            <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               The measurable lift behind omnichannel recovery.
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
@@ -67,42 +67,61 @@ export const StatsComparison = () => {
           <div className="hidden md:block" />
         </div>
 
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-border bg-border md:grid-cols-3">
-            {stats.map((stat) => (
-              <div
-                key={stat.strategy}
-              className={`group bg-card p-6 transition-colors duration-300 hover:bg-background md:p-8 ${
-                stat.highlight ? "md:col-span-1" : ""
+        {/* Mobile swipe hint */}
+        <div className="mb-3 flex items-center justify-between md:hidden">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Compare strategies
+          </p>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
+            Swipe
+            <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+
+        <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-px md:overflow-hidden md:rounded-3xl md:border md:border-border md:bg-border md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+          {stats.map((stat, index) => (
+            <div
+              key={stat.strategy}
+              className={`group flex w-[82%] shrink-0 snap-center flex-col rounded-3xl border bg-card p-6 transition-all duration-300 hover:bg-background sm:w-[56%] md:w-auto md:shrink md:rounded-none md:border-0 lg:p-8 ${
+                stat.highlight
+                  ? "border-primary/40 shadow-xl shadow-primary/10 ring-1 ring-primary/20 md:shadow-none md:ring-0"
+                  : "border-border"
               }`}
-              >
-              <div className="mb-8 flex items-start justify-between gap-4">
+            >
+              <div className="mb-7 flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <span
                     className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:-translate-y-1 ${
                       stat.highlight
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                         : "bg-muted text-muted-foreground"
                     }`}
                   >
                     <stat.icon className="h-5 w-5" />
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-foreground">
-                        {stat.strategy}
+                    <h3 className="text-lg font-bold text-foreground md:text-xl">
+                      {stat.strategy}
                     </h3>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {stat.highlight ? "Best performing benchmark" : "Baseline comparison"}
-                  </p>
+                    <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                      {stat.highlight
+                        ? "Best performing benchmark"
+                        : "Baseline comparison"}
+                    </p>
                   </div>
                 </div>
-                {stat.highlight && (
-                  <span className="rounded-md bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                {stat.highlight ? (
+                  <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
                     Best
+                  </span>
+                ) : (
+                  <span className="shrink-0 text-base font-bold tracking-tight text-muted-foreground/40">
+                    0{index + 1}
                   </span>
                 )}
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <MetricCell
                   label="Revenue captured"
                   value={stat.captured}
@@ -126,11 +145,23 @@ export const StatsComparison = () => {
                 />
               </div>
 
-              <p className="mt-8 border-t border-border pt-5 text-sm leading-7 text-muted-foreground">
+              <p className="mt-8 border-t border-border pt-5 text-sm leading-7 text-muted-foreground md:mt-auto">
                 {stat.note}
               </p>
-              </div>
-            ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile progress dots */}
+        <div className="mt-4 flex justify-center gap-1.5 md:hidden">
+          {stats.map((stat) => (
+            <span
+              key={stat.strategy}
+              className={`h-1.5 rounded-full transition-all ${
+                stat.highlight ? "w-6 bg-primary" : "w-1.5 bg-border"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -155,13 +186,21 @@ const MetricCell = ({
       <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
         {label}
       </span>
-      <span className={`text-base font-bold ${highlight ? "text-primary" : "text-foreground"}`}>
+      <span
+        className={`text-base font-bold ${
+          highlight ? "text-primary" : "text-foreground"
+        }`}
+      >
         {value}
       </span>
     </div>
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
       <div
-        className={`h-full rounded-full ${highlight ? "bg-primary" : "bg-border"}`}
+        className={`h-full rounded-full ${
+          highlight
+            ? "bg-gradient-to-r from-primary to-primary/60"
+            : "bg-foreground/25"
+        }`}
         style={{ width: `${(percentage / max) * 100}%` }}
       />
     </div>

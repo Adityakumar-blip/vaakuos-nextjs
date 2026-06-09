@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ArrowLeft, ArrowRight, Clock3 } from "lucide-react";
 import { blogService } from "@/services/blog-service";
+import { readingTimeMinutes } from "@/lib/reading-time";
+import { COVER_PALETTES, formatDate, hashSlug, initials } from "../blog-utils";
+import { NewsletterCta } from "../newsletter-cta";
+import { ReadingProgress } from "./reading-progress";
+import type { BlogPost } from "@/types/blog";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -12,6 +19,15 @@ async function getBlogPost(slug: string) {
     return await blogService.getBySlug(slug);
   } catch {
     return null;
+  }
+}
+
+async function getOtherPosts(currentSlug: string): Promise<BlogPost[]> {
+  try {
+    const posts = await blogService.getAllPublished();
+    return posts.filter((post) => post.slug !== currentSlug).slice(0, 5);
+  } catch {
+    return [];
   }
 }
 
@@ -37,85 +53,202 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       publishedTime: post.created_at,
       authors: [post.author?.name || "VaakuOS Team"],
+      ...(post.featured_image ? { images: [{ url: post.featured_image }] } : {}),
     },
   };
 }
 
+function SideThumb({ post }: { post: BlogPost }) {
+  if (post.featured_image) {
+    return (
+      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border border-foreground/10 bg-muted">
+        <Image
+          src={post.featured_image}
+          alt={post.title}
+          fill
+          sizes="80px"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+    );
+  }
+  const palette = COVER_PALETTES[hashSlug(post.slug) % COVER_PALETTES.length];
+  return (
+    <div
+      className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg ${palette}`}
+    >
+      <span
+        aria-hidden
+        className="absolute -bottom-[0.3em] left-1.5 select-none text-3xl font-bold leading-none text-white/20"
+      >
+        {post.title.charAt(0)}
+      </span>
+    </div>
+  );
+}
+
+function OtherReads({ posts }: { posts: BlogPost[] }) {
+  if (posts.length === 0) return null;
+  return (
+    <aside className="lg:sticky lg:top-28 lg:self-start">
+      <div className="mb-5 flex items-center gap-4">
+        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-muted-foreground">
+          Other reads
+        </h2>
+        <span className="h-px flex-1 bg-foreground/10" />
+      </div>
+      <div className="space-y-5">
+        {posts.map((post) => (
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            className="group flex items-start gap-3.5"
+          >
+            <SideThumb post={post} />
+            <div className="min-w-0">
+              <h3 className="line-clamp-2 text-sm font-bold leading-snug tracking-tight transition-colors group-hover:text-primary">
+                {post.title}
+              </h3>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                <time dateTime={post.created_at}>
+                  {formatDate(post.created_at)}
+                </time>
+                <span className="mx-1.5 text-muted-foreground/60">·</span>
+                {post.author?.name || "VaakuOS Team"}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <Link
+        href="/blog"
+        className="group mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary"
+      >
+        View all posts
+        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+      </Link>
+    </aside>
+  );
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
+  const [post, otherPosts] = await Promise.all([
+    getBlogPost(slug),
+    getOtherPosts(slug),
+  ]);
 
   if (!post) {
     notFound();
   }
 
-  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const authorName = post.author?.name || "VaakuOS Team";
+  const readingTime = readingTimeMinutes(post.content ?? "");
+  const formattedDate = formatDate(post.created_at);
 
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
+    <div className="relative min-h-screen overflow-hidden pb-24 pt-32">
+      <ReadingProgress />
+
+      {/* Atmosphere */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-[420px] w-[800px] max-w-[150vw] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,hsl(var(--tertiary)/0.28),transparent)] blur-2xl" />
+        <div className="absolute inset-0 opacity-[0.15] [background-image:linear-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_45%)]" />
+      </div>
+
+      <div className="container mx-auto max-w-6xl px-4">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors text-sm font-medium"
+          className="group mb-10 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-card/70 px-4 py-2 text-sm font-semibold text-muted-foreground backdrop-blur-sm transition-all hover:border-primary/40 hover:text-primary"
         >
-          ← Back to Blog
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          Back to the Journal
         </Link>
 
-        <article>
-          <header className="mb-10 md:mb-12">
-            <div className="flex items-center gap-4 mb-6">
-              <span className="bg-primary/10 text-primary text-xs md:text-sm font-bold px-3 md:px-4 py-1 rounded">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_280px] xl:gap-16">
+          <article className="min-w-0">
+            <header className="mb-10 md:mb-12">
+              <span className="inline-block rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
                 {post.category?.name || "General"}
               </span>
-            </div>
 
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 leading-tight tracking-tight">
-              {post.title}
-            </h1>
+              <h1 className="mt-6 text-3xl font-bold leading-[1.1] tracking-tight md:text-4xl lg:text-5xl">
+                {post.title}
+              </h1>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between py-6 border-y border-border gap-4">
-              <div>
-                <p className="font-bold text-sm md:text-base">{post.author?.name || "VaakuOS Team"}</p>
-                <p className="text-xs md:text-sm text-muted-foreground">Author</p>
+              {post.excerpt && (
+                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+                  {post.excerpt}
+                </p>
+              )}
+
+              <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2.5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-tertiary text-xs font-bold text-tertiary-foreground">
+                    {initials(authorName)}
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {authorName}
+                  </span>
+                </span>
+                <span className="text-muted-foreground/50">·</span>
+                <time dateTime={post.created_at}>{formattedDate}</time>
+                <span className="text-muted-foreground/50">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock3 className="h-3.5 w-3.5" />
+                  {readingTime} min read
+                </span>
               </div>
-              <time className="text-sm text-muted-foreground">{formattedDate}</time>
-            </div>
-          </header>
+            </header>
 
-          <div
-            className="prose prose-lg max-w-none
-              prose-headings:font-bold prose-headings:text-foreground
-              prose-p:text-muted-foreground prose-p:leading-relaxed
-              prose-a:text-primary prose-strong:text-foreground
-              prose-ul:list-disc prose-li:text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-
-          <footer className="mt-16 pt-10 border-t border-border">
-            <div className="bg-card p-6 md:p-10 rounded-2xl border border-border text-center">
-              <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
-                Want more insights?
-              </h3>
-              <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
-                Join our newsletter to receive the latest strategies for e-commerce growth.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-5 md:px-6 py-3 md:py-4 rounded-full bg-muted border border-border focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+            {post.featured_image && (
+              <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-foreground/10 shadow-xl shadow-primary/10 md:mb-12">
+                <Image
+                  src={post.featured_image}
+                  alt={post.title}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  className="object-cover"
                 />
-                <button className="px-6 md:px-8 py-3 md:py-4 bg-primary text-white font-bold rounded-full hover:opacity-90 transition-all text-sm">
-                  Subscribe
-                </button>
               </div>
-            </div>
-          </footer>
-        </article>
+            )}
+
+            <div
+              className="prose prose-lg max-w-none
+                prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
+                prose-p:leading-relaxed prose-p:text-foreground/80
+                prose-a:font-semibold prose-a:text-primary prose-a:decoration-accent/40 prose-a:underline-offset-4 hover:prose-a:decoration-accent
+                prose-strong:text-foreground
+                prose-blockquote:border-l-accent prose-blockquote:text-xl prose-blockquote:italic prose-blockquote:text-foreground
+                prose-li:text-foreground/80
+                prose-img:rounded-2xl prose-img:border prose-img:border-foreground/10
+                prose-hr:border-border"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+
+            <footer className="mt-14">
+              <div className="flex items-center gap-4 rounded-2xl border border-foreground/10 bg-card p-6">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-tertiary text-base font-bold text-tertiary-foreground">
+                  {initials(authorName)}
+                </span>
+                <div>
+                  <p className="text-lg font-bold tracking-tight">
+                    Written by {authorName}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Insights on cart recovery, retention, and conversion from
+                    the VaakuOS team.
+                  </p>
+                </div>
+              </div>
+            </footer>
+          </article>
+
+          <OtherReads posts={otherPosts} />
+        </div>
+
+        <NewsletterCta />
       </div>
     </div>
   );

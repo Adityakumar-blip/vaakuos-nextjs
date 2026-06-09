@@ -36,14 +36,14 @@ export const faqItems = [
 
 export const FaqSection = () => {
   return (
-    <section className="relative overflow-hidden px-4 py-20 md:py-28">
+    <section className="relative overflow-hidden px-4 py-16 sm:py-20 md:py-28">
       <div className="container mx-auto max-w-7xl">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="max-w-xl">
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
               FAQ
             </p>
-            <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               Frequently asked questions.
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">

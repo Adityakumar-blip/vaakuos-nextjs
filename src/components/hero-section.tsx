@@ -31,20 +31,20 @@ export const HeroSection = () => {
             converts missed purchases across every digital touchpoint.
           </p>
 
-          <div className="hero-fade-item hero-delay-4 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+          <div className="hero-fade-item hero-delay-4 flex flex-row items-center justify-center gap-3">
             <Button
               size="lg"
-              className="group h-12 rounded-lg px-7 text-sm font-semibold shadow-lg shadow-primary/15 sm:text-base"
+              className="group h-12 flex-1 rounded-lg px-4 text-sm font-semibold shadow-lg shadow-primary/15 sm:flex-none sm:px-7 sm:text-base"
               onClick={openBookDemo}
             >
               Book Live Demo
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Link href="/calculator">
+            <Link href="/calculator" className="flex-1 sm:flex-none">
               <Button
                 variant="outline"
                 size="lg"
-                className="h-12 w-full rounded-lg border-foreground/15 bg-card/70 px-7 text-sm font-semibold text-foreground backdrop-blur-md hover:bg-secondary hover:text-foreground sm:w-auto sm:text-base"
+                className="h-12 w-full rounded-lg border-foreground/15 bg-card/70 px-4 text-sm font-semibold text-foreground backdrop-blur-md hover:bg-secondary hover:text-foreground sm:px-7 sm:text-base"
               >
                 Calculate ROI
               </Button>

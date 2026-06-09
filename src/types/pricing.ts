@@ -1,7 +1,7 @@
 export interface PricingFeatureItem {
   code: string;
   label: string;
-  description: string;
+  description: string | null;
   value: boolean | number | string;
   display_value: string;
 }
@@ -9,16 +9,39 @@ export interface PricingFeatureItem {
 export interface PricingPlan {
   id: string;
   name: string;
-  description: string;
+  subtitle: string | null;
+  description: string | null;
+  /** Monthly amount in paise (e.g. 99900 = ₹999) */
   amount: number;
   currency: string;
-  billing_cycle: "monthly" | "yearly";
+  billing_interval: number;
   features: PricingFeatureItem[];
-  razorpay_plan_id?: string;
-  is_published?: boolean;
-  subtitle?: string;
-  isYearly?: boolean;
-  yearlyDiscount?: number;
-  yearlyPrice?: number;
-  discountedMonthlyPrice?: number;
+  isYearly: boolean;
+  yearlyDiscount: number;
+  /** 12 months with yearly discount applied, in paise */
+  yearlyPrice: number;
+  /** Per-month price with yearly discount applied, in paise */
+  discountedMonthlyPrice: number;
+}
+
+export interface PricingAddon {
+  id: string;
+  name: string;
+  description: string | null;
+  amount: number;
+  currency: string;
+  type: string;
+  features: PricingFeatureItem[];
+}
+
+export interface PricingResponse {
+  plans: {
+    monthly: PricingPlan[];
+    yearly: PricingPlan[];
+  };
+  addons: PricingAddon[];
+  meta: {
+    currency: string;
+    fetched_at: string;
+  };
 }

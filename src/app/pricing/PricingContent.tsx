@@ -2,287 +2,654 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, CheckCircle2, ArrowUpRight, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { pricingService } from "@/services/pricing-service";
+import { ArrowRight, Check, Info, Minus, Plus, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import type { PricingPlan } from "@/types/pricing";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ScrollReveal } from "@/components/scroll-reveal";
+import { useBookDemo } from "@/contexts/book-demo-context";
+import { pricingService } from "@/services/pricing-service";
+import type { PricingFeatureItem, PricingPlan } from "@/types/pricing";
 
-const FEATURE_METADATA: Record<string, { label: string }> = {
-  api_access: { label: "API Access" },
-  max_agents: { label: "Max Agents" },
-  max_contacts: { label: "Max Contacts" },
-  max_campaigns: { label: "Max Campaigns" },
-  monthly_messages: { label: "Monthly Messages" },
-  priority_support: { label: "Priority Support" },
-  broadcast_enabled: { label: "Broadcast Enabled" },
-  markup_per_message: { label: "Markup Per Message" },
-  monthly_ai_replies: { label: "Monthly AI Replies" },
+type BillingCycle = "monthly" | "yearly";
+
+/** Convert paise to a localized rupee string (99900 → "999"). */
+const formatRupees = (paise: number) =>
+  Math.round(paise / 100).toLocaleString("en-IN");
+
+/** Format raw numeric display values with Indian grouping (10000 → 10,000). */
+const formatDisplayValue = (item: PricingFeatureItem) => {
+  if (typeof item.value === "number" && item.value !== -1) {
+    return item.value.toLocaleString("en-IN");
+  }
+  return item.display_value;
 };
 
-const COMPARISON_CONFIG = [
-  {
-    title: "Usage & Limits",
-    rows: [
-      { key: "monthly_messages", help: "Total monthly WhatsApp messages allowed." },
-      { key: "max_contacts", help: "Maximum number of contacts/leads you can store." },
-      { key: "max_agents", help: "Number of team members who can access the dashboard." },
-      { key: "max_campaigns", help: "Number of active broadcast campaigns allowed." },
-      { key: "monthly_ai_replies", help: "Number of AI-powered automated replies per month." },
-    ],
-  },
-  {
-    title: "Features & Support",
-    rows: [
-      { key: "broadcast_enabled", help: "Ability to send mass messages to your contacts." },
-      { key: "api_access", help: "Access to developer APIs and webhooks for integration." },
-      { key: "priority_support", help: "Faster response times and dedicated support channel." },
-      { key: "markup_per_message", help: "Additional cost per message (INR)." },
-    ],
-  },
-];
+const isUnlimited = (item: PricingFeatureItem) =>
+  item.value === -1 || item.display_value === "Unlimited";
 
-const renderCell = (value: unknown, rowKey: string) => {
-  if (value === true || value === "Included")
-    return <CheckCircle2 className="h-5 w-5 text-primary mx-auto" strokeWidth={2.5} />;
-  if (value === false || value === "Not Included")
-    return <X className="h-4 w-4 text-muted-foreground/30 mx-auto" />;
-  if (value === -1 || value === "Unlimited")
-    return <span className="text-primary font-bold tracking-tighter text-base">∞</span>;
-  return <span className="text-foreground/90 font-semibold">{String(value)}</span>;
+const planFeature = (plan: PricingPlan, code: string) =>
+  plan.features.find((f) => f.code === code);
+
+/** Cell renderer for the comparison table. */
+const ComparisonCell = ({ item }: { item?: PricingFeatureItem }) => {
+  if (!item || item.value === false) {
+    return <Minus className="h-4 w-4 text-muted-foreground/30" />;
+  }
+  // Empty-string values are flag-style features ("Dedicated Solution Expert")
+  if (item.value === true || item.value === "") {
+    return <Check className="h-[18px] w-[18px] text-primary" strokeWidth={2.5} />;
+  }
+  if (isUnlimited(item)) {
+    return <span className="text-sm font-semibold text-primary">Unlimited</span>;
+  }
+  return (
+    <span className="text-sm font-medium text-foreground/90">
+      {formatDisplayValue(item)}
+    </span>
+  );
 };
 
 export function PricingContent() {
   const router = useRouter();
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const { openBookDemo } = useBookDemo();
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
 
-  const { data: apiPlans, isLoading } = useQuery({
-    queryKey: ["plans"],
-    queryFn: pricingService.getPlans,
+  const { data, isLoading } = useQuery({
+    queryKey: ["public-pricing"],
+    queryFn: pricingService.getPricing,
   });
 
-  const currentPlans = (apiPlans || [])
-    .filter((p) => p.is_published && p.billing_cycle === billingCycle)
-    .map((plan) => {
-      const features = Array.isArray(plan.features) ? plan.features : [];
-      return {
-        ...plan,
-        displayPrice: (plan.amount / 100).toLocaleString(),
-        displayFeatures: features.slice(1, 7), // Skip first feature (name), take 6 features
-        recommended: plan.name.toLowerCase() === "growth",
-        featureMap: features.reduce((acc: Record<string, { display_value?: string; value?: unknown }>, f) => {
-          if (f && f.code) {
-            acc[f.code] = f;
-          }
-          return acc;
-        }, {}),
-      };
-    });
+  const plans = data?.plans?.[billingCycle] ?? [];
+  const yearlyPlans = data?.plans?.yearly ?? [];
+  const maxYearlyDiscount = Math.max(
+    0,
+    ...yearlyPlans.map((p) => p.yearlyDiscount || 0),
+  );
 
-  const handleGetStarted = (planId: string) => {
-    router.push(`/login?planId=${planId}&billingCycle=${billingCycle}`);
+  // Highlight the "Growth" plan; fall back to the middle card.
+  const highlightedIndex = (() => {
+    const growth = plans.findIndex((p) => p.name.toLowerCase() === "growth");
+    if (growth !== -1) return growth;
+    return plans.length >= 3 ? 1 : -1;
+  })();
+
+  // Build comparison rows dynamically from the feature catalog the plans use:
+  // metered limits (numbers/strings) first, then boolean capabilities.
+  const featureRows = (() => {
+    const seen = new Map<string, PricingFeatureItem>();
+    for (const plan of plans) {
+      for (const f of plan.features) {
+        if (!seen.has(f.code)) seen.set(f.code, f);
+      }
+    }
+    const all = Array.from(seen.values());
+    // Flags = booleans and empty-string markers (e.g. "Dedicated Solution Expert")
+    const isFlag = (f: PricingFeatureItem) =>
+      typeof f.value === "boolean" || f.value === "";
+    return {
+      limits: all.filter((f) => !isFlag(f)),
+      capabilities: all.filter(isFlag),
+    };
+  })();
+
+  const comparisonGroups = [
+    { title: "Usage & limits", rows: featureRows.limits },
+    { title: "Features & support", rows: featureRows.capabilities },
+  ].filter((g) => g.rows.length > 0);
+
+  // Shared column template so the header, category, and feature rows align.
+  const comparisonCols = {
+    gridTemplateColumns: `minmax(200px, 1.5fr) repeat(${plans.length}, minmax(130px, 1fr))`,
+  };
+
+  const hasAddons = (data?.addons?.length ?? 0) > 0;
+
+  // Selected add-ons ride along into the signup funnel as `addonIds`,
+  // which the app passes to POST /subscriptions (CreateSubscriptionDto.addon_ids).
+  const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
+
+  const toggleAddon = (addonId: string) =>
+    setSelectedAddonIds((prev) =>
+      prev.includes(addonId)
+        ? prev.filter((id) => id !== addonId)
+        : [...prev, addonId],
+    );
+
+  const selectedAddons = (data?.addons ?? []).filter((a) =>
+    selectedAddonIds.includes(a.id),
+  );
+  const addonMonthlyTotal = selectedAddons
+    .filter((a) => a.type === "recurring")
+    .reduce((sum, a) => sum + a.amount, 0);
+  const addonOneTimeTotal = selectedAddons
+    .filter((a) => a.type !== "recurring")
+    .reduce((sum, a) => sum + a.amount, 0);
+
+  const handleGetStarted = (plan: PricingPlan) => {
+    const params = new URLSearchParams({
+      planId: plan.id,
+      billingCycle,
+    });
+    if (selectedAddonIds.length > 0) {
+      params.set("addonIds", selectedAddonIds.join(","));
+    }
+    router.push(`/login?${params.toString()}`);
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-24">
-      <div className="container mx-auto px-4 max-w-[1200px]">
-        {/* Header & Toggles */}
-        <div className="text-center max-w-4xl mx-auto mb-12">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight pb-4 mb-2 leading-normal">
-            Simple, Transparent Pricing
+    <div className="relative isolate min-h-screen overflow-hidden pb-24 pt-32">
+      {/* Background — same language as the hero: soft gradient + faint grid */}
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_45%,hsl(var(--background))_100%)]" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(circle_at_18%_12%,hsl(var(--tertiary)/0.35),transparent_32%),radial-gradient(circle_at_84%_8%,hsl(var(--primary)/0.14),transparent_30%)]" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[640px] opacity-[0.18] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:linear-gradient(180deg,black,transparent)]" />
+
+      {/* Same container as the navbar so wide sections align with it */}
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+            Pricing
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl">
+            Plans that scale with your recovery engine.
           </h1>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto font-medium">
-            Choose the perfect plan for your business. Whether you are just starting out or scaling fast, we have got you covered.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
+            Start free, upgrade when you grow. Every plan includes the core
+            VaakuOS workflow — no setup fees, cancel anytime.
           </p>
 
-          {/* Billing Cycle Toggle */}
-          <div className="inline-flex bg-secondary/50 backdrop-blur-sm p-1.5 rounded-2xl border border-border/50 mb-8 shadow-inner">
-            <button
-              onClick={() => setBillingCycle("monthly")}
-              className={cn(
-                "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
-                billingCycle === "monthly"
-                  ? "bg-white text-foreground shadow-lg scale-105"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/30",
-              )}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingCycle("yearly")}
-              className={cn(
-                "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2",
-                billingCycle === "yearly"
-                  ? "bg-white text-foreground shadow-lg scale-105"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/30",
-              )}
-            >
-              Yearly{" "}
-              <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full uppercase tracking-wider">
-                -20% Off
-              </span>
-            </button>
+          {/* Billing cycle toggle */}
+          <div className="mt-8 inline-flex items-center rounded-full border border-border bg-secondary/60 p-1">
+            {(["monthly", "yearly"] as const).map((cycle) => (
+              <button
+                key={cycle}
+                onClick={() => setBillingCycle(cycle)}
+                aria-pressed={billingCycle === cycle}
+                className={cn(
+                  "flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold transition-all duration-200",
+                  billingCycle === cycle
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {cycle === "monthly" ? "Monthly" : "Yearly"}
+                {cycle === "yearly" && maxYearlyDiscount > 0 && (
+                  <span className="rounded-full bg-tertiary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-tertiary-foreground">
+                    Save {maxYearlyDiscount}%
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        {/* Pricing cards */}
+        <div
+          className={cn(
+            "mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3",
+            hasAddons ? "mb-8" : "mb-24",
+          )}
+        >
           {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
-              <div key={i} className="h-[500px] rounded-[2rem] border border-border bg-card animate-pulse" />
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-[520px] animate-pulse rounded-2xl border border-border bg-card/60"
+              />
             ))
-          ) : currentPlans.length > 0 ? (
-            currentPlans.map((plan) => {
-              const displayPrice =
-                billingCycle === "monthly" ? plan.amount : plan.discountedMonthlyPrice;
-              const isGrowth = plan.name.toLowerCase() === "growth";
-              const displayFeatures = plan.displayFeatures || [];
+          ) : plans.length > 0 ? (
+            plans.map((plan, index) => {
+              const highlighted = index === highlightedIndex;
+              const isFree = plan.amount === 0;
+              const monthlyPaise =
+                billingCycle === "yearly"
+                  ? plan.discountedMonthlyPrice
+                  : plan.amount;
 
               return (
                 <div
                   key={plan.id}
                   className={cn(
-                    "relative flex flex-col p-8 border backdrop-blur-xl transition-all duration-500 rounded-[2rem] group",
-                    isGrowth
-                      ? "bg-primary/5 border-primary/40 shadow-2xl shadow-primary/10 ring-1 ring-primary/20"
-                      : "bg-white/40 border-border/40 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5",
+                    "relative flex flex-col rounded-2xl border bg-card p-8 transition-shadow duration-300",
+                    highlighted
+                      ? "border-primary/50 shadow-xl shadow-primary/10 ring-1 ring-primary/25"
+                      : "border-border shadow-sm hover:shadow-lg",
                   )}
                 >
-                  {isGrowth && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[11px] font-bold text-white bg-primary px-4 py-1.5 rounded-full uppercase tracking-[0.1em] shadow-lg">
-                      Most Popular
+                  {highlighted && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-md">
+                      Most popular
                     </div>
                   )}
 
                   <div className="mb-6">
-                    <h3 className="text-xl font-bold pb-1 mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-lg font-semibold text-foreground">
                       {plan.name}
                     </h3>
-                    <p className="text-[13px] text-muted-foreground/80 leading-relaxed font-medium">
-                      {plan.subtitle}
-                    </p>
+                    {plan.subtitle && (
+                      <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                        {plan.subtitle}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mb-8">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold tracking-tight">
-                        ₹{typeof displayPrice === "number" ? displayPrice.toLocaleString() : displayPrice}
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-4xl font-semibold tracking-tight text-foreground">
+                        ₹{formatRupees(monthlyPaise)}
                       </span>
-                      <span className="text-muted-foreground/60 font-medium text-sm">/mo</span>
-                    </div>
-                    {billingCycle === "yearly" && plan.yearlyPrice && (
-                      <p className="text-[12px] text-primary font-semibold mt-1.5">
-                        Billed annually (₹{plan.yearlyPrice.toLocaleString()}/yr)
-                      </p>
-                    )}
-                    {billingCycle === "monthly" && plan.yearlyPrice && (
-                      <p className="text-[12px] text-muted-foreground mt-1.5 font-medium">
-                        ₹{plan.yearlyPrice.toLocaleString()}/yr if billed yearly
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-4 flex-grow border-t border-border/40 pt-8">
-                    {displayFeatures.map((feature, i) => (
-                      <div key={i} className="flex gap-4 text-sm items-center">
-                        <div className={cn(
-                          "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
-                          feature.value === false ? "bg-muted text-muted-foreground/30" : "bg-primary/10 text-primary"
-                        )}>
-                          <Check className="h-3 w-3" strokeWidth={3} />
-                        </div>
-                        <span className={cn(
-                          "font-medium leading-none",
-                          feature.value === false ? "text-muted-foreground/50" : "text-foreground/80"
-                        )}>
-                          {feature.display_value} {feature.label}
+                      {!isFree && (
+                        <span className="text-sm font-medium text-muted-foreground">
+                          /month
                         </span>
-                      </div>
-                    ))}
+                      )}
+                    </div>
+                    {!isFree && billingCycle === "yearly" && (
+                      <p className="mt-2 text-xs font-semibold text-primary">
+                        Billed ₹{formatRupees(plan.yearlyPrice)} per year
+                      </p>
+                    )}
+                    {!isFree &&
+                      billingCycle === "monthly" &&
+                      plan.isYearly &&
+                      plan.yearlyDiscount > 0 && (
+                        <p className="mt-2 text-xs font-medium text-muted-foreground">
+                          Save {plan.yearlyDiscount}% with yearly billing
+                        </p>
+                      )}
+                    {isFree && (
+                      <p className="mt-2 text-xs font-medium text-muted-foreground">
+                        Free forever — no card required
+                      </p>
+                    )}
+                    {addonMonthlyTotal > 0 && (
+                      <p className="mt-2 text-xs font-semibold text-accent">
+                        + ₹{formatRupees(addonMonthlyTotal)}/mo in add-ons
+                      </p>
+                    )}
+                    {addonOneTimeTotal > 0 && (
+                      <p className="mt-1 text-xs font-semibold text-accent">
+                        + ₹{formatRupees(addonOneTimeTotal)} one-time add-ons
+                      </p>
+                    )}
                   </div>
 
                   <Button
                     size="lg"
+                    variant={highlighted ? "default" : "outline"}
                     className={cn(
-                      "w-full font-bold h-12 rounded-xl mt-8 transition-all duration-300",
-                      isGrowth
-                        ? "bg-primary hover:bg-primary/90 text-white shadow-[0_10px_20px_-5px_rgba(var(--primary),0.3)] hover:-translate-y-0.5"
-                        : "bg-secondary hover:bg-secondary/80 text-foreground hover:-translate-y-0.5",
+                      "group h-12 w-full rounded-lg text-sm font-semibold",
+                      highlighted
+                        ? "shadow-lg shadow-primary/15"
+                        : "border-foreground/15 bg-background text-foreground hover:border-primary/25 hover:bg-secondary hover:text-foreground",
                     )}
-                    onClick={() => handleGetStarted(plan.id)}
+                    onClick={() => handleGetStarted(plan)}
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      {plan.name === "Enterprise" ? "Contact Us" : "Get Started"}
-                      <ArrowUpRight className="h-5 w-5" />
-                    </span>
+                    {isFree ? "Start for free" : "Get started"}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
+
+                  <div className="mt-8 flex-grow border-t border-border pt-7">
+                    <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                      What&apos;s included
+                    </p>
+                    <ul className="space-y-3.5">
+                      {plan.features.map((feature) => {
+                        // value === 0 on a limit (e.g. 0 AI replies) reads as "not included"
+                        const excluded =
+                          feature.value === false || feature.value === 0;
+                        // Empty-string values (e.g. "Dedicated Solution Expert")
+                        // are flags — render the label alone, like booleans.
+                        const labelOnly =
+                          typeof feature.value === "boolean" ||
+                          feature.value === "" ||
+                          excluded;
+                        return (
+                          <li
+                            key={feature.code}
+                            className="flex items-center gap-3 text-sm"
+                          >
+                            <span
+                              className={cn(
+                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+                                excluded
+                                  ? "bg-muted text-muted-foreground/40"
+                                  : "bg-primary/10 text-primary",
+                              )}
+                            >
+                              {excluded ? (
+                                <Minus className="h-3 w-3" strokeWidth={3} />
+                              ) : (
+                                <Check className="h-3 w-3" strokeWidth={3} />
+                              )}
+                            </span>
+                            <span
+                              className={cn(
+                                "font-medium leading-snug",
+                                excluded
+                                  ? "text-muted-foreground/60"
+                                  : "text-foreground/85",
+                              )}
+                            >
+                              {labelOnly ? (
+                                feature.label
+                              ) : (
+                                <>
+                                  <span className="font-semibold text-foreground">
+                                    {isUnlimited(feature)
+                                      ? "Unlimited"
+                                      : formatDisplayValue(feature)}
+                                  </span>{" "}
+                                  {feature.label.toLowerCase()}
+                                </>
+                              )}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 </div>
               );
             })
           ) : (
-            <div className="col-span-full text-center py-20 text-muted-foreground">
-              No plans available for this cycle.
+            <div className="col-span-full rounded-2xl border border-border bg-card py-20 text-center shadow-sm">
+              <p className="text-base font-medium text-foreground">
+                {billingCycle === "yearly"
+                  ? "Yearly billing isn't available yet."
+                  : "No plans are available right now."}
+              </p>
+              {billingCycle === "yearly" && (
+                <Button
+                  variant="outline"
+                  className="mt-4 rounded-lg"
+                  onClick={() => setBillingCycle("monthly")}
+                >
+                  View monthly plans
+                </Button>
+              )}
             </div>
           )}
         </div>
 
-        {/* Comparison Table */}
-        {currentPlans.length > 0 && (
-          <div className="max-w-[1000px] mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-4xl font-bold mb-3">Compare Features</h2>
-              <p className="text-sm text-muted-foreground font-medium">
-                Find the detailed breakdown of what is included in each plan.
-              </p>
+        {/* Add-ons — selectable power-up strips; chosen IDs are passed into the
+            signup funnel and applied at checkout via POST /subscriptions */}
+        {hasAddons && (
+          <ScrollReveal>
+            <div className="mx-auto mb-24 max-w-6xl space-y-4">
+              {data!.addons.map((addon) => {
+                const selected = selectedAddonIds.includes(addon.id);
+                return (
+                  <div
+                    key={addon.id}
+                    className={cn(
+                      "flex flex-col gap-5 rounded-2xl border bg-card p-6 transition-all duration-200 md:flex-row md:items-center md:justify-between md:px-8",
+                      selected
+                        ? "border-primary/50 shadow-lg shadow-primary/10 ring-1 ring-primary/25"
+                        : "border-border shadow-sm hover:shadow-lg",
+                    )}
+                  >
+                    <div className="flex items-start gap-4">
+                      <span
+                        className={cn(
+                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors",
+                          selected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-tertiary text-tertiary-foreground",
+                        )}
+                      >
+                        <Sparkles className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-semibold text-foreground">
+                            {addon.name}
+                          </h3>
+                          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-secondary-foreground">
+                            Add-on · works with every plan
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                          {selected
+                            ? "Will be applied at checkout with the plan you pick below."
+                            : addon.description}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-5 md:shrink-0">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-semibold tracking-tight text-foreground">
+                          ₹{formatRupees(addon.amount)}
+                        </span>
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {addon.type === "recurring" ? "/month" : "one-time"}
+                        </span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant={selected ? "default" : "outline"}
+                        aria-pressed={selected}
+                        className={cn(
+                          "h-9 shrink-0 rounded-lg px-4 text-xs font-semibold",
+                          !selected &&
+                            "border-foreground/15 bg-background hover:bg-secondary",
+                        )}
+                        onClick={() => toggleAddon(addon.id)}
+                      >
+                        {selected ? (
+                          <>
+                            <Check className="h-3.5 w-3.5" />
+                            Added
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="h-3.5 w-3.5" />
+                            Add
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+          </ScrollReveal>
+        )}
 
-            <div className="bg-white/40 backdrop-blur-2xl rounded-[2rem] border border-border/40 shadow-2xl overflow-hidden">
-              {/* Desktop Sticky Header */}
-              <div className="hidden md:grid grid-cols-4 gap-4 sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-border/50 py-8 px-8">
-                <div className="col-span-1 text-sm font-black text-muted-foreground uppercase tracking-[0.2em] self-center">
-                  Core Features
-                </div>
-                {currentPlans.map((plan) => (
-                  <div key={plan.id} className="col-span-1 text-center flex flex-col items-center justify-center">
-                    <span className={cn("font-bold text-lg mb-3", plan.name.toLowerCase() === "growth" ? "text-primary" : "text-foreground")}>
-                      {plan.name}
-                    </span>
-                    <Button size="sm" variant={plan.name.toLowerCase() === "growth" ? "default" : "outline"} onClick={() => handleGetStarted(plan.id)} className="w-full max-w-[120px] rounded-xl h-10 font-bold">
-                      Choose
-                    </Button>
-                  </div>
-                ))}
+        {/* Comparison table — borderless rows, full-height tinted "popular" column.
+            Not wrapped in ScrollReveal: its overflow:hidden breaks the sticky header. */}
+        {plans.length > 1 && comparisonGroups.length > 0 && (
+          <TooltipProvider delayDuration={150}>
+            <div>
+              <div className="mb-12 text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+                  Compare plans
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                  Every detail, side by side.
+                </h2>
               </div>
 
-              <div className="divide-y divide-border/30">
-                {COMPARISON_CONFIG.map((category, idx) => (
-                  <div key={idx}>
-                    <div className="bg-secondary/30 px-8 py-4 backdrop-blur-sm">
-                      <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">{category.title}</h3>
+              {/* Horizontal scroll on mobile; sticky header from md up */}
+              <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+                <div className="min-w-[640px]">
+                  {/* Plan header */}
+                  <div
+                    className="z-20 grid border-b border-border bg-background/90 backdrop-blur-md md:sticky md:top-16"
+                    style={comparisonCols}
+                  >
+                    <div className="flex items-end px-4 pb-4">
+                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                        Features
+                      </span>
                     </div>
-                    <div className="divide-y divide-border/10">
-                      {category.rows.map((row, rIdx) => {
-                        const metadata = FEATURE_METADATA[row.key];
-                        return (
-                          <div key={rIdx} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center px-8 py-6 hover:bg-primary/[0.02] transition-colors">
-                            <div className="col-span-1 font-semibold text-foreground/80 text-[13px]">{metadata?.label || row.key}</div>
-                            {currentPlans.map((plan) => (
-                              <div key={plan.id} className="col-span-1 text-center text-sm">
-                                <span className="md:hidden text-muted-foreground/50 text-[10px] block font-black uppercase mb-1">{plan.name}</span>
-                                {renderCell(plan.featureMap?.[row.key]?.display_value ?? plan.featureMap?.[row.key]?.value ?? false, row.key)}
-                              </div>
-                            ))}
+                    {plans.map((plan, index) => {
+                      const highlighted = index === highlightedIndex;
+                      return (
+                        <div
+                          key={plan.id}
+                          className={cn(
+                            "flex flex-col items-center gap-1 px-4 pb-4 pt-5 text-center",
+                            highlighted &&
+                              "rounded-t-2xl border-x border-t border-primary/15 bg-primary/[0.05]",
+                          )}
+                        >
+                          {highlighted && (
+                            <span className="mb-1 rounded-full bg-primary px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-primary-foreground">
+                              Popular
+                            </span>
+                          )}
+                          <span className="text-sm font-semibold text-foreground">
+                            {plan.name}
+                          </span>
+                          <div className="flex items-baseline gap-0.5">
+                            <span className="text-xl font-semibold tracking-tight text-foreground">
+                              ₹
+                              {formatRupees(
+                                billingCycle === "yearly"
+                                  ? plan.discountedMonthlyPrice
+                                  : plan.amount,
+                              )}
+                            </span>
+                            <span className="text-xs font-medium text-muted-foreground">
+                              /mo
+                            </span>
                           </div>
-                        );
-                      })}
-                    </div>
+                          <Button
+                            size="sm"
+                            variant={highlighted ? "default" : "outline"}
+                            className={cn(
+                              "mt-2 h-8 w-full max-w-[120px] rounded-lg text-xs font-semibold",
+                              !highlighted &&
+                                "border-foreground/15 bg-background hover:bg-secondary",
+                            )}
+                            onClick={() => handleGetStarted(plan)}
+                          >
+                            Choose
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+
+                  {comparisonGroups.map((group) => (
+                    <div key={group.title}>
+                      {/* Category label row — tint continues through the popular column */}
+                      <div className="grid" style={comparisonCols}>
+                        <div className="px-4 pb-3 pt-8">
+                          <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                            {group.title}
+                          </h3>
+                        </div>
+                        {plans.map((plan, index) => (
+                          <div
+                            key={plan.id}
+                            className={cn(
+                              index === highlightedIndex &&
+                                "border-x border-primary/15 bg-primary/[0.05]",
+                            )}
+                          />
+                        ))}
+                      </div>
+
+                      {group.rows.map((row) => (
+                        <div
+                          key={row.code}
+                          className="grid border-t border-border/60 transition-colors hover:bg-muted/40"
+                          style={comparisonCols}
+                        >
+                          <div className="flex items-center gap-1.5 px-4 py-4">
+                            <span className="text-sm font-medium text-foreground/85">
+                              {row.label}
+                            </span>
+                            {row.description && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    type="button"
+                                    aria-label={`About ${row.label}`}
+                                    className="text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+                                  >
+                                    <Info className="h-3.5 w-3.5" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  side="top"
+                                  className="max-w-[240px] text-xs leading-5"
+                                >
+                                  {row.description}
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                          {plans.map((plan, index) => (
+                            <div
+                              key={plan.id}
+                              className={cn(
+                                "flex items-center justify-center px-4 py-4",
+                                index === highlightedIndex &&
+                                  "border-x border-primary/15 bg-primary/[0.05]",
+                              )}
+                            >
+                              <ComparisonCell item={planFeature(plan, row.code)} />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+
+                  {/* Bottom cap — closes the popular column outline */}
+                  <div className="grid border-t border-border/60" style={comparisonCols}>
+                    <div />
+                    {plans.map((plan, index) => (
+                      <div
+                        key={plan.id}
+                        className={cn(
+                          "h-4",
+                          index === highlightedIndex &&
+                            "rounded-b-2xl border-x border-b border-primary/15 bg-primary/[0.05]",
+                        )}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
+            </div>
+          </TooltipProvider>
+        )}
+
+        {/* Custom plan CTA */}
+        <ScrollReveal>
+          <div className="mt-16">
+            <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border bg-card p-8 shadow-sm md:flex-row md:p-10">
+              <div>
+                <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                  Need higher limits or a custom plan?
+                </h2>
+                <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
+                  Talk to us about enterprise volume, dedicated support, and
+                  custom integrations for your team.
+                </p>
+              </div>
+              <Button
+                size="lg"
+                className="group h-12 shrink-0 rounded-lg px-7 text-sm font-semibold shadow-lg shadow-primary/15"
+                onClick={openBookDemo}
+              >
+                Book Live Demo
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
             </div>
           </div>
-        )}
+        </ScrollReveal>
       </div>
     </div>
   );

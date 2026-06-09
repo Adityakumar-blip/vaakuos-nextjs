@@ -9,7 +9,7 @@ export function BookDemoDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) closeBookDemo(); }}>
-      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden border-none shadow-2xl min-h-[500px]">
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-[820px] max-h-[90vh] overflow-y-auto p-0 border border-border rounded-2xl shadow-2xl">
         <BookDemoForm onSuccess={closeBookDemo} />
       </DialogContent>
     </Dialog>

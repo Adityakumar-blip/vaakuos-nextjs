@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
+import { SiteChrome } from "@/components/site-chrome";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +27,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/favicon.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -38,8 +46,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 1024,
         alt: "VaakuOS - AI-Powered Abandoned Cart Recovery",
       },
     ],
@@ -63,7 +71,14 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    other: {
+      "facebook-domain-verification": "b2ssfhjwgbjs5cm0x21z45xcfanqap",
+    },
+  },
 };
+
+const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 
 export default function RootLayout({
   children,
@@ -74,10 +89,21 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
+        <AnalyticsTracker />
+        {FB_PIXEL_ID && (
+          <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              alt=""
+              src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
+            />
+          </noscript>
+        )}
       </body>
     </html>
   );

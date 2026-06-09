@@ -16,7 +16,7 @@ export const CTASection = () => {
   const { openBookDemo } = useBookDemo();
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_100%)] px-4 py-20 md:py-28">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_100%)] px-4 py-16 sm:py-20 md:py-28">
       <div className="absolute inset-0 opacity-40 [background-image:linear-gradient(135deg,hsl(var(--primary)/0.05)_0_1px,transparent_1px_20px)]" />
       <div className="container relative z-10 mx-auto max-w-7xl">
         <div className="rounded-2xl border border-border bg-card/95 p-6 shadow-sm backdrop-blur md:p-10">
@@ -25,7 +25,7 @@ export const CTASection = () => {
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
                 Recovery launch
               </p>
-              <h2 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight tracking-tight text-foreground md:text-6xl">
+              <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
                 Turn missed checkouts into a measurable recovery engine.
               </h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground md:text-lg">
@@ -35,10 +35,10 @@ export const CTASection = () => {
             </div>
 
             <div className="lg:pt-2">
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-row gap-3">
                 <Button
                   size="xl"
-                  className="group rounded-lg"
+                  className="group flex-1 rounded-lg px-4 text-sm sm:flex-none sm:px-10 sm:text-base"
                   onClick={openBookDemo}
                 >
                   Book Live Demo
@@ -47,7 +47,7 @@ export const CTASection = () => {
                 <Button
                   variant="outline"
                   size="xl"
-                  className="rounded-lg border-border bg-background text-foreground hover:border-primary/25 hover:bg-secondary hover:text-foreground"
+                  className="flex-1 rounded-lg border-border bg-background px-4 text-sm text-foreground hover:border-primary/25 hover:bg-secondary hover:text-foreground sm:flex-none sm:px-10 sm:text-base"
                   asChild
                 >
                   <Link href="/pricing">See Pricing</Link>

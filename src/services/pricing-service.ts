@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/api-client";
-import { PricingPlan } from "@/types/pricing";
+import { PricingResponse } from "@/types/pricing";
 
 export const pricingService = {
-  getPlans: async (): Promise<PricingPlan[]> => {
-    const response = await apiClient.get<PricingPlan[]>("/subscriptions/plans");
+  getPricing: async (): Promise<PricingResponse> => {
+    const response = await apiClient.get<PricingResponse>("/public/pricing");
     return response.data;
   },
 };

@@ -37,13 +37,13 @@ export function PluginDirectory({ integrations }: PluginDirectoryProps) {
   }, [integrations, selectedCategory]);
 
   return (
-    <section id="plugins" className="container mx-auto max-w-7xl px-4 py-16 md:py-24">
+    <section id="plugins" className="container mx-auto max-w-7xl px-4 py-16 sm:py-20 md:py-24">
       <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
             Plugin library
           </p>
-          <h2 className="mt-3 max-w-3xl text-3xl font-bold leading-tight md:text-5xl">
+          <h2 className="mt-3 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
             Modern connectors with the details your team needs.
           </h2>
         </div>
@@ -77,17 +77,17 @@ export function PluginDirectory({ integrations }: PluginDirectoryProps) {
         <span className="font-semibold text-foreground">{selectedCategory}</span>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {filteredIntegrations.map((integration) => (
           <Link
             key={integration.name}
             href={`/integrations/${integration.slug}`}
-            className="group rounded-3xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl"
+            className="group flex flex-col items-center gap-3 rounded-3xl border border-border bg-card p-4 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl sm:items-stretch sm:gap-0 sm:p-5 sm:text-left"
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex w-full items-center justify-center sm:items-start sm:justify-between sm:gap-4">
               <PluginLogo logo={integration.logo} name={integration.name} />
               <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                className={`hidden items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${
                   integration.status === "Live"
                     ? "bg-tertiary text-foreground"
                     : integration.status === "Beta"
@@ -95,21 +95,26 @@ export function PluginDirectory({ integrations }: PluginDirectoryProps) {
                       : "bg-muted text-muted-foreground"
                 }`}
               >
+                {integration.status === "Live" && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-foreground/70" />
+                )}
                 {integration.status}
               </span>
             </div>
-            <div className="mt-5">
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold">{integration.name}</h3>
-                <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-bold text-muted-foreground">
+            <div className="sm:mt-5">
+              <div className="flex items-center justify-center gap-2 sm:justify-start">
+                <h3 className="text-sm font-bold sm:text-xl">
+                  {integration.name}
+                </h3>
+                <span className="hidden rounded-full bg-muted px-2.5 py-1 text-xs font-bold text-muted-foreground sm:inline-block">
                   {integration.category}
                 </span>
               </div>
-              <p className="mt-3 min-h-[3rem] text-sm leading-6 text-muted-foreground">
+              <p className="mt-3 hidden min-h-[3rem] text-sm leading-6 text-muted-foreground sm:block">
                 {integration.description}
               </p>
             </div>
-            <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+            <div className="mt-5 hidden w-full items-center justify-between border-t border-border pt-4 sm:flex">
               <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                 <Clock3 className="h-4 w-4 text-primary" />
                 {integration.sync}
