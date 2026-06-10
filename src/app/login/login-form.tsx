@@ -80,7 +80,7 @@ export function LoginForm() {
           required
           hint={
             <Link
-              href="/contact"
+              href="/forgot-password"
               className="text-[0.82rem] font-medium text-primary underline-offset-4 hover:underline"
             >
               Forgot it?

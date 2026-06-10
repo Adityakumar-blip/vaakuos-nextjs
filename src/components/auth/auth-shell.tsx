@@ -3,11 +3,20 @@ import Link from "next/link";
 import { fraunces } from "./auth-fonts";
 import { AuthBackButton } from "./auth-back-button";
 
-type Mode = "login" | "signup";
+type Mode = "login" | "signup" | "forgot" | "reset";
 
 const HEADLINE: Record<Mode, string> = {
   login: "Pick up right where your customers left off.",
   signup: "Start turning abandoned carts into revenue.",
+  forgot: "Locked out? Let's get you back in.",
+  reset: "One new password and you're back in business.",
+};
+
+const BACK_HREF: Record<Mode, string> = {
+  login: "/",
+  signup: "/",
+  forgot: "/login",
+  reset: "/login",
 };
 
 export function AuthShell({ mode, children }: { mode: Mode; children: React.ReactNode }) {
@@ -46,7 +55,7 @@ export function AuthShell({ mode, children }: { mode: Mode; children: React.Reac
       {/* ── right: form ── */}
       <div className="relative h-full">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(125%_120%_at_50%_0%,hsl(var(--background)),hsl(var(--muted))_55%,hsl(var(--background)))]" />
-        <AuthBackButton />
+        <AuthBackButton href={BACK_HREF[mode]} />
         <div className="h-full overflow-y-auto">
           <div className="flex min-h-full items-center justify-center px-6 py-14 sm:px-10">
             <div className="w-full max-w-[24rem]">{children}</div>

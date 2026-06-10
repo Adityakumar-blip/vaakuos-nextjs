@@ -78,9 +78,9 @@ export const HeroSection = () => {
               </div>
             </div>
 
-            <div className="relative aspect-video overflow-hidden bg-card">
+            <div className="relative overflow-hidden bg-card">
               <video
-                className="h-full w-full object-contain"
+                className="block h-auto w-full"
                 poster="/images/hero-dashboard-1280.jpg"
                 controls
                 preload="metadata"

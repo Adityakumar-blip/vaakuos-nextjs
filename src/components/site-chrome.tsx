@@ -5,7 +5,7 @@ import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 
 /** Routes that render full-screen without the global nav + footer. */
-const BARE_ROUTES = ["/login", "/signup"];
+const BARE_ROUTES = ["/login", "/signup", "/forgot-password", "/reset-password"];
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
