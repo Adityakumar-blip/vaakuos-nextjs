@@ -39,9 +39,9 @@ export const Navigation = () => {
       <div
         className={cn(
           "mx-auto transition-all duration-500 ease-out",
-          // Mobile: always detached with a small side gap
-          "max-w-full px-3 pt-3",
-          isOpen && "pb-3 md:pb-0",
+          // Mobile: always detached with a small side gap (safe-area aware)
+          "max-w-full px-3 pt-[calc(0.75rem+env(safe-area-inset-top))]",
+          isOpen && "pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:pb-0",
           // Desktop: only detaches once scrolled
           scrolled
             ? "md:max-w-6xl md:px-4 md:pt-3"
@@ -146,7 +146,7 @@ export const Navigation = () => {
               )}
             >
               <div className="overflow-hidden">
-                <div className="flex min-h-[calc(100vh-7rem)] flex-col pt-4">
+                <div className="flex min-h-[calc(100dvh-7rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] flex-col pt-4">
                   <div className="flex flex-col">
                     {navItems.map((item, i) => (
                       <Link
