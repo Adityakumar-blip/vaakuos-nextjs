@@ -8,6 +8,7 @@ import { IntegrationsSection } from "@/components/integrations-section";
 import { CTASection } from "@/components/cta-section";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { JsonLd } from "@/components/json-ld";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Recover every abandoned sale with VaakuOS",
@@ -15,28 +16,6 @@ export const metadata: Metadata = {
     "VaakuOS tracks intent and re-engages shoppers across channels to win back abandoned carts and conversations.",
   alternates: {
     canonical: "/",
-  },
-};
-
-// JSON-LD Structured Data
-const orgSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "VaakuOS",
-  url: "https://vaakuos.com",
-  logo: "https://vaakuos.com/favicon.png",
-  sameAs: ["https://www.linkedin.com/company/vaakuos"],
-};
-
-const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  url: "https://vaakuos.com",
-  name: "VaakuOS",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: "https://vaakuos.com/search?q={search_term_string}",
-    "query-input": "required name=search_term_string",
   },
 };
 
@@ -56,7 +35,7 @@ const faqSchema = {
 export default function HomePage() {
   return (
     <>
-      <JsonLd data={[orgSchema, websiteSchema, faqSchema]} />
+      <JsonLd data={[organizationSchema, websiteSchema, faqSchema]} />
       <div className="min-h-screen">
         <HeroSection />
 

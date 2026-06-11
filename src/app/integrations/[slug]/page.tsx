@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { getIntegration, integrations } from "../integration-data";
 import { PluginLogo } from "../plugin-logo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbSchema } from "@/lib/seo";
 
 type IntegrationDetailPageProps = {
   params: {
@@ -64,8 +66,15 @@ export default function IntegrationDetailPage({
     )
     .slice(0, 3);
 
+  const breadcrumb = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Integrations", path: "/integrations" },
+    { name: integration.name, path: `/integrations/${integration.slug}` },
+  ]);
+
   return (
     <div className="min-h-screen bg-background pt-24 text-foreground">
+      <JsonLd data={breadcrumb} />
       <section className="border-b border-border/70">
         <div className="container mx-auto max-w-7xl px-4 py-10 md:py-14">
           <Link

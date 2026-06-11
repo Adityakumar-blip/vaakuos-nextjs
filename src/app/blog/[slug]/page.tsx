@@ -9,6 +9,27 @@ import { COVER_PALETTES, formatDate, hashSlug, initials } from "../blog-utils";
 import { NewsletterCta } from "../newsletter-cta";
 import { ReadingProgress } from "./reading-progress";
 import type { BlogPost } from "@/types/blog";
+import { JsonLd } from "@/components/json-ld";
+import { SITE_URL, ORGANIZATION_ID, breadcrumbSchema } from "@/lib/seo";
+
+function articleSchema(post: BlogPost) {
+  const authorName = post.author?.name || "VaakuOS Team";
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt || post.meta_description || "",
+    ...(post.featured_image ? { image: post.featured_image } : {}),
+    datePublished: post.created_at,
+    dateModified: post.updated_at || post.created_at,
+    author: { "@type": "Person", name: authorName },
+    publisher: { "@id": ORGANIZATION_ID },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/blog/${post.slug}`,
+    },
+  };
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -41,9 +62,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const description = post.meta_description || post.excerpt || "";
+
   return {
-    title: post.meta_title || post.title,
-    description: post.meta_description || post.excerpt,
+    // `absolute` bypasses the "%s | VaakuOS" layout template so titles that
+    // already carry a brand suffix (e.g. meta_title) don't get it twice.
+    title: { absolute: post.meta_title || `${post.title} | VaakuOS` },
+    description,
     alternates: {
       canonical: `/blog/${slug}`,
     },
@@ -52,8 +77,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: post.excerpt || "",
       type: "article",
       publishedTime: post.created_at,
+      modifiedTime: post.updated_at || post.created_at,
       authors: [post.author?.name || "VaakuOS Team"],
       ...(post.featured_image ? { images: [{ url: post.featured_image }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt || description,
+      ...(post.featured_image ? { images: [post.featured_image] } : {}),
     },
   };
 }
@@ -146,8 +178,15 @@ export default async function BlogPostPage({ params }: PageProps) {
   const readingTime = readingTimeMinutes(post.content ?? "");
   const formattedDate = formatDate(post.created_at);
 
+  const breadcrumb = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ]);
+
   return (
     <div className="relative min-h-screen overflow-hidden pb-24 pt-32">
+      <JsonLd data={[articleSchema(post), breadcrumb]} />
       <ReadingProgress />
 
       {/* Atmosphere */}

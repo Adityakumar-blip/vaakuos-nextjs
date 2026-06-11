@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/json-ld";
+import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About VaakuOS",
@@ -9,9 +11,15 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumb = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+]);
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen pt-32 pb-20">
+      <JsonLd data={[organizationSchema, breadcrumb]} />
       <div className="container mx-auto max-w-6xl px-4 text-center mb-24">
         <h1 className="text-4xl md:text-7xl font-bold mb-8">
           Our mission is to end <span className="text-primary italic">abandonment</span>.

@@ -11,9 +11,9 @@ import {
   AuthPasswordField,
   AuthDivider,
   AuthSegmented,
-  SocialButton,
 } from "@/components/auth/auth-fields";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
+import { WhatsappAuthButton } from "@/components/auth/whatsapp-auth-button";
 import { authService, getAppUrl } from "@/services/auth-service";
 
 type AccountType = "business" | "agency";
@@ -168,9 +168,9 @@ export function SignupForm() {
         <AuthDivider />
       </div>
 
-      <div className="space-y-3">
-        <GoogleAuthButton successMessage="Account created!" />
-        <SocialButton brand="shopify">Continue with Shopify</SocialButton>
+      <div className="grid grid-cols-2 gap-3">
+        <GoogleAuthButton successMessage="Account created!" label="Google" />
+        <WhatsappAuthButton successMessage="Account created!" label="WhatsApp" />
       </div>
 
       <p className="mt-7 text-[0.92rem] text-muted-foreground">

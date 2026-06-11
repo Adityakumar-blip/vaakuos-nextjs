@@ -168,7 +168,7 @@ export function SocialButton({
   );
 }
 
-function GoogleMark() {
+export function GoogleMark() {
   return (
     <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" aria-hidden="true">
       <path
