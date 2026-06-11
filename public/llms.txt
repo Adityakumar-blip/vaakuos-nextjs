@@ -1,0 +1,33 @@
+# VaakuOS
+
+> VaakuOS is an AI-powered omnichannel communication platform for e-commerce brands. It tracks shopper intent in real time, triggers automated WhatsApp-first recovery sequences when carts are abandoned, and stops all outreach the instant an order is confirmed. The platform connects to Shopify, WooCommerce, Google Sheets, and Wix, and attributes recovered revenue back to the workflow that earned it.
+
+## Key capabilities
+
+- Abandoned cart recovery across WhatsApp, SMS, and email — omnichannel, not single-channel
+- Intent tracking: monitors cart activity, product views, and checkout drop-off in real time
+- Automated sequencer: timed outreach that follows the shopper's behavioral signals
+- Smart Sync: recovery flows halt automatically when an order is confirmed (no over-messaging)
+- Revenue attribution: dashboards track every recovered sale and true ROI per workflow
+- Integration-ready: native connectors for Shopify, WooCommerce, Google Sheets, Wix, HubSpot, Salesforce, Klaviyo, Slack, Zapier, and more
+
+## Pages
+
+- [Homepage](https://vaakuos.com/)
+- [Features](https://vaakuos.com/features)
+- [Integrations](https://vaakuos.com/integrations)
+- [Pricing](https://vaakuos.com/pricing)
+- [ROI Calculator](https://vaakuos.com/calculator)
+- [About](https://vaakuos.com/about)
+- [Blog](https://vaakuos.com/blog)
+- [Contact](https://vaakuos.com/contact)
+
+## Blog
+
+- [Why WhatsApp Is the #1 Channel for Brand-Customer Conversations in 2026](https://vaakuos.com/blog/why-whatsapp-is-the-1-channel-for-brand-customer-conversations-in-2026)
+- [WhatsApp Marketing ROI — The 5 KPIs Every Brand Must Track in 2026](https://vaakuos.com/blog/whatsapp-marketing-roi-the-5-kpis-every-brand-must-track-in-2026)
+
+## Company
+
+VaakuOS serves e-commerce and D2C brands targeting WhatsApp-dominant markets.
+LinkedIn: https://www.linkedin.com/company/vaakuos

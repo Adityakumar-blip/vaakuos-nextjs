@@ -1,20 +1,49 @@
-# VaakuOS Robots.txt
-# This file tells search engine crawlers which URLs they can access on your site
+# VaakuOS robots.txt
 
-# Allow all user agents to crawl the entire site
-User-agent: *
+# Traditional search crawlers
+User-agent: Googlebot
 Allow: /
 
-# Disallow admin and private paths (if any exist)
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+# AI search / inference crawlers — allowed for citation visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# AI training-corpus crawlers — disallowed (does not affect AI search citations)
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# Fallback for all other bots
+User-agent: *
+Allow: /
 Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 
-# Allow access to important directories and files
-Allow: /_next/static/
-Allow: /public/images/
-Allow: /favicon.ico
-Allow: /manifest.json
-
-# Sitemap location
 Sitemap: https://vaakuos.com/sitemap.xml

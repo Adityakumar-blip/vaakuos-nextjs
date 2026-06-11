@@ -17,6 +17,8 @@ import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import { integrations } from "./integration-data";
 import { PluginDirectory } from "./plugin-directory";
+import { JsonLd } from "@/components/json-ld";
+import { SITE_URL, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Integrations that fit your stack",
@@ -26,6 +28,23 @@ export const metadata: Metadata = {
     canonical: "/integrations",
   },
 };
+
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "VaakuOS integrations",
+  itemListElement: integrations.map((integration, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: `${integration.name} integration`,
+    url: `${SITE_URL}/integrations/${integration.slug}`,
+  })),
+};
+
+const breadcrumb = breadcrumbSchema([
+  { name: "Home", path: "/" },
+  { name: "Integrations", path: "/integrations" },
+]);
 
 const workflow = [
   {
@@ -48,6 +67,7 @@ const workflow = [
 export default function IntegrationsPage() {
   return (
     <div className="min-h-screen overflow-hidden bg-background pt-24 text-foreground">
+      <JsonLd data={[itemListSchema, breadcrumb]} />
       <section className="relative border-b border-border/70">
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(115deg,rgba(42,97,68,0.14),transparent_32%,rgba(238,90,41,0.10)_64%,transparent)]" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_25%,rgba(130,193,159,0.35),transparent_26%),radial-gradient(circle_at_80%_10%,rgba(238,90,41,0.14),transparent_22%)]" />

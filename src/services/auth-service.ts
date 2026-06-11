@@ -60,6 +60,24 @@ export const authService = {
     return data;
   },
 
+  /** Sends a one-time code to the given phone number over WhatsApp. */
+  whatsappRequestOtp: async (phone: string): Promise<{ message: string }> => {
+    const { data } = await apiClient.post<{ message: string }>("/auth/whatsapp/request-otp", {
+      phone,
+    });
+    return data;
+  },
+
+  /** Verifies the WhatsApp OTP and signs the user in. */
+  whatsappVerifyOtp: async (phone: string, code: string): Promise<AuthResponse> => {
+    const { data } = await apiClient.post<AuthResponse>("/auth/whatsapp/verify-otp", {
+      phone,
+      code,
+    });
+    markAuthenticated(data.access_token);
+    return data;
+  },
+
   logout: async (): Promise<void> => {
     try {
       await apiClient.post("/auth/logout");

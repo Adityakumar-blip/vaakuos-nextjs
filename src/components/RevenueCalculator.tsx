@@ -52,9 +52,9 @@ export const RevenueCalculator = () => {
     <section id="revenue-calculator" className="py-24 px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-medium mb-4 tracking-tight text-foreground">
+          <h1 className="text-3xl md:text-5xl font-medium mb-4 tracking-tight text-foreground">
             Calculate Your Recovery Potential
-          </h2>
+          </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
             See exactly how much revenue VaakuOS can recover for your business based on your current store metrics.
           </p>

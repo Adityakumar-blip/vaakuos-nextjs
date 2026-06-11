@@ -4,20 +4,27 @@ import * as React from "react";
 import { toast } from "@/components/ui/sonner";
 import { authService, getAppUrl } from "@/services/auth-service";
 import { loadGoogleSDK, initializeGoogleLogin, renderGoogleButton } from "@/lib/google-sdk";
+import { GoogleMark } from "@/components/auth/auth-fields";
+import { cn } from "@/lib/utils";
 
 /**
- * Renders the official Google Identity button and wires its credential
- * callback to `authService.googleLogin` (POST /auth/google) — the same
- * flow used on both the login and signup pages of the original app.
+ * A Google sign-in button styled to match the Shopify `SocialButton`.
+ *
+ * Google's own rendered button can't be restyled, so we show our own button
+ * (identical chrome to the Shopify one) and overlay the real, transparent
+ * Google Identity button on top to capture the click and run the credential
+ * flow → `authService.googleLogin` (POST /auth/google).
  */
 export function GoogleAuthButton({
   successMessage,
   failureMessage = "Something went wrong with Google sign-in.",
+  label = "Continue with Google",
 }: {
   successMessage: string;
   failureMessage?: string;
+  label?: string;
 }) {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const overlayRef = React.useRef<HTMLDivElement>(null);
   const [unavailable, setUnavailable] = React.useState(false);
 
   React.useEffect(() => {
@@ -33,7 +40,7 @@ export function GoogleAuthButton({
 
       try {
         await loadGoogleSDK();
-        if (cancelled || !ref.current) return;
+        if (cancelled || !overlayRef.current) return;
 
         initializeGoogleLogin(clientId, async (response) => {
           try {
@@ -54,8 +61,10 @@ export function GoogleAuthButton({
           }
         });
 
-        const width = Math.min(400, ref.current.offsetWidth || 360);
-        renderGoogleButton(ref.current, {
+        // Real Google button — kept transparent and overlaid; GSI requires a
+        // width of at least 200px, so clamp up and let the wrapper clip it.
+        const width = Math.max(200, overlayRef.current.offsetWidth || 200);
+        renderGoogleButton(overlayRef.current, {
           theme: "outline",
           size: "large",
           text: "continue_with",
@@ -75,5 +84,26 @@ export function GoogleAuthButton({
 
   if (unavailable) return null;
 
-  return <div ref={ref} className="flex h-11 w-full justify-center overflow-hidden rounded-lg" />;
+  return (
+    <div className="group relative h-11 w-full overflow-hidden rounded-lg">
+      {/* Visible button — matches the Shopify SocialButton chrome exactly. */}
+      <div
+        className={cn(
+          "pointer-events-none flex h-11 w-full items-center justify-center gap-2.5 rounded-lg",
+          "border border-foreground/15 bg-card/60 px-4 text-[0.88rem] font-medium text-foreground",
+          "transition-colors duration-200 group-hover:border-foreground/30 group-hover:bg-card",
+        )}
+      >
+        <GoogleMark />
+        {label}
+      </div>
+
+      {/* Real, transparent Google button overlaid to capture the click. */}
+      <div
+        ref={overlayRef}
+        aria-hidden="true"
+        className="absolute inset-0 z-10 cursor-pointer opacity-0"
+      />
+    </div>
+  );
 }
