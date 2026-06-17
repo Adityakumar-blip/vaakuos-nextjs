@@ -84,7 +84,7 @@ export const IntegrationRequestForm = ({
       if (!response.ok) throw new Error("Failed to submit integration request");
 
       toast.success("Request received!", {
-        description: `We'll review the ${formData.toolName || "integration"} request and follow up within one business day.`,
+        description: `We'll review the ${formData.toolName || "integration"} request and let you know if it makes our product roadmap.`,
       });
       setIsSubmitting(false);
       setSubmitted(true);
@@ -353,8 +353,8 @@ function SuccessState({
       </h3>
       <p className="mb-8 max-w-sm leading-relaxed text-muted-foreground">
         Thanks for flagging {toolName ? <strong>{toolName}</strong> : "this"}.
-        Our connector team will review it and email you a path to go live within
-        one business day.
+        Our team will review your request and let you know if it makes our
+        product roadmap.
       </p>
       {isPage ? (
         <Button variant="outline" className="rounded-lg" asChild>
