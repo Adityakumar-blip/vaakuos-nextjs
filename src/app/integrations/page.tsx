@@ -287,7 +287,7 @@ export default function IntegrationsPage() {
               size="xl"
               className="mt-5 w-full rounded-2xl"
             >
-              <Link href="/contact">
+              <Link href="/request-integration">
                 Request an integration
                 <ArrowRight className="h-5 w-5" />
               </Link>

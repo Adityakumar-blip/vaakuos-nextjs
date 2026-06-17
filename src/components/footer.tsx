@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const footerLinks = {
-  Product: ["Features", "Integrations", "Changelog"],
+  Product: ["Features", "Integrations"], //"Changelog"
   Company: ["Blog", "Contact"],
   Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
 };
