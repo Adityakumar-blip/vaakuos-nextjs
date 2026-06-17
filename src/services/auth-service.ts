@@ -127,10 +127,15 @@ export const authService = {
 /**
  * Mirrors the redirect target used by the original landing app: local dev
  * goes to the local app, everything else to the hosted dashboard.
+ *
+ * The session is handed off via a shared cookie: `.vaakuos.com` in production
+ * and `localhost` locally. The redirect host must match the cookie host, so
+ * local dev points at `localhost:8081` (a cookie set on `localhost` is not
+ * sent to `vaakuos.local`, which would leave the app unauthenticated).
  */
 export function getAppUrl(): string {
   if (typeof window === "undefined") return "https://app.vaakuos.com";
   const host = window.location.hostname;
   const isLocal = host === "localhost" || host === "127.0.0.1" || host === "vaakuos.local";
-  return isLocal ? "http://vaakuos.local:8081" : "https://app.vaakuos.com";
+  return isLocal ? "http://localhost:8081" : "https://app.vaakuos.com";
 }
