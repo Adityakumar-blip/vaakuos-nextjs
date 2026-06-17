@@ -2,3 +2,5 @@ node_modules
 .next
 dist
 seo-audit
+.env.local
+.env

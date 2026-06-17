@@ -26,8 +26,8 @@ const nextConfig = {
     // confirmed. Left open to avoid breaking runtime-fetched blog images.
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
