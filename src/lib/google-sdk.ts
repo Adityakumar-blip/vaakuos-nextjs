@@ -61,6 +61,12 @@ export const promptGoogleLogin = () => {
     console.error("Google SDK not loaded");
     return;
   }
+  // If a previous FedCM prompt was opened and then dismissed/cancelled, GSI keeps
+  // that aborted request in its internal state and silently swallows the next
+  // `prompt()` call (the chooser never re-opens). Cancelling first clears that
+  // stale state so a fresh prompt can be shown on every click. Safe to call even
+  // when nothing is pending.
+  window.google.accounts.id.cancel();
   window.google.accounts.id.prompt();
 };
 
