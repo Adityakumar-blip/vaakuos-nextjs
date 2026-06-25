@@ -1,30 +1,31 @@
 "use client";
 
 import * as React from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 import { authService, getAppUrl } from "@/services/auth-service";
-import { loadGoogleSDK, initializeGoogleLogin, renderGoogleButton } from "@/lib/google-sdk";
+import { loadGoogleSDK, initializeGoogleLogin, promptGoogleLogin } from "@/lib/google-sdk";
 import { GoogleMark } from "@/components/auth/auth-fields";
-import { cn } from "@/lib/utils";
 
 /**
- * A Google sign-in button styled to match the Shopify `SocialButton`.
+ * "Continue with Google" — a custom button styled identically to the WhatsApp
+ * social button. Clicking opens Google's FedCM account chooser via `prompt()`;
+ * the credential (ID token) is POSTed to `/auth/google`.
  *
- * Google's own rendered button can't be restyled, so we show our own button
- * (identical chrome to the Shopify one) and overlay the real, transparent
- * Google Identity button on top to capture the click and run the credential
- * flow → `authService.googleLogin` (POST /auth/google).
+ * We render our own button rather than Google's iframe so it matches the rest of
+ * the auth chrome. The old approach (transparent GSI button overlaid on a custom
+ * one) is blocked by FedCM's clickjacking protection, so it can't be used.
  */
 export function GoogleAuthButton({
   successMessage,
   failureMessage = "Something went wrong with Google sign-in.",
-  label = "Continue with Google",
+  label = "Google",
 }: {
   successMessage: string;
   failureMessage?: string;
   label?: string;
 }) {
-  const overlayRef = React.useRef<HTMLDivElement>(null);
+  const [ready, setReady] = React.useState(false);
   const [unavailable, setUnavailable] = React.useState(false);
 
   React.useEffect(() => {
@@ -40,7 +41,7 @@ export function GoogleAuthButton({
 
       try {
         await loadGoogleSDK();
-        if (cancelled || !overlayRef.current) return;
+        if (cancelled) return;
 
         initializeGoogleLogin(clientId, async (response) => {
           try {
@@ -61,15 +62,7 @@ export function GoogleAuthButton({
           }
         });
 
-        // Real Google button — kept transparent and overlaid; GSI requires a
-        // width of at least 200px, so clamp up and let the wrapper clip it.
-        const width = Math.max(200, overlayRef.current.offsetWidth || 200);
-        renderGoogleButton(overlayRef.current, {
-          theme: "outline",
-          size: "large",
-          text: "continue_with",
-          width,
-        });
+        setReady(true);
       } catch (error) {
         console.error("Google SDK load error:", error);
         setUnavailable(true);
@@ -85,29 +78,14 @@ export function GoogleAuthButton({
   if (unavailable) return null;
 
   return (
-    <div className="group relative h-11 w-full overflow-hidden rounded-lg">
-      {/* Visible button — matches the Shopify SocialButton chrome exactly.
-          Purely decorative: aria-hidden so the real Google button (overlaid
-          below) is the single element exposed to assistive tech. */}
-      <div
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none flex h-11 w-full items-center justify-center gap-2.5 rounded-lg",
-          "border border-foreground/15 bg-card/60 px-4 text-[0.88rem] font-medium text-foreground",
-          "transition-colors duration-200 group-hover:border-foreground/30 group-hover:bg-card",
-        )}
-      >
-        <GoogleMark />
-        {label}
-      </div>
-
-      {/* Real, transparent Google button overlaid to capture the click. It must
-          NOT be aria-hidden: it holds the focusable GSI iframe, and hiding a
-          focused element's ancestor makes Chrome block the focus/click. */}
-      <div
-        ref={overlayRef}
-        className="absolute inset-0 z-10 cursor-pointer opacity-0"
-      />
-    </div>
+    <button
+      type="button"
+      onClick={() => promptGoogleLogin()}
+      disabled={!ready}
+      className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-foreground/15 bg-card/60 px-4 text-[0.88rem] font-medium text-foreground transition-colors duration-200 hover:border-foreground/30 hover:bg-card disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {ready ? <GoogleMark /> : <Loader2 className="h-[18px] w-[18px] animate-spin" />}
+      {label}
+    </button>
   );
 }

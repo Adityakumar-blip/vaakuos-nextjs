@@ -45,7 +45,23 @@ export const initializeGoogleLogin = (
   window.google.accounts.id.initialize({
     client_id: clientId,
     callback,
+    // Use Chrome's FedCM account chooser so `prompt()` works reliably from a
+    // custom button (the legacy One Tap UI is being retired).
+    use_fedcm_for_prompt: true,
   });
+};
+
+/**
+ * Opens Google's FedCM account chooser. Call this from a custom button's click
+ * handler — the `callback` passed to `initializeGoogleLogin` receives the
+ * credential. Lets us use our own button styling instead of Google's iframe.
+ */
+export const promptGoogleLogin = () => {
+  if (!window.google) {
+    console.error("Google SDK not loaded");
+    return;
+  }
+  window.google.accounts.id.prompt();
 };
 
 export const renderGoogleButton = (
