@@ -86,8 +86,11 @@ export function GoogleAuthButton({
 
   return (
     <div className="group relative h-11 w-full overflow-hidden rounded-lg">
-      {/* Visible button — matches the Shopify SocialButton chrome exactly. */}
+      {/* Visible button — matches the Shopify SocialButton chrome exactly.
+          Purely decorative: aria-hidden so the real Google button (overlaid
+          below) is the single element exposed to assistive tech. */}
       <div
+        aria-hidden="true"
         className={cn(
           "pointer-events-none flex h-11 w-full items-center justify-center gap-2.5 rounded-lg",
           "border border-foreground/15 bg-card/60 px-4 text-[0.88rem] font-medium text-foreground",
@@ -98,10 +101,11 @@ export function GoogleAuthButton({
         {label}
       </div>
 
-      {/* Real, transparent Google button overlaid to capture the click. */}
+      {/* Real, transparent Google button overlaid to capture the click. It must
+          NOT be aria-hidden: it holds the focusable GSI iframe, and hiding a
+          focused element's ancestor makes Chrome block the focus/click. */}
       <div
         ref={overlayRef}
-        aria-hidden="true"
         className="absolute inset-0 z-10 cursor-pointer opacity-0"
       />
     </div>
