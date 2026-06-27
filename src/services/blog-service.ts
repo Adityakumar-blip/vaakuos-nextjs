@@ -11,10 +11,15 @@ import {
 
 export const blogService = {
   getAllPublished: async (tenantSlug?: string): Promise<BlogPost[]> => {
-    const response = await apiClient.get<BlogPost[]>("/blogs", {
+    const response = await apiClient.get<
+      BlogPost[] | { data: BlogPost[]; pagination?: unknown }
+    >("/blogs", {
       params: { tenantSlug },
     });
-    return response.data;
+    // The API returns a paginated envelope ({ data, pagination }); tolerate a
+    // bare array too. Always resolve to an array so callers can safely .map().
+    const payload = response.data;
+    return Array.isArray(payload) ? payload : payload?.data ?? [];
   },
 
   getBySlug: async (blogSlug: string, tenantSlug?: string): Promise<BlogPost> => {
