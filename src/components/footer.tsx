@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const footerLinks = {
-  Product: ["Features", "Integrations"], //"Changelog"
+  Product: ["Features", "Integrations", "Docs"], //"Changelog"
   Company: ["Blog", "Contact"],
   Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
 };
@@ -58,6 +58,7 @@ export const Footer = () => {
                   if (link === "Pricing") href = "/pricing";
                   else if (link === "Features") href = "/features";
                   else if (link === "Integrations") href = "/integrations";
+                  else if (link === "Docs") href = "/docs";
                   else if (link === "Changelog") href = "/changelog";
                   else if (link === "Privacy Policy") href = "/privacy-policy";
                   else if (link === "Terms of Service")

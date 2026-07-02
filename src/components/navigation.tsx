@@ -29,6 +29,7 @@ export const Navigation = () => {
 
   const navItems = [
     { label: "Integrations", path: "/integrations" },
+    { label: "Docs", path: "/docs" },
     { label: "Pricing", path: "/pricing" },
     { label: "Calculator", path: "/calculator" },
     { label: "Blogs", path: "/blog" },

@@ -39,6 +39,8 @@ const STATIC_ROUTES: StaticRoute[] = [
   { route: "/features", file: "features/page.tsx", priority: 0.9, changeFrequency: "monthly" },
   { route: "/pricing", file: "pricing/page.tsx", priority: 0.9, changeFrequency: "monthly" },
   { route: "/integrations", file: "integrations/page.tsx", priority: 0.9, changeFrequency: "monthly" },
+  { route: "/docs", file: "docs/page.tsx", priority: 0.7, changeFrequency: "monthly" },
+  { route: "/docs/plugin/woocommerce", file: "docs/plugin/woocommerce/page.tsx", priority: 0.7, changeFrequency: "monthly" },
   { route: "/calculator", file: "calculator/page.tsx", priority: 0.7, changeFrequency: "monthly" },
   { route: "/blog", file: "blog/page.tsx", priority: 0.8, changeFrequency: "weekly" },
   { route: "/about", file: "about/page.tsx", priority: 0.6, changeFrequency: "yearly" },
