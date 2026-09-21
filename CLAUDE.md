@@ -141,3 +141,13 @@ Hardcoded in `src/components/navigation.tsx`. When adding routes:
 - All components use strict TypeScript
 - Types defined in `src/types/` (blog.ts, pricing.ts)
 - shadcn/ui components include type-safe form integration via react-hook-form
+
+## Blog Drafts
+
+Posts are written here as Markdown and proofread/published in the internal admin panel (`~/Documents/internal`).
+
+- Write posts to `content/blog/<slug>.md` (scratch, not committed); follow `BRAND.md` / `VOICE.md`. Frontmatter keys: `title`, `slug` (required), `excerpt`, `meta_title`, `meta_description`, `category` (name), `featured_image` (URL, or a path relative to the post, which gets uploaded).
+- After a successful push, delete `content/`; the admin panel copy is the source of truth.
+- When the user says to push a post: `npm run blog:push -- content/blog/<slug>.md`. It creates the post as a **draft** (or updates the existing draft with the same slug) via `POST/PATCH /blogs` on instacal-backend.
+- Never publish from here. The script refuses to touch a post that's already published; publishing happens in the admin panel.
+- Needs `BLOG_ADMIN_EMAIL` + `BLOG_ADMIN_PASSWORD` (or `BLOG_API_TOKEN`) in `.env.local`.

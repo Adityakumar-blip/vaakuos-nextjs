@@ -4,3 +4,5 @@ dist
 seo-audit
 .env.local
 .env
+# Blog drafts are scratch; the admin panel is the source of truth
+/content/

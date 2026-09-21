@@ -14,7 +14,7 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 /** Confirmed public profiles for entity disambiguation. */
 export const SAME_AS = [
   "https://www.linkedin.com/company/vaakuos",
-  "https://twitter.com/Vaakuos",
+  "https://x.com/useVaakuos",
 ];
 
 /** Canonical Organization node — reuse via @id everywhere else. */

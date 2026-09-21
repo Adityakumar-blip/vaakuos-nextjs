@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VaakuOS Blog Topic Plan</title>
+<style>
+:root{--bg:#fbfaf7;--card:#fff;--fg:#1c1b19;--muted:#6b6862;--line:#e6e2da;--accent:#0f7a55;--p1:#b42318;--p1bg:#fdecea;--p2:#a15c07;--p2bg:#fdf3e2;--p3:#475467;--p3bg:#eef1f4;--ok:#0f7a55;--okbg:#e6f4ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141413;--card:#1d1d1b;--fg:#ecebe7;--muted:#a19e97;--line:#33322f;--accent:#4cc79a;--p1:#ff9b91;--p1bg:#3a1c1a;--p2:#f5c27a;--p2bg:#382a15;--p3:#b8c2cf;--p3bg:#262a30;--ok:#4cc79a;--okbg:#17302a}}
+:root[data-theme="dark"]{--bg:#141413;--card:#1d1d1b;--fg:#ecebe7;--muted:#a19e97;--line:#33322f;--accent:#4cc79a;--p1:#ff9b91;--p1bg:#3a1c1a;--p2:#f5c27a;--p2bg:#382a15;--p3:#b8c2cf;--p3bg:#262a30;--ok:#4cc79a;--okbg:#17302a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;margin:0 0 4px}h2{font-size:20px;margin:40px 0 12px;padding-top:8px;border-top:1px solid var(--line)}h3{font-size:16px;margin:24px 0 8px}
+.sub{color:var(--muted);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card b{display:block;font-size:22px}.card span{color:var(--muted);font-size:13px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--muted);margin-top:3px}
+code{font-size:12.5px;background:var(--p3bg);padding:1px 5px;border-radius:4px;word-break:break-word}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.P1{color:var(--p1);background:var(--p1bg)}.P2{color:var(--p2);background:var(--p2bg)}.P3{color:var(--p3);background:var(--p3bg)}.ok{color:var(--ok);background:var(--okbg)}
+.note{background:var(--p2bg);border-left:3px solid var(--p2);padding:10px 14px;border-radius:6px;margin:12px 0}
+ol li,ul li{margin:4px 0}
+a{color:var(--accent)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.filters button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:4px 12px;border-radius:99px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+</style>
+</head>
+<body>
+<main>
+<h1>VaakuOS Blog Topic Plan</h1>
+<p class="sub">Audit of the 5 live posts on vaakuos.com/blog and the 20 topics to publish next, in order. Built on BRAND.md and VOICE.md · 21 Sep 2026</p>
+
+<div class="grid">
+  <div class="card"><b>5</b><span>published posts, all general WhatsApp topics</span></div>
+  <div class="card"><b>0</b><span>posts on cart recovery or Shopify/WooCommerce operations (your core topics)</span></div>
+  <div class="card"><b>4 / 5</b><span>posts with no author name, which hurts Google's trust signals</span></div>
+  <div class="card"><b>10 days</b><span>until Meta's 1 Oct 2026 pricing change, the most timely topic</span></div>
+</div>
+
+<h2>1. The strategy in one paragraph</h2>
+<p>The homepage targets "WhatsApp marketing + cart recovery for Shopify &amp; WooCommerce". The blog doesn't support it yet. Build <b>two hub posts</b>, one for each core topic: cart recovery and Shopify/WooCommerce order operations. Surround each with specific how-to and template posts (the "spokes"). Every spoke links up to its hub, and the hub links to the matching product page (<code>/integrations/shopify</code>, <code>/integrations/woocommerce</code>, <code>/docs/plugin/woocommerce</code>, <code>/calculator</code>). This group of linked pages is what makes Google see VaakuOS as the authority on WhatsApp cart recovery for Indian D2C stores. The two series you chose, <b>Meta Policy Watch</b> and <b>Alternatives/vs</b>, capture timely searches and people close to buying.</p>
+<div class="note"><b>No keyword volumes in this plan.</b> No keyword data source (DataForSEO, Google Search Console, Ahrefs) was connected. Priorities come from live search results, competitor coverage and how closely each topic matches what you sell, not from measured search volume. Check the P1 keywords in Google Keyword Planner or GSC before writing.</div>
+
+<h2>2. Fix the 5 existing posts first</h2>
+<div class="tbl"><table>
+<thead><tr><th>Post</th><th>Verdict</th><th>What to change</th></tr></thead>
+<tbody>
+<tr><td>WhatsApp Marketing ROI: 5 KPIs<small>/blog/whatsapp-marketing-roi-the-5-kpis…</small></td><td><span class="pill ok">Keep · refresh</span></td><td>Your strongest post. It already covers recovery and cost per recovered revenue. Link it to the new cart-recovery hub (#1) and the attribution post (#18). It's the only post with an author, so use it as the model for the others.</td></tr>
+<tr><td>10 WhatsApp Automation Flows<small>/blog/10-whatsapp-automation-flows…</small></td><td><span class="pill P1">Refresh</span></td><td>Remove the unsourced "Generate ₹40L+ monthly revenue" from the meta description (BRAND.md rule: no invented stats). Flows 1–4 each become a link to their new dedicated post (#1, #9, #10). It has only 1 internal link now; it should have 8 or more.</td></tr>
+<tr><td>How to Set Up WhatsApp Business API<small>/blog/how-to-set-up-whatsapp-business-api…</small></td><td><span class="pill P1">Refresh now</span></td><td>The pricing section goes out of date on 1 Oct 2026, when service and utility messages inside the 24-hour window stop being free. Update it and link to #14. Cite Meta's own docs, not other providers' blogs.</td></tr>
+<tr><td>Why WhatsApp Is the #1 Channel<small>/blog/why-whatsapp-is-the-1-channel…</small></td><td><span class="pill P1">Rewrite</span></td><td>The "98x higher conversions than email" claim has no source. The Healthcare section is outside your topic scope. Rewrite it around <i>WhatsApp marketing for e-commerce in India</i>, the keyword your homepage now targets. Cut the Healthcare section and add a source for every statistic.</td></tr>
+<tr><td>Omnichannel vs Multichannel<small>/blog/omnichannel-vs-multichannel…</small></td><td><span class="pill P3">Keep as is</span></td><td>Outside your core topics but harmless. Add an author and links to #1 and #10. Don't write more posts in this direction.</td></tr>
+</tbody></table></div>
+
+<h3>Fixes for every post</h3>
+<ul>
+<li><b>Add an author name to every post.</b> Right now only 1 of 5 shows who wrote it. Also add an author page with a LinkedIn link. It's the cheapest way to improve Google's trust signals.</li>
+<li><b>Fix the brand spelling in meta titles.</b> They say "| Vaakuos"; it should be "| VaakuOS", matching the brand name in BRAND.md and the site's schema.</li>
+<li><b>Leave years out of new URLs.</b> Four current URLs contain "2026", so they'll look out of date next year. Keep the old URLs, but give new posts short URLs with no year, like <code>/blog/whatsapp-abandoned-cart-recovery</code>.</li>
+<li><b>Check view tracking.</b> All 5 posts report <code>view_count: 0</code>. Either the posts get no traffic or tracking is broken. Confirm in GA4 before you judge any post by performance.</li>
+</ul>
+
+<h2>3. The 20 topics to publish</h2>
+<div class="filters" role="group" aria-label="Filter by priority">
+  <button data-f="all" aria-pressed="true">All</button>
+  <button data-f="P1" aria-pressed="false">P1 · next 4 weeks</button>
+  <button data-f="P2" aria-pressed="false">P2 · weeks 5–10</button>
+  <button data-f="P3" aria-pressed="false">P3 · later</button>
+</div>
+<div class="tbl"><table id="topics">
+<thead><tr><th>#</th><th>Headline</th><th>Primary keyword · intent</th><th>Topic · format</th><th>Why it ranks / links to</th><th>Priority</th></tr></thead>
+<tbody>
+<tr data-p="P1"><td>1</td><td><b>WhatsApp Abandoned Cart Recovery: The Complete Guide for Shopify and WooCommerce Stores</b><small>HUB · 3,000+ words</small></td><td>whatsapp abandoned cart recovery<small>commercial / informational</small></td><td>Cart recovery · hub</td><td>The keyword the homepage exists for. Current top results are small apps and agency blogs (Zoko, SuperLemon, HillTeck), so a strong guide can compete. Links to #2–#8 and <code>/calculator</code>.</td><td><span class="pill P1">P1</span></td></tr>
+<tr data-p="P1"><td>2</td><td><b>How to Recover Abandoned Carts on Shopify with WhatsApp</b></td><td>shopify abandoned cart whatsapp<small>transactional</small></td><td>Cart recovery · how-to</td><td>Searchers are close to buying, but the results are mostly Shopify app listings, so a real guide can stand out. Links to <code>/integrations/shopify</code>.</td><td><span class="pill P1">P1</span></td></tr>
+<tr data-p="P1"><td>3</td><td><b>WooCommerce Abandoned Cart Recovery on WhatsApp: Setup Guide</b></td><td>woocommerce abandoned cart whatsapp<small>transactional</small></td><td>Cart recovery · how-to</td><td>The results are WordPress plugin pages with little explanation. You already have <code>/docs/plugin/woocommerce</code> to link to.</td><td><span class="pill P1">P1</span></td></tr>
+<tr data-p="P1"><td>4</td><td><b>12 Abandoned Cart WhatsApp Templates Meta Will Approve</b></td><td>abandoned cart whatsapp template<small>informational, copy-and-paste</small></td><td>Cart recovery · numbered</td><td>Uses your "show the actual message" rule. Include the real template copy, variables, category and send timing. Template posts get saved and linked to often.</td><td><span class="pill P1">P1</span></td></tr>
+<tr data-p="P1"><td>14</td><td><b>WhatsApp Business API Pricing in India: What Changes on 1 October 2026</b></td><td>whatsapp business api pricing india<small>informational, time-sensitive</small></td><td>Meta Policy Watch #1</td><td>Meta starts charging for service and utility messages inside the 24-hour window on 1 Oct 2026. The India marketing rate is ₹0.8631 plus 18% GST. Cite <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing">Meta's pricing docs</a> and add "as of" dates. <b>Publish this week.</b></td><td><span class="pill P1">P1 · urgent</span></td></tr>
+<tr data-p="P1"><td>10</td><td><b>COD Order Confirmation on WhatsApp: How Indian Stores Cut RTO</b></td><td>cod order confirmation whatsapp<small>transactional</small></td><td>Store operations · hub</td><td>A problem specific to India. The results are mostly single-purpose Shopify apps (Konfirm, Level, WASP). Your angle: COD confirmation that knows the customer's full history, not a standalone app.</td><td><span class="pill P1">P1</span></td></tr>
+<tr data-p="P2"><td>5</td><td><b>When Should You Send Abandoned Cart Messages on WhatsApp?</b></td><td>abandoned cart message timing<small>informational</small></td><td>Cart recovery · question</td><td>Answers a common myth, "cart recovery = one reminder", by laying out a 3-message sequence. A short direct answer suits Google's AI Overviews.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>6</td><td><b>Abandoned Checkout vs Abandoned Cart: What Shopify Actually Tracks</b></td><td>abandoned checkout shopify<small>informational</small></td><td>Cart recovery · statement</td><td>Technical difference most competitors skip. It explains why some carts can't be recovered at all, since the store never got a phone number.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>7</td><td><b>Should Cart Recovery Messages Include a Discount?</b></td><td>abandoned cart discount<small>informational</small></td><td>Cart recovery · question</td><td>A contrarian take that backs your view that context beats volume. Discounting every reminder trains customers to abandon carts on purpose.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>9</td><td><b>WhatsApp Order Notifications for Shopify: Confirmation, Shipping and Delivery Templates</b></td><td>shopify whatsapp order notifications<small>transactional</small></td><td>Store operations · templates</td><td>Replaces flows 2–4 of the existing automation post with a dedicated page. Links to <code>/integrations/shopify</code>.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>11</td><td><b>How to Convert COD Orders to Prepaid on WhatsApp</b></td><td>cod to prepaid conversion<small>transactional</small></td><td>Store operations · how-to</td><td>Pairs with #10. Every order switched to prepaid removes the risk of a returned COD parcel. Show the payment-link message.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>15</td><td><b>Utility or Marketing? How Meta Categorizes Your Order Messages</b></td><td>whatsapp utility vs marketing template<small>informational</small></td><td>Meta Policy Watch #2</td><td>If Meta files an order update as marketing, you pay about 7× more (₹0.8631 vs ₹0.115). This cost point links directly to #14.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>16</td><td><b>Interakt Alternatives for Shopify Stores</b><small>vendor disclosure required</small></td><td>interakt alternatives<small>commercial</small></td><td>Alternatives/vs</td><td>Many sites compete (Gallabox, Zoko, YCloud all rank), but searchers are ready to buy. Compare only on facts from public pricing pages.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P2"><td>17</td><td><b>Klaviyo WhatsApp vs a WhatsApp-First Platform for Indian D2C</b><small>vendor disclosure required</small></td><td>klaviyo whatsapp<small>commercial</small></td><td>Alternatives/vs</td><td>Answers a common myth, "Klaviyo already covers WhatsApp". You also have a <code>/integrations/klaviyo</code> page to link to.</td><td><span class="pill P2">P2</span></td></tr>
+<tr data-p="P3"><td>8</td><td><b>How Much Revenue Are Abandoned Carts Costing Your Store?</b></td><td>abandoned cart revenue calculator<small>commercial</small></td><td>Cart recovery · calculator</td><td>A written companion to <code>/calculator</code>. It gives other sites a reason to link to the calculator.</td><td><span class="pill P3">P3</span></td></tr>
+<tr data-p="P3"><td>12</td><td><b>WooCommerce WhatsApp Order Notifications: Plugin vs API</b></td><td>woocommerce whatsapp notifications<small>commercial</small></td><td>Store operations · comparison</td><td>The results are plugin listings. Your angle: when a free plugin is enough and when you need the official API.</td><td><span class="pill P3">P3</span></td></tr>
+<tr data-p="P3"><td>13</td><td><b>WhatsApp Messaging Limits and Quality Rating: Why Your Templates Get Paused</b></td><td>whatsapp messaging limit<small>informational</small></td><td>Meta Policy Watch #3</td><td>Answers a common myth, "broadcasts get you banned". Explains what actually triggers limits, citing Meta's docs.</td><td><span class="pill P3">P3</span></td></tr>
+<tr data-p="P3"><td>18</td><td><b>How to Attribute Revenue to a WhatsApp Message</b></td><td>whatsapp revenue attribution<small>informational</small></td><td>Attribution (limited scope)</td><td>Backs your promise of "revenue per message" and goes deeper on the existing ROI post.</td><td><span class="pill P3">P3</span></td></tr>
+<tr data-p="P3"><td>19</td><td><b>WhatsApp vs Email vs SMS for Cart Recovery in India</b></td><td>whatsapp vs email cart recovery<small>commercial</small></td><td>Email and SMS (limited scope)</td><td>Allowed because it compares channels against WhatsApp. Must use sourced open and recovery rates only; competitors' "60% recovery" claims have no source.</td><td><span class="pill P3">P3</span></td></tr>
+<tr data-p="P3"><td>20</td><td><b>Gallabox vs VaakuOS for E-commerce Stores</b><small>vendor disclosure required</small></td><td>gallabox alternative<small>commercial</small></td><td>Alternatives/vs</td><td>Gallabox publishes its own "Interakt alternative" pages. This returns the favour, based on facts only.</td><td><span class="pill P3">P3</span></td></tr>
+</tbody></table></div>
+
+<h2>4. Publishing order</h2>
+<ol>
+<li><b>This week:</b> #14, the pricing post, before 1 Oct. Refresh the API setup post the same day.</li>
+<li><b>Weeks 1–2:</b> #1 (hub), then #4. Rewrite "Why WhatsApp Is the #1 Channel" and refresh the automation-flows post so they link to the hub.</li>
+<li><b>Weeks 3–4:</b> #2, #3, #10. Once these exist, your hub-and-spoke structure is live for both core topics.</li>
+<li><b>Weeks 5–10:</b> P2, about one post a week. Publish Meta Policy Watch once a month, only when Meta actually changes something.</li>
+<li><b>After that:</b> P3. After 8 weeks, check Google Search Console and move up whichever topics are getting impressions.</li>
+</ol>
+
+<h2>5. Rules every post follows (from BRAND.md)</h2>
+<ul>
+<li>Every statistic links to its original source. Competitor blogs are full of unsourced figures like "60% recovery" and "98% open rate", so don't copy them.</li>
+<li>Show the real message: template copy, variables, template category and send timing.</li>
+<li>Give costs in INR with an "as of &lt;Month YYYY&gt;" date. Comparison posts carry the line "VaakuOS makes a product in this category."</li>
+<li>Each post starts with a <b>Key Takeaways</b> box and has at least 3 internal links: one to its hub, one to a sibling post and one to a product page.</li>
+</ul>
+
+<h2>Sources</h2>
+<ul>
+<li><a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing">Meta: Pricing on the WhatsApp Business Platform</a></li>
+<li><a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing/non-template-messages">Meta: Upcoming pricing updates for service and utility messages</a></li>
+<li><a href="https://myoperator.com/blog/whatsapp-business-api-pricing-india-2026">MyOperator: WhatsApp API pricing India 2026</a> · <a href="https://respond.io/blog/whatsapp-pricing-change-2026">respond.io: pricing change 2026</a></li>
+<li>Cart recovery results: <a href="https://www.zoko.io/post/whatsapp-abandoned-cart-shopify">Zoko</a>, <a href="https://superlemon.xyz/whatsapp-abandoned-cart-recovery/">SuperLemon</a>, <a href="https://www.hillteck.com/blog/recover-abandoned-carts-whatsapp-shopify.html">HillTeck</a>, <a href="https://www.bot.space/blog/whatsapp-abandoned-cart-recovery-shopify">bot.space</a></li>
+<li>COD/RTO results: <a href="https://apps.shopify.com/konfirm-1">Konfirm</a>, <a href="https://apps.shopify.com/level">Level</a>, <a href="https://staffping.net/blog/reduce-cod-rto-shopify-whatsapp-verification">Staff Ping</a></li>
+<li>Alternatives results: <a href="https://www.zoko.io/post/best-interakt-alternative">Zoko</a>, <a href="https://gallabox.com/alternatives/interakt">Gallabox</a>, <a href="https://www.ycloud.com/blog/top-interakt-alternative">YCloud</a></li>
+<li>WooCommerce results: <a href="https://wordpress.org/plugins/order-notifications-for-woocommerce/">WordPress.org plugin</a>, <a href="https://woocommerce.com/products/notifications-with-whatsapp/">WooCommerce Marketplace</a></li>
+<li>Existing posts: <code>api.vaakuos.com/blogs</code> (5 published) and <code>vaakuos.com/sitemap.xml</code></li>
+</ul>
+</main>
+<script>
+document.querySelectorAll('.filters button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filters button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const f=b.dataset.f;
+  document.querySelectorAll('#topics tbody tr').forEach(r=>r.hidden=f!=='all'&&r.dataset.p!==f);
+}));
+</script>
+</body>
+</html>

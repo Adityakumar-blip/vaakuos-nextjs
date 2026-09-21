@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     description:
       "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
     images: ["/og-image.png"],
-    creator: "@Vaakuos",
+    creator: "@useVaakuos",
   },
   robots: {
     index: true,

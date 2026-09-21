@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VaakuOS SEO Plan</title>
+<style>
+  :root {
+    --bg: #fbfbf9; --fg: #1d1f1c; --muted: #5d625a; --line: #e2e3dd; --card: #ffffff;
+    --accent: #2f7d4f; --high: #b3261e; --med: #a15c00; --low: #3a6ea5; --code: #f1f2ed;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #151714; --fg: #e8e9e4; --muted: #a2a79e; --line: #2d302b; --card: #1c1f1b;
+      --accent: #6cc28f; --high: #ff8a80; --med: #f2b35c; --low: #8fb8e8; --code: #242823; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 1.35rem; margin: 48px 0 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 24px 0 8px; }
+  p, li { color: var(--fg); }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: .88em; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .box.key { border-left: 4px solid var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; margin: 12px 0; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+  .scroll { overflow-x: auto; }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 700; padding: 1px 7px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+  .p0 { color: var(--high); } .p1 { color: var(--med); } .p2 { color: var(--low); } .ok { color: var(--accent); }
+  nav ol { columns: 2; column-gap: 32px; padding-left: 20px; margin: 0; }
+  @media (max-width: 600px) { nav ol { columns: 1; } h1 { font-size: 1.6rem; } }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<h1>VaakuOS SEO plan: ranking for WhatsApp and e-commerce tool searches</h1>
+<p class="sub">Audit of the <code>nextjs</code> codebase and a 90-day plan · 21 Sep 2026</p>
+
+<div class="box key">
+  <strong>Summary.</strong> The technical base is already solid: SSR, canonical tags, sitemap, robots.txt, llms.txt, and Organization, Breadcrumb and FAQ schema. That base isn't what's holding VaakuOS back. <strong>The problem is that the site doesn't have pages about the terms you want to rank for.</strong> Google ranks a page for what that page is about. Today the homepage title and H1 never say "WhatsApp". There are no pages for "WhatsApp Business API", "WhatsApp marketing software", "AiSensy alternative" or any competitor. The blog has 2 posts. Every term on your list needs a dedicated page, plus backlinks and listings that tell Google VaakuOS belongs in that category.
+  <br><br>
+  <strong>Where the work is:</strong> about 20% code fixes (this report lists them with file references), 50% new pages and content, and 30% off-site authority (reviews, directories, app stores, links).
+</div>
+
+<nav class="box">
+<strong>Contents</strong>
+<ol>
+  <li><a href="#state">What's already done</a></li>
+  <li><a href="#gaps">Code fixes</a></li>
+  <li><a href="#keywords">Keyword → page map</a></li>
+  <li><a href="#competitors">Competitor "alternative" pages</a></li>
+  <li><a href="#content">Blog and content plan</a></li>
+  <li><a href="#offpage">Off-site authority</a></li>
+  <li><a href="#geo">Getting cited by ChatGPT and AI Overviews</a></li>
+  <li><a href="#roadmap">90-day roadmap</a></li>
+  <li><a href="#measure">How to measure it</a></li>
+  <li><a href="#expect">Realistic expectations</a></li>
+</ol>
+</nav>
+
+<h2 id="state">1. What's already done</h2>
+<div class="scroll"><table>
+<tr><th>Area</th><th>Status</th><th>Where</th></tr>
+<tr><td>Server-side rendering (content visible to crawlers)</td><td><span class="tag ok">Good</span></td><td>App Router pages</td></tr>
+<tr><td>Title template, canonical tags, robots meta</td><td><span class="tag ok">Good</span></td><td><code>src/app/layout.tsx</code></td></tr>
+<tr><td>Sitemap with real <code>lastmod</code> dates, integration pages and blog posts</td><td><span class="tag ok">Good</span></td><td><code>src/app/sitemap.ts</code></td></tr>
+<tr><td>robots.txt allows AI search bots (GPTBot, PerplexityBot, ClaudeBot)</td><td><span class="tag ok">Good</span></td><td><code>public/robots.txt</code></td></tr>
+<tr><td>llms.txt</td><td><span class="tag ok">Good</span></td><td><code>public/llms.txt</code></td></tr>
+<tr><td>Organization, WebSite, SoftwareApplication, Breadcrumb and FAQ schema</td><td><span class="tag ok">Good</span></td><td><code>src/lib/seo.ts</code></td></tr>
+<tr><td>12 integration landing pages</td><td><span class="tag ok">Good</span></td><td><code>src/app/integrations/[slug]</code></td></tr>
+<tr><td>Pages targeting WhatsApp keywords</td><td><span class="tag p0">Missing</span></td><td>—</td></tr>
+<tr><td>Competitor comparison and alternative pages</td><td><span class="tag p0">Missing</span></td><td>—</td></tr>
+<tr><td>Enough blog content (currently 2 posts)</td><td><span class="tag p0">Too thin</span></td><td>CMS</td></tr>
+<tr><td>Reviews and directory presence (G2, Capterra, Shopify App Store)</td><td><span class="tag p0">Unknown or missing</span></td><td>Off-site</td></tr>
+</table></div>
+
+<h2 id="gaps">2. Code fixes</h2>
+
+<h3><span class="tag p0">P0</span> Homepage doesn't mention its main category</h3>
+<p>The homepage has the most authority on the site, and it's positioned only on "abandoned carts". None of the title, description or H1 contains "WhatsApp".</p>
+<div class="scroll"><table>
+<tr><th>Location</th><th>Now</th><th>Suggested</th></tr>
+<tr><td><code>src/app/page.tsx:14</code> title</td><td>Recover every abandoned sale with VaakuOS</td><td><em>WhatsApp Marketing &amp; Cart Recovery Platform for E-commerce | VaakuOS</em></td></tr>
+<tr><td><code>src/app/page.tsx:16</code> description</td><td>VaakuOS tracks intent and re-engages shoppers…</td><td><em>Official WhatsApp Business API platform for Shopify &amp; WooCommerce brands. Recover abandoned carts, send broadcasts, automate COD confirmation and track revenue per message. Start free.</em></td></tr>
+<tr><td><code>src/components/hero-section.tsx:26</code> H1</td><td>Recover abandoned carts before they turn cold.</td><td>Keep the hook, and add a line such as <em>"The WhatsApp commerce platform that recovers abandoned carts before they turn cold."</em> The H1 should name the category.</td></tr>
+<tr><td><code>src/app/layout.tsx:12-16</code> default title and OG/Twitter text</td><td>Same abandoned-sale wording</td><td>Update to match. Google ignores the <code>keywords</code> array at line 17, so it doesn't matter.</td></tr>
+</table></div>
+<p>Only claim "Official WhatsApp Business API" if VaakuOS is a Meta Tech Provider or BSP, or works through one. Don't claim it otherwise.</p>
+
+<h3><span class="tag p0">P0</span> Indexable placeholder pages</h3>
+<p><code>/changelog</code>, <code>/careers</code>, <code>/community</code>, <code>/documentation</code>, <code>/help-center</code>, <code>/demo</code> and <code>/register-interest</code> are left out of the sitemap, but they have no <code>noindex</code>, so Google can still find and index them through links. <code>src/app/changelog/page.tsx:15-33</code> contains what looks like placeholder content ("Advanced A/B Testing", "WhatsApp Business API v3"). Thin pages lower Google's view of the whole site. For each page, either build it out or add:</p>
+<p><code>robots: { index: false, follow: true }</code> to its <code>metadata</code>. The same pattern already exists in <code>src/app/login/page.tsx</code>.</p>
+
+<h3><span class="tag p1">P1</span> Integration pages target "setup" instead of what people search</h3>
+<p><code>src/app/integrations/[slug]/page.tsx:45</code> produces titles like "Shopify integration setup". People search "Shopify WhatsApp integration", "WhatsApp for WooCommerce" and "Shopify abandoned cart WhatsApp". Suggested title: <code>`${name} WhatsApp Integration – Abandoned Cart, Order &amp; COD Messages`</code>. Also give each page about 600 or more words of unique content: use cases, the message templates it sends, setup steps and an FAQ. Each page should also have its own <code>FAQPage</code> schema.</p>
+
+<h3><span class="tag p1">P1</span> Entity signals (how Google and AI tools identify VaakuOS)</h3>
+<ul>
+  <li><code>src/lib/seo.ts:15</code> <code>SAME_AS</code> lists only LinkedIn and X. Add every real profile: Instagram, YouTube, Facebook, Crunchbase, G2, Capterra, Product Hunt, Shopify App Store listing and GitHub.</li>
+  <li><code>src/lib/seo.ts:27</code> uses <code>favicon.png</code> as the Organization logo. Point it at a real logo that is at least 112×112 (for example <code>/images/black_full.png</code>).</li>
+  <li><code>src/lib/seo.ts:55-60</code> sets the SoftwareApplication price to "0". Make sure a free plan really exists. Once you have real reviews on G2 or Capterra, add <code>aggregateRating</code>. Never make up ratings.</li>
+</ul>
+
+<h3><span class="tag p1">P1</span> OG image has the wrong shape</h3>
+<p><code>src/app/layout.tsx:47-51</code> uses a 1024×1024 image with <code>summary_large_image</code>. That card expects 1200×630, so the shared preview on WhatsApp, LinkedIn and X gets cropped. Create a 1200×630 image. Ideally, generate one per page with <code>opengraph-image.tsx</code>, especially for competitor and blog pages.</p>
+
+<h3><span class="tag p1">P1</span> Target market (geo) signals</h3>
+<p>Prices are in INR (<code>src/lib/seo.ts:58</code>), but OG locale is <code>en_US</code> (<code>layout.tsx:40</code>). If India is the main market, which the competitors named suggest, set <code>locale: "en_IN"</code>. Use Indian terms in the copy: COD, RTO, prepaid conversion, Meta pricing per conversation in ₹. Add a Google Business Profile with an Indian address. If you later target UAE, Indonesia or Brazil, add hreflang then.</p>
+
+<h3><span class="tag p1">P1</span> Homepage FAQ questions don't match searches</h3>
+<p>The FAQs in <code>src/components/faq-section.tsx:11-31</code> are all about recovery. Add questions people actually search, which can also appear as FAQ-style answers in AI results:</p>
+<ul>
+  <li>Is VaakuOS an official WhatsApp Business API provider?</li>
+  <li>How is VaakuOS different from AiSensy, Interakt or WATI?</li>
+  <li>How much does WhatsApp Business API cost in India?</li>
+  <li>Can I send bulk WhatsApp messages without getting banned?</li>
+  <li>Does VaakuOS work with Shopify and WooCommerce?</li>
+  <li>Can VaakuOS confirm COD orders on WhatsApp?</li>
+</ul>
+
+<h3><span class="tag p2">P2</span> Smaller items</h3>
+<ul>
+  <li><code>public/llms.txt</code>: add the new solution, alternative and blog pages as they ship. AI assistants read this file.</li>
+  <li><code>src/app/sitemap.ts</code>: add each new route family, as integrations already are.</li>
+  <li>Core Web Vitals: run PageSpeed Insights on <code>/</code>, <code>/features</code> and <code>/pricing</code>. <code>/features</code> and <code>/pricing</code> are fully client components, which means more JavaScript to download. Keep the LCP image as the preloaded WebP/AVIF hero (<code>public/images/hero-dashboard-*.jpg</code>).</li>
+  <li>Internal links: link every new page from the navigation or footer (<code>src/components/footer.tsx</code>). Add a "Compare" footer column and a "Solutions" menu.</li>
+  <li>Blog posts: add <code>Article</code> schema with author as a <code>Person</code> and a real author bio page. This supports E-E-A-T (how Google judges expertise and trust).</li>
+</ul>
+
+<h2 id="keywords">3. Keyword → page map</h2>
+<p>Each group of related searches gets one page. Competing pages would split ranking strength between them. Check actual search volumes in Google Keyword Planner, Ahrefs or Semrush. The groupings below are based on how this market searches.</p>
+<div class="scroll"><table>
+<tr><th>Search group (examples)</th><th>Intent</th><th>Target URL</th><th>Priority</th></tr>
+<tr><td>whatsapp marketing tool, whatsapp marketing software, bulk whatsapp sender, whatsapp broadcast tool</td><td>Buying</td><td><code>/whatsapp-marketing</code></td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>whatsapp business api, whatsapp api provider india, whatsapp business api pricing</td><td>Buying</td><td><code>/whatsapp-business-api</code></td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>aisensy alternative, interakt alternative, wati alternative, aisensy vs interakt</td><td>Switching</td><td><code>/alternatives/*</code>, <code>/compare/*</code></td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>whatsapp abandoned cart recovery, shopify abandoned cart whatsapp</td><td>Buying</td><td><code>/</code> + <code>/whatsapp-abandoned-cart-recovery</code></td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>whatsapp for shopify, shopify whatsapp integration / app</td><td>Buying</td><td><code>/integrations/shopify</code> (rewrite)</td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>whatsapp for woocommerce, woocommerce whatsapp plugin</td><td>Buying</td><td><code>/integrations/woocommerce</code> (rewrite)</td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>cod confirmation whatsapp, reduce rto shopify, cod to prepaid</td><td>Problem</td><td><code>/whatsapp-cod-confirmation</code></td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>whatsapp chatbot for ecommerce, whatsapp automation</td><td>Buying</td><td><code>/whatsapp-chatbot</code></td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>whatsapp shared team inbox, multiple agents whatsapp</td><td>Buying</td><td><code>/whatsapp-team-inbox</code></td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>whatsapp order notifications, shipping updates whatsapp</td><td>Buying</td><td><code>/whatsapp-order-notifications</code></td><td><span class="tag p2">P2</span></td></tr>
+<tr><td>whatsapp for d2c brands / fashion / beauty / food</td><td>Buying by industry</td><td><code>/industries/*</code></td><td><span class="tag p2">P2</span></td></tr>
+<tr><td>best whatsapp marketing tools india 2026, top whatsapp api providers</td><td>Comparing options</td><td><code>/blog/best-whatsapp-marketing-tools</code></td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>whatsapp link generator, whatsapp template generator, whatsapp api cost calculator</td><td>Free tool (earns links)</td><td><code>/tools/*</code></td><td><span class="tag p1">P1</span></td></tr>
+</table></div>
+
+<h3>Template for each solution page (<code>/whatsapp-marketing</code> and similar)</h3>
+<ol>
+  <li>An H1 containing the exact phrase, such as "WhatsApp Marketing Software for E-commerce Brands".</li>
+  <li>A direct 2-sentence answer of what it is and who it's for. AI tools often quote this kind of passage.</li>
+  <li>Features with screenshots, and alt text that includes the keyword naturally.</li>
+  <li>How it works in 3 steps.</li>
+  <li>Proof: real numbers, customer logos, a case study.</li>
+  <li>A comparison table against 2 or 3 competitors.</li>
+  <li>Pricing summary with a link to <code>/pricing</code>.</li>
+  <li>6–8 FAQs with <code>FAQPage</code> schema.</li>
+  <li>A CTA, plus links to related integration and blog pages.</li>
+</ol>
+<p>Aim for 1,200–2,000 words. Build it as a Server Component with <code>metadata</code>, <code>breadcrumbSchema</code> and <code>softwareApplicationSchema</code>, using the same pattern as <code>src/app/features/page.tsx</code>.</p>
+
+<h2 id="competitors">4. Competitor "alternative" pages</h2>
+<p>Pages targeting "alternative" and "vs" searches usually rank fastest for a newer site. Search volume is lower, but the people searching are ready to switch and the competition is lighter. Build one route that reads from a data file, the same way integrations work (<code>integration-data.ts</code> → <code>[slug]/page.tsx</code>).</p>
+<div class="scroll"><table>
+<tr><th>Page</th><th>URL</th></tr>
+<tr><td>AiSensy alternative</td><td><code>/alternatives/aisensy</code></td></tr>
+<tr><td>Interakt alternative</td><td><code>/alternatives/interakt</code></td></tr>
+<tr><td>WATI alternative</td><td><code>/alternatives/wati</code></td></tr>
+<tr><td>Gallabox alternative</td><td><code>/alternatives/gallabox</code></td></tr>
+<tr><td>DoubleTick alternative</td><td><code>/alternatives/doubletick</code></td></tr>
+<tr><td>Zoko alternative</td><td><code>/alternatives/zoko</code></td></tr>
+<tr><td>VaakuOS vs AiSensy (and one per competitor)</td><td><code>/compare/vaakuos-vs-aisensy</code></td></tr>
+<tr><td>Hub page: "Best AiSensy alternatives in 2026"</td><td><code>/alternatives</code></td></tr>
+</table></div>
+<h3>What each page needs</h3>
+<ul>
+  <li>Title format: <em>"Best AiSensy Alternative for E-commerce (2026) | VaakuOS"</em>.</li>
+  <li>An honest summary of who should pick the competitor and who should pick VaakuOS. Google and readers both reward fair pages over one-sided ones.</li>
+  <li>A feature table covering Shopify/WooCommerce depth, abandoned-cart intent tracking, Smart Sync (outreach stops when the order is placed), revenue attribution, pricing model, markup on Meta's per-conversation fees, and free tier.</li>
+  <li>Pricing compared side by side, with the "last verified" date shown on the page.</li>
+  <li>Migration steps ("Switch in 1 day: keep your number, templates…").</li>
+  <li>FAQ schema and a <code>BreadcrumbList</code>.</li>
+</ul>
+<p><strong>Legal rule:</strong> competitor names are fine to use in text to identify them. Don't use their logos without permission. Keep every claim factual, sourced and dated, and recheck the pages every quarter.</p>
+
+<h2 id="content">5. Blog and content plan</h2>
+<p>Two posts isn't enough for Google to treat VaakuOS as an authority on the topic. Target 2 posts a week for 12 weeks, about 24 posts, each linking to a solution page. Priority list:</p>
+<ol>
+  <li>Best WhatsApp Marketing Tools in India (2026): honest comparison, with VaakuOS included</li>
+  <li>WhatsApp Business API Pricing in India: Meta's per-message charges explained</li>
+  <li>WhatsApp Business App vs WhatsApp Business API: which does your store need?</li>
+  <li>How to Recover Abandoned Carts on Shopify with WhatsApp (step by step)</li>
+  <li>How to Reduce RTO with WhatsApp COD Confirmation</li>
+  <li>How to Get the WhatsApp Green Tick (Official Business Account)</li>
+  <li>WhatsApp Message Templates: 50 examples for e-commerce</li>
+  <li>How to Send Bulk WhatsApp Messages Without Getting Banned</li>
+  <li>WhatsApp Marketing vs Email vs SMS for D2C: open-rate and ROI data</li>
+  <li>AiSensy vs Interakt vs WATI vs VaakuOS: 2026 comparison</li>
+  <li>How to Set Up WhatsApp for WooCommerce</li>
+  <li>WhatsApp Catalog and Payments for Online Stores</li>
+  <li>Meta WhatsApp policy changes 2026: what brands need to know (news posts earn links and citations)</li>
+  <li>Case study: how [customer] recovered ₹X in 30 days, with real data</li>
+</ol>
+<h3>Standards for every post</h3>
+<ul>
+  <li>A named author with a bio page. Use first-hand data or screenshots from the product.</li>
+  <li>Answer the question in the first 60 words, then go into detail.</li>
+  <li>Use tables and numbered steps. They're more likely to become featured snippets and AI citations.</li>
+  <li>Link to 1 solution page, 1 integration page and 2 related posts.</li>
+  <li>Update the post every year, and change the year in the title.</li>
+</ul>
+
+<h3>Free tools (for backlinks)</h3>
+<ul>
+  <li><strong>WhatsApp link / QR generator</strong> (<code>/tools/whatsapp-link-generator</code>): lots of searches and it attracts links naturally.</li>
+  <li><strong>WhatsApp API cost calculator</strong>, using Meta's per-message rates by country.</li>
+  <li><strong>Message template generator</strong>, for utility, marketing and authentication templates.</li>
+  <li>You already have <code>/calculator</code> (ROI). Rename it to target "abandoned cart revenue calculator" and promote it.</li>
+</ul>
+
+<h2 id="offpage">6. Off-site authority</h2>
+<p>This is the main thing keeping new SaaS sites off page 1. Competitors like AiSensy and Interakt have years of links and reviews.</p>
+<div class="scroll"><table>
+<tr><th>Action</th><th>Why it matters</th><th>Priority</th></tr>
+<tr><td><strong>Shopify App Store listing</strong> (and WooCommerce.com / WordPress.org plugin)</td><td>High-authority link. It's also a search engine in its own right: merchants search "whatsapp" there directly.</td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>Meta Business Partner / Tech Provider directory</td><td>A trust signal, and it shows the "official API" claim is true.</td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>G2, Capterra, GetApp, SaaSworthy, Techjockey, SoftwareSuggest</td><td>These sites rank on page 1 for "best WhatsApp marketing software". Being listed there puts you on page 1 indirectly. Ask 10–20 customers for reviews.</td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>Get included in existing "best WhatsApp tools" listicles</td><td>Email the authors of the top 20 ranking articles with a short pitch and a free account. These articles are also what ChatGPT and Perplexity cite.</td><td><span class="tag p0">P0</span></td></tr>
+<tr><td>Product Hunt launch, Crunchbase, LinkedIn page activity</td><td>Links to your own profiles help Google and AI tools recognize VaakuOS as a brand.</td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>Guest posts on D2C / Shopify blogs (Indian ecosystem: Shiprocket, Razorpay, GoKwik partner blogs, Inc42, YourStory)</td><td>Relevant, authoritative links.</td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>Integration partner listings (Shiprocket, Razorpay, Zoho, HubSpot, Klaviyo marketplaces)</td><td>Each one is a link, and each is a separate place to be found.</td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>Reddit (r/shopify, r/ecommerce, r/IndianStartups), Quora, YouTube tutorials</td><td>These show up in Google results and AI answers a lot. Answer questions, don't just post links.</td><td><span class="tag p1">P1</span></td></tr>
+<tr><td>Founder posts on LinkedIn and X, podcasts</td><td>Grows branded searches, which Google counts as a trust signal.</td><td><span class="tag p2">P2</span></td></tr>
+</table></div>
+
+<h2 id="geo">7. Getting cited by ChatGPT and AI Overviews</h2>
+<p>Many buyers now ask ChatGPT or Perplexity "what's a good AiSensy alternative?". Those tools don't only rank pages. They pull from listicles, review sites, Reddit and short, clear passages.</p>
+<ul>
+  <li>AI bots are already allowed in <code>robots.txt</code>. Keep it that way.</li>
+  <li>Write passages that can be quoted: "VaakuOS is a WhatsApp commerce platform for Shopify and WooCommerce brands that…" Use the same one-line description everywhere (site, G2, LinkedIn, Crunchbase).</li>
+  <li>Put comparison tables with specific facts on the alternative pages. AI tools lift these directly.</li>
+  <li>Keep <code>llms.txt</code> current with every solution and alternative page.</li>
+  <li>Test every month: ask ChatGPT, Perplexity, Gemini and Google AI Mode 10 fixed questions ("best WhatsApp marketing tool for Shopify India", "AiSensy alternative"…). Record whether VaakuOS is mentioned.</li>
+</ul>
+
+<h2 id="roadmap">8. 90-day roadmap</h2>
+<div class="scroll"><table>
+<tr><th>Weeks</th><th>Code / site</th><th>Content</th><th>Off-site</th></tr>
+<tr><td>1–2</td><td>Homepage title, H1, description and FAQ fixes; noindex thin pages; OG image; <code>SAME_AS</code> and logo; Google Search Console + Bing Webmaster Tools set up and sitemap submitted</td><td>Pick keywords using real volume data</td><td>Create G2 and Capterra profiles; start the Shopify App Store submission</td></tr>
+<tr><td>3–4</td><td><code>/alternatives/[slug]</code> + <code>/compare/[slug]</code> data-driven routes, sitemap and footer links</td><td>AiSensy, Interakt and WATI alternative pages; "Best WhatsApp marketing tools" post</td><td>Review campaign (goal: 10 reviews)</td></tr>
+<tr><td>5–6</td><td><code>/whatsapp-marketing</code>, <code>/whatsapp-business-api</code>, <code>/whatsapp-abandoned-cart-recovery</code></td><td>API pricing post; App vs API post</td><td>Listicle outreach (20 emails)</td></tr>
+<tr><td>7–8</td><td>Rewrite integration pages (Shopify and WooCommerce first)</td><td>COD/RTO post; Shopify how-to post</td><td>Meta partner directory; Product Hunt</td></tr>
+<tr><td>9–10</td><td><code>/tools/whatsapp-link-generator</code></td><td>Remaining alternative pages; 4 posts</td><td>2 guest posts; Reddit and Quora answers</td></tr>
+<tr><td>11–12</td><td>Core Web Vitals pass; per-page OG images</td><td>First case study; COD and chatbot solution pages</td><td>Partner marketplace listings; review the results against the tracking</td></tr>
+</table></div>
+
+<h2 id="measure">9. How to measure it</h2>
+<ul>
+  <li><strong>Google Search Console</strong>: impressions, clicks and average position per target group. Check indexing on every new page.</li>
+  <li><strong>Rank tracker</strong> (Ahrefs, Semrush, SE Ranking or similar): track the ~40 keywords in section 3, set to India / English.</li>
+  <li><strong>GA4</strong>: organic sessions → demo bookings / signups, per landing page. <code>src/lib/analytics.ts</code> is already in place, so add a conversion event for this.</li>
+  <li><strong>AI visibility</strong>: the monthly 10-question test from section 7.</li>
+  <li><strong>Authority</strong>: number of referring domains (from Ahrefs or Moz), review count, and branded search volume.</li>
+</ul>
+
+<h2 id="expect">10. Realistic expectations</h2>
+<div class="box">
+  <ul>
+    <li><strong>1–3 months:</strong> alternative and comparison pages and long-tail posts start ranking (positions 5–20), and branded searches show up.</li>
+    <li><strong>3–6 months:</strong> page 1 for many "X alternative", "WhatsApp for Shopify" and COD/RTO terms, provided reviews and listings are live.</li>
+    <li><strong>6–12+ months:</strong> competitive terms like "WhatsApp marketing tool" and "WhatsApp Business API". Established competitors and review sites hold these, so reaching them depends mostly on backlinks and brand, not on code.</li>
+  </ul>
+  <p>No code change alone can make VaakuOS appear for every search. What gets it there is having the best page for each group of searches, plus enough outside sources recommending VaakuOS.</p>
+</div>
+
+</main>
+</body>
+</html>
