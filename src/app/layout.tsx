@@ -9,11 +9,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "VaakuOS | Recover every abandoned sale",
+    default: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
     template: "%s | VaakuOS",
   },
   description:
-    "VaakuOS tracks intent and re-engages shoppers across channels to win back abandoned carts and conversations.",
+    "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
   keywords: [
     "abandoned cart recovery",
     "e-commerce",
@@ -40,23 +40,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://vaakuos.com",
     siteName: "VaakuOS",
-    title: "VaakuOS | Recover every abandoned sale",
+    title: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
     description:
-      "VaakuOS tracks intent and re-engages shoppers across channels to win back abandoned carts and conversations.",
+      "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
     images: [
       {
         url: "/og-image.png",
         width: 1024,
         height: 1024,
-        alt: "VaakuOS - AI-Powered Abandoned Cart Recovery",
+        alt: "VaakuOS - WhatsApp Marketing & Abandoned Cart Recovery",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "VaakuOS | Recover every abandoned sale",
+    title: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
     description:
-      "VaakuOS tracks intent and re-engages shoppers across channels to win back abandoned carts and conversations.",
+      "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
     images: ["/og-image.png"],
     creator: "@Vaakuos",
   },

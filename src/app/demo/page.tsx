@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/demo",
   },
+  robots: { index: false, follow: true },
 };
 
 export default function DemoPage() {

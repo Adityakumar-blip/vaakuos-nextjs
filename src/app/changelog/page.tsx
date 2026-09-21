@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/changelog",
   },
+  robots: { index: false, follow: true },
 };
 
 const changes = [

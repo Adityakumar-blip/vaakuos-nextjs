@@ -11,9 +11,11 @@ import { JsonLd } from "@/components/json-ld";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Recover every abandoned sale with VaakuOS",
+  title: {
+    absolute: "WhatsApp Marketing & Cart Recovery for E-commerce | VaakuOS",
+  },
   description:
-    "VaakuOS tracks intent and re-engages shoppers across channels to win back abandoned carts and conversations.",
+    "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message. Start free.",
   alternates: {
     canonical: "/",
   },

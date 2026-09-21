@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/register-interest",
   },
+  robots: { index: false, follow: true },
 };
 
 export default function RegisterInterestPage() {

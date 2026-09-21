@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/community",
   },
+  robots: { index: false, follow: true },
 };
 
 export default function CommunityPage() {

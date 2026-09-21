@@ -23,11 +23,12 @@ export const HeroSection = () => {
       <div className="container relative z-10 mx-auto max-w-7xl">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="hero-fade-item hero-delay-2 mb-6 text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Recover abandoned carts before they turn cold.
+            WhatsApp marketing that recovers abandoned carts before they turn cold.
           </h1>
 
           <p className="hero-fade-item hero-delay-3 mx-auto mb-8 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-            VaakuOS tracks intent, re-engages shoppers at the right moment, and
+            VaakuOS is the WhatsApp commerce platform for Shopify and WooCommerce
+            brands. It tracks shopper intent, re-engages at the right moment, and
             converts missed purchases across every digital touchpoint.
           </p>
 

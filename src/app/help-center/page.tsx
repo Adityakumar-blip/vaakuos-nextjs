@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/help-center",
   },
+  robots: { index: false, follow: true },
 };
 
 const faqs = [

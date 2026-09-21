@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/careers",
   },
+  robots: { index: false, follow: true },
 };
 
 const openings = [
