@@ -2,22 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Check, Info, Minus, Plus, Sparkles } from "lucide-react";
+import { Check, Info, Minus, Plus, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ScrollReveal } from "@/components/scroll-reveal";
-import { useBookDemo } from "@/contexts/book-demo-context";
+import { WalkthroughButton } from "@/components/walkthrough-button";
 import { pricingService } from "@/services/pricing-service";
 import type { PricingFeatureItem, PricingPlan } from "@/types/pricing";
 
 type BillingCycle = "monthly" | "yearly";
+
+const heading = "font-display font-bold leading-[1.02] tracking-[-0.03em]";
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
 
 /** Convert paise to a localized rupee string (99900 → "999"). */
 const formatRupees = (paise: number) =>
@@ -40,25 +42,50 @@ const planFeature = (plan: PricingPlan, code: string) =>
 /** Cell renderer for the comparison table. */
 const ComparisonCell = ({ item }: { item?: PricingFeatureItem }) => {
   if (!item || item.value === false) {
-    return <Minus className="h-4 w-4 text-muted-foreground/30" />;
+    return <Minus className="h-4 w-4 text-ink/25" aria-hidden="true" />;
   }
   // Empty-string values are flag-style features ("Dedicated Solution Expert")
   if (item.value === true || item.value === "") {
-    return <Check className="h-[18px] w-[18px] text-primary" strokeWidth={2.5} />;
+    return <Check className="h-[18px] w-[18px] text-forest" strokeWidth={2.5} aria-hidden="true" />;
   }
   if (isUnlimited(item)) {
-    return <span className="text-sm font-semibold text-primary">Unlimited</span>;
+    return <span className="text-sm font-semibold text-forest">Unlimited</span>;
   }
   return (
-    <span className="text-sm font-medium text-foreground/90">
+    <span className="text-sm font-medium text-ink/80">
       {formatDisplayValue(item)}
     </span>
   );
 };
 
+/** Mirrors the real plan card's shape so layout doesn't shift once data loads. */
+function PlanCardSkeleton() {
+  return (
+    <div className="flex flex-col rounded-[1.75rem] border border-line bg-white p-8" aria-hidden="true">
+      <div className="mb-6 space-y-2">
+        <div className="h-5 w-24 animate-pulse rounded bg-ink/10" />
+        <div className="h-4 w-36 animate-pulse rounded bg-ink/10" />
+      </div>
+      <div className="mb-8 space-y-2">
+        <div className="h-9 w-28 animate-pulse rounded bg-ink/10" />
+        <div className="h-3 w-32 animate-pulse rounded bg-ink/10" />
+      </div>
+      <div className="h-12 w-full animate-pulse rounded-full bg-ink/10" />
+      <div className="mt-8 flex-grow space-y-3.5 border-t border-line pt-7">
+        <div className="h-3 w-24 animate-pulse rounded bg-ink/10" />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className="h-5 w-5 shrink-0 animate-pulse rounded-md bg-ink/10" />
+            <div className="h-3 flex-1 animate-pulse rounded bg-ink/10" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PricingContent() {
   const router = useRouter();
-  const { openBookDemo } = useBookDemo();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
 
   const { data, isLoading } = useQuery({
@@ -100,8 +127,8 @@ export function PricingContent() {
   })();
 
   const comparisonGroups = [
-    { title: "Usage & limits", rows: featureRows.limits },
-    { title: "Features & support", rows: featureRows.capabilities },
+    { title: "Usage and limits", rows: featureRows.limits },
+    { title: "Features and support", rows: featureRows.capabilities },
   ].filter((g) => g.rows.length > 0);
 
   // Shared column template so the header, category, and feature rows align.
@@ -144,44 +171,39 @@ export function PricingContent() {
   };
 
   return (
-    <div className="relative isolate min-h-screen overflow-hidden pb-24 pt-32">
-      {/* Background — same language as the hero: soft gradient + faint grid */}
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_45%,hsl(var(--background))_100%)]" />
-      <div className="absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(circle_at_18%_12%,hsl(var(--tertiary)/0.35),transparent_32%),radial-gradient(circle_at_84%_8%,hsl(var(--primary)/0.14),transparent_30%)]" />
-      <div className="absolute inset-x-0 top-0 -z-10 h-[640px] opacity-[0.18] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:linear-gradient(180deg,black,transparent)]" />
-
-      {/* Same container as the navbar so wide sections align with it */}
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
-            Pricing
-          </p>
-          <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl">
-            Plans that scale with your recovery engine.
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg md:leading-8">
-            Start free, upgrade when you grow. Every plan includes the core
-            VaakuOS workflow — no setup fees, cancel anytime.
-          </p>
+    <div className="bg-paper font-display text-ink">
+      {/* Header */}
+      <section className="px-4 pb-16 pt-28 md:pb-20 md:pt-36">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-5 md:grid-cols-[1.2fr_1fr] md:items-end md:gap-12">
+            <h1 className={`${heading} text-4xl text-ink md:text-6xl`}>
+              Plans that scale with every channel your customers use.
+            </h1>
+            <p className="max-w-md text-lg leading-8 text-ink/70 md:justify-self-end">
+              Start free, upgrade when you grow. Every plan covers WhatsApp,
+              email, Instagram and Messenger, with no setup fees and no
+              lock-in.
+            </p>
+          </div>
 
           {/* Billing cycle toggle */}
-          <div className="mt-8 inline-flex items-center rounded-full border border-border bg-secondary/60 p-1">
+          <div className="mt-10 inline-flex items-center gap-1 rounded-full border border-line p-1">
             {(["monthly", "yearly"] as const).map((cycle) => (
               <button
                 key={cycle}
+                type="button"
                 onClick={() => setBillingCycle(cycle)}
                 aria-pressed={billingCycle === cycle}
                 className={cn(
-                  "flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold transition-all duration-200",
+                  `flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold transition-colors ${focusRing}`,
                   billingCycle === cycle
-                    ? "bg-card text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "bg-ink text-paper"
+                    : "text-ink/65 hover:text-ink",
                 )}
               >
                 {cycle === "monthly" ? "Monthly" : "Yearly"}
                 {cycle === "yearly" && maxYearlyDiscount > 0 && (
-                  <span className="rounded-full bg-tertiary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-tertiary-foreground">
+                  <span className="rounded-full bg-mint-soft px-2 py-0.5 text-xs font-semibold text-forest">
                     Save {maxYearlyDiscount}%
                   </span>
                 )}
@@ -189,21 +211,13 @@ export function PricingContent() {
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Pricing cards */}
-        <div
-          className={cn(
-            "mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3",
-            hasAddons ? "mb-8" : "mb-24",
-          )}
-        >
+      {/* Pricing cards */}
+      <section className="px-4">
+        <div className={cn("mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3", hasAddons ? "mb-8" : "mb-24")}>
           {isLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-[520px] animate-pulse rounded-2xl border border-border bg-card/60"
-              />
-            ))
+            Array.from({ length: 3 }).map((_, i) => <PlanCardSkeleton key={i} />)
           ) : plans.length > 0 ? (
             plans.map((plan, index) => {
               const highlighted = index === highlightedIndex;
@@ -217,24 +231,21 @@ export function PricingContent() {
                 <div
                   key={plan.id}
                   className={cn(
-                    "relative flex flex-col rounded-2xl border bg-card p-8 transition-shadow duration-300",
-                    highlighted
-                      ? "border-primary/50 shadow-xl shadow-primary/10 ring-1 ring-primary/25"
-                      : "border-border shadow-sm hover:shadow-lg",
+                    "flex flex-col rounded-[1.75rem] p-8",
+                    highlighted ? "bg-forest text-paper" : "border border-line bg-white text-ink",
                   )}
                 >
-                  {highlighted && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-md">
-                      Most popular
-                    </div>
-                  )}
-
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-foreground">
+                    {highlighted && (
+                      <span className="mb-3 inline-flex rounded-full bg-paper/15 px-3 py-1 text-xs font-semibold text-paper">
+                        Recommended
+                      </span>
+                    )}
+                    <h3 className={cn("font-display text-2xl font-bold tracking-[-0.02em]", highlighted ? "text-paper" : "text-ink")}>
                       {plan.name}
                     </h3>
                     {plan.subtitle && (
-                      <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                      <p className={cn("mt-1.5 text-sm leading-6", highlighted ? "text-paper/75" : "text-ink/65")}>
                         {plan.subtitle}
                       </p>
                     )}
@@ -242,17 +253,17 @@ export function PricingContent() {
 
                   <div className="mb-8">
                     <div className="flex items-baseline gap-1.5">
-                      <span className="text-4xl font-semibold tracking-tight text-foreground">
+                      <span className="font-display text-4xl font-bold tracking-[-0.02em]">
                         ₹{formatRupees(monthlyPaise)}
                       </span>
                       {!isFree && (
-                        <span className="text-sm font-medium text-muted-foreground">
+                        <span className={cn("text-sm font-medium", highlighted ? "text-paper/75" : "text-ink/65")}>
                           /month
                         </span>
                       )}
                     </div>
                     {!isFree && billingCycle === "yearly" && (
-                      <p className="mt-2 text-xs font-semibold text-primary">
+                      <p className={cn("mt-2 text-xs font-semibold", highlighted ? "text-paper/85" : "text-forest")}>
                         Billed ₹{formatRupees(plan.yearlyPrice)} per year
                       </p>
                     )}
@@ -260,44 +271,42 @@ export function PricingContent() {
                       billingCycle === "monthly" &&
                       plan.isYearly &&
                       plan.yearlyDiscount > 0 && (
-                        <p className="mt-2 text-xs font-medium text-muted-foreground">
+                        <p className={cn("mt-2 text-xs font-medium", highlighted ? "text-paper/75" : "text-ink/65")}>
                           Save {plan.yearlyDiscount}% with yearly billing
                         </p>
                       )}
                     {isFree && (
-                      <p className="mt-2 text-xs font-medium text-muted-foreground">
-                        Free forever — no card required
+                      <p className={cn("mt-2 text-xs font-medium", highlighted ? "text-paper/75" : "text-ink/65")}>
+                        Free forever, no card required
                       </p>
                     )}
                     {addonMonthlyTotal > 0 && (
-                      <p className="mt-2 text-xs font-semibold text-accent">
+                      <p className={cn("mt-2 text-xs font-semibold", highlighted ? "text-paper" : "text-forest")}>
                         + ₹{formatRupees(addonMonthlyTotal)}/mo in add-ons
                       </p>
                     )}
                     {addonOneTimeTotal > 0 && (
-                      <p className="mt-1 text-xs font-semibold text-accent">
+                      <p className={cn("mt-1 text-xs font-semibold", highlighted ? "text-paper" : "text-forest")}>
                         + ₹{formatRupees(addonOneTimeTotal)} one-time add-ons
                       </p>
                     )}
                   </div>
 
-                  <Button
-                    size="lg"
-                    variant={highlighted ? "default" : "outline"}
-                    className={cn(
-                      "group h-12 w-full rounded-lg text-sm font-semibold",
-                      highlighted
-                        ? "shadow-lg shadow-primary/15"
-                        : "border-foreground/15 bg-background text-foreground hover:border-primary/25 hover:bg-secondary hover:text-foreground",
-                    )}
+                  <button
+                    type="button"
                     onClick={() => handleGetStarted(plan)}
+                    className={cn(
+                      "h-12 w-full rounded-full text-sm font-semibold transition-colors",
+                      highlighted
+                        ? `bg-paper text-ink hover:bg-mint ${focusRing} focus-visible:outline-paper`
+                        : `bg-forest text-paper hover:bg-ink ${focusRing}`,
+                    )}
                   >
                     {isFree ? "Start for free" : "Get started"}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
+                  </button>
 
-                  <div className="mt-8 flex-grow border-t border-border pt-7">
-                    <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className={cn("mt-8 flex-grow border-t pt-7", highlighted ? "border-paper/20" : "border-line")}>
+                    <p className={cn("mb-4 text-sm font-semibold", highlighted ? "text-paper/75" : "text-ink/65")}>
                       What&apos;s included
                     </p>
                     <ul className="space-y-3.5">
@@ -312,40 +321,39 @@ export function PricingContent() {
                           feature.value === "" ||
                           excluded;
                         return (
-                          <li
-                            key={feature.code}
-                            className="flex items-center gap-3 text-sm"
-                          >
+                          <li key={feature.code} className="flex items-center gap-3 text-sm">
                             <span
                               className={cn(
                                 "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
                                 excluded
-                                  ? "bg-muted text-muted-foreground/40"
-                                  : "bg-primary/10 text-primary",
+                                  ? highlighted
+                                    ? "bg-paper/10 text-paper/40"
+                                    : "bg-line/40 text-ink/35"
+                                  : highlighted
+                                    ? "bg-paper/15 text-paper"
+                                    : "bg-mint-soft text-forest",
                               )}
                             >
                               {excluded ? (
-                                <Minus className="h-3 w-3" strokeWidth={3} />
+                                <Minus className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
                               ) : (
-                                <Check className="h-3 w-3" strokeWidth={3} />
+                                <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
                               )}
                             </span>
                             <span
                               className={cn(
                                 "font-medium leading-snug",
                                 excluded
-                                  ? "text-muted-foreground/60"
-                                  : "text-foreground/85",
+                                  ? highlighted ? "text-paper/45" : "text-ink/45"
+                                  : highlighted ? "text-paper/90" : "text-ink/85",
                               )}
                             >
                               {labelOnly ? (
                                 feature.label
                               ) : (
                                 <>
-                                  <span className="font-semibold text-foreground">
-                                    {isUnlimited(feature)
-                                      ? "Unlimited"
-                                      : formatDisplayValue(feature)}
+                                  <span className={cn("font-semibold", highlighted ? "text-paper" : "text-ink")}>
+                                    {isUnlimited(feature) ? "Unlimited" : formatDisplayValue(feature)}
                                   </span>{" "}
                                   {feature.label.toLowerCase()}
                                 </>
@@ -360,135 +368,121 @@ export function PricingContent() {
               );
             })
           ) : (
-            <div className="col-span-full rounded-2xl border border-border bg-card py-20 text-center shadow-sm">
-              <p className="text-base font-medium text-foreground">
+            <div className="col-span-full rounded-[1.75rem] border border-line bg-white py-20 text-center">
+              <p className="text-base font-medium text-ink">
                 {billingCycle === "yearly"
                   ? "Yearly billing isn't available yet."
                   : "No plans are available right now."}
               </p>
               {billingCycle === "yearly" && (
-                <Button
-                  variant="outline"
-                  className="mt-4 rounded-lg"
+                <button
+                  type="button"
                   onClick={() => setBillingCycle("monthly")}
+                  className={`mt-4 rounded-full border border-line px-5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-paper ${focusRing}`}
                 >
                   View monthly plans
-                </Button>
+                </button>
               )}
             </div>
           )}
         </div>
+      </section>
 
-        {/* Add-ons — selectable power-up strips; chosen IDs are passed into the
-            signup funnel and applied at checkout via POST /subscriptions */}
-        {hasAddons && (
-          <ScrollReveal>
-            <div className="mx-auto mb-24 max-w-6xl space-y-4">
-              {data!.addons.map((addon) => {
-                const selected = selectedAddonIds.includes(addon.id);
-                return (
-                  <div
-                    key={addon.id}
-                    className={cn(
-                      "flex flex-col gap-5 rounded-2xl border bg-card p-6 transition-all duration-200 md:flex-row md:items-center md:justify-between md:px-8",
-                      selected
-                        ? "border-primary/50 shadow-lg shadow-primary/10 ring-1 ring-primary/25"
-                        : "border-border shadow-sm hover:shadow-lg",
-                    )}
-                  >
-                    <div className="flex items-start gap-4">
-                      <span
-                        className={cn(
-                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors",
-                          selected
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-tertiary text-tertiary-foreground",
-                        )}
-                      >
-                        <Sparkles className="h-5 w-5" />
-                      </span>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base font-semibold text-foreground">
-                            {addon.name}
-                          </h3>
-                          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-secondary-foreground">
-                            Add-on · works with every plan
-                          </span>
-                        </div>
-                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                          {selected
-                            ? "Will be applied at checkout with the plan you pick below."
-                            : addon.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-5 md:shrink-0">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-semibold tracking-tight text-foreground">
-                          ₹{formatRupees(addon.amount)}
-                        </span>
-                        <span className="text-sm font-medium text-muted-foreground">
-                          {addon.type === "recurring" ? "/month" : "one-time"}
+      {/* Add-ons — selectable power-up strips; chosen IDs are passed into the
+          signup funnel and applied at checkout via POST /subscriptions */}
+      {hasAddons && (
+        <section className="px-4">
+          <div className="mx-auto mb-24 max-w-6xl space-y-4">
+            {data!.addons.map((addon) => {
+              const selected = selectedAddonIds.includes(addon.id);
+              return (
+                <div
+                  key={addon.id}
+                  className={cn(
+                    "flex flex-col gap-5 rounded-[1.75rem] border bg-white p-6 transition-colors md:flex-row md:items-center md:justify-between md:px-8",
+                    selected ? "border-forest" : "border-line",
+                  )}
+                >
+                  <div className="flex items-start gap-4">
+                    <span
+                      className={cn(
+                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors",
+                        selected ? "bg-forest text-paper" : "bg-mint-soft text-forest",
+                      )}
+                    >
+                      <Sparkles className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-base font-semibold text-ink">{addon.name}</h3>
+                        <span className="rounded-full bg-line/40 px-2.5 py-0.5 text-xs font-semibold text-ink/65">
+                          Add-on, works with every plan
                         </span>
                       </div>
-                      <Button
-                        size="sm"
-                        variant={selected ? "default" : "outline"}
-                        aria-pressed={selected}
-                        className={cn(
-                          "h-9 shrink-0 rounded-lg px-4 text-xs font-semibold",
-                          !selected &&
-                            "border-foreground/15 bg-background hover:bg-secondary",
-                        )}
-                        onClick={() => toggleAddon(addon.id)}
-                      >
-                        {selected ? (
-                          <>
-                            <Check className="h-3.5 w-3.5" />
-                            Added
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="h-3.5 w-3.5" />
-                            Add
-                          </>
-                        )}
-                      </Button>
+                      <p className="mt-1 text-sm leading-6 text-ink/65">
+                        {selected
+                          ? "Will be applied at checkout with the plan you pick below."
+                          : addon.description}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </ScrollReveal>
-        )}
+                  <div className="flex items-center gap-5 md:shrink-0">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-semibold tracking-[-0.02em] text-ink">
+                        ₹{formatRupees(addon.amount)}
+                      </span>
+                      <span className="text-sm font-medium text-ink/65">
+                        {addon.type === "recurring" ? "/month" : "one-time"}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleAddon(addon.id)}
+                      className={cn(
+                        `flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-xs font-semibold transition-colors ${focusRing}`,
+                        selected
+                          ? "bg-forest text-paper"
+                          : "border border-line text-ink hover:bg-paper",
+                      )}
+                    >
+                      {selected ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                          Added
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                          Add
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
-        {/* Comparison table — borderless rows, full-height tinted "popular" column.
-            Not wrapped in ScrollReveal: its overflow:hidden breaks the sticky header. */}
-        {plans.length > 1 && comparisonGroups.length > 0 && (
-          <TooltipProvider delayDuration={150}>
-            <div>
-              <div className="mb-12 text-center">
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
-                  Compare plans
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                  Every detail, side by side.
-                </h2>
-              </div>
+      {/* Comparison table — borderless rows, full-height tinted "recommended" column.
+          Horizontal scroll is contained to this box so the page never widens. */}
+      {plans.length > 1 && comparisonGroups.length > 0 && (
+        <TooltipProvider delayDuration={150}>
+          <section className="px-4 py-20 md:py-28">
+            <div className="mx-auto max-w-6xl">
+              <h2 className={`${heading} mb-12 text-4xl text-ink md:text-6xl`}>Every plan, side by side.</h2>
 
-              {/* Horizontal scroll on mobile; sticky header from md up */}
               <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
                 <div className="min-w-[640px]">
                   {/* Plan header */}
                   <div
-                    className="z-20 grid border-b border-border bg-background/90 backdrop-blur-md md:sticky md:top-16"
+                    className="z-20 grid border-b border-line bg-paper/90 backdrop-blur-md md:sticky md:top-16"
                     style={comparisonCols}
                   >
                     <div className="flex items-end px-4 pb-4">
-                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                        Features
-                      </span>
+                      <span className="text-sm font-semibold text-ink/65">Features</span>
                     </div>
                     {plans.map((plan, index) => {
                       const highlighted = index === highlightedIndex;
@@ -497,43 +491,33 @@ export function PricingContent() {
                           key={plan.id}
                           className={cn(
                             "flex flex-col items-center gap-1 px-4 pb-4 pt-5 text-center",
-                            highlighted &&
-                              "rounded-t-2xl border-x border-t border-primary/15 bg-primary/[0.05]",
+                            highlighted && "rounded-t-2xl border-x border-t border-mint-soft bg-mint-soft/30",
                           )}
                         >
                           {highlighted && (
-                            <span className="mb-1 rounded-full bg-primary px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-primary-foreground">
-                              Popular
+                            <span className="mb-1 rounded-full bg-forest px-2.5 py-0.5 text-xs font-semibold text-paper">
+                              Recommended
                             </span>
                           )}
-                          <span className="text-sm font-semibold text-foreground">
-                            {plan.name}
-                          </span>
+                          <span className="text-sm font-semibold text-ink">{plan.name}</span>
                           <div className="flex items-baseline gap-0.5">
-                            <span className="text-xl font-semibold tracking-tight text-foreground">
-                              ₹
-                              {formatRupees(
-                                billingCycle === "yearly"
-                                  ? plan.discountedMonthlyPrice
-                                  : plan.amount,
-                              )}
+                            <span className="text-xl font-semibold tracking-[-0.02em] text-ink">
+                              ₹{formatRupees(billingCycle === "yearly" ? plan.discountedMonthlyPrice : plan.amount)}
                             </span>
-                            <span className="text-xs font-medium text-muted-foreground">
-                              /mo
-                            </span>
+                            <span className="text-xs font-medium text-ink/65">/mo</span>
                           </div>
-                          <Button
-                            size="sm"
-                            variant={highlighted ? "default" : "outline"}
-                            className={cn(
-                              "mt-2 h-8 w-full max-w-[120px] rounded-lg text-xs font-semibold",
-                              !highlighted &&
-                                "border-foreground/15 bg-background hover:bg-secondary",
-                            )}
+                          <button
+                            type="button"
                             onClick={() => handleGetStarted(plan)}
+                            className={cn(
+                              `mt-2 h-8 w-full max-w-[120px] rounded-full text-xs font-semibold transition-colors ${focusRing}`,
+                              highlighted
+                                ? "bg-forest text-paper hover:bg-ink"
+                                : "border border-line text-ink hover:bg-paper",
+                            )}
                           >
                             Choose
-                          </Button>
+                          </button>
                         </div>
                       );
                     })}
@@ -541,20 +525,15 @@ export function PricingContent() {
 
                   {comparisonGroups.map((group) => (
                     <div key={group.title}>
-                      {/* Category label row — tint continues through the popular column */}
+                      {/* Category label row — tint continues through the recommended column */}
                       <div className="grid" style={comparisonCols}>
                         <div className="px-4 pb-3 pt-8">
-                          <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                            {group.title}
-                          </h3>
+                          <h3 className="text-sm font-semibold text-ink/65">{group.title}</h3>
                         </div>
                         {plans.map((plan, index) => (
                           <div
                             key={plan.id}
-                            className={cn(
-                              index === highlightedIndex &&
-                                "border-x border-primary/15 bg-primary/[0.05]",
-                            )}
+                            className={cn(index === highlightedIndex && "border-x border-mint-soft bg-mint-soft/30")}
                           />
                         ))}
                       </div>
@@ -562,28 +541,23 @@ export function PricingContent() {
                       {group.rows.map((row) => (
                         <div
                           key={row.code}
-                          className="grid border-t border-border/60 transition-colors hover:bg-muted/40"
+                          className="grid border-t border-line/60 transition-colors hover:bg-ink/[0.02]"
                           style={comparisonCols}
                         >
                           <div className="flex items-center gap-1.5 px-4 py-4">
-                            <span className="text-sm font-medium text-foreground/85">
-                              {row.label}
-                            </span>
+                            <span className="text-sm font-medium text-ink/85">{row.label}</span>
                             {row.description && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <button
                                     type="button"
                                     aria-label={`About ${row.label}`}
-                                    className="text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+                                    className={`text-ink/40 transition-colors hover:text-ink/70 ${focusRing}`}
                                   >
-                                    <Info className="h-3.5 w-3.5" />
+                                    <Info className="h-3.5 w-3.5" aria-hidden="true" />
                                   </button>
                                 </TooltipTrigger>
-                                <TooltipContent
-                                  side="top"
-                                  className="max-w-[240px] text-xs leading-5"
-                                >
+                                <TooltipContent side="top" className="max-w-[240px] text-xs leading-5">
                                   {row.description}
                                 </TooltipContent>
                               </Tooltip>
@@ -594,8 +568,7 @@ export function PricingContent() {
                               key={plan.id}
                               className={cn(
                                 "flex items-center justify-center px-4 py-4",
-                                index === highlightedIndex &&
-                                  "border-x border-primary/15 bg-primary/[0.05]",
+                                index === highlightedIndex && "border-x border-mint-soft bg-mint-soft/30",
                               )}
                             >
                               <ComparisonCell item={planFeature(plan, row.code)} />
@@ -606,16 +579,15 @@ export function PricingContent() {
                     </div>
                   ))}
 
-                  {/* Bottom cap — closes the popular column outline */}
-                  <div className="grid border-t border-border/60" style={comparisonCols}>
+                  {/* Bottom cap — closes the recommended column outline */}
+                  <div className="grid border-t border-line/60" style={comparisonCols}>
                     <div />
                     {plans.map((plan, index) => (
                       <div
                         key={plan.id}
                         className={cn(
                           "h-4",
-                          index === highlightedIndex &&
-                            "rounded-b-2xl border-x border-b border-primary/15 bg-primary/[0.05]",
+                          index === highlightedIndex && "rounded-b-2xl border-x border-b border-mint-soft bg-mint-soft/30",
                         )}
                       />
                     ))}
@@ -623,34 +595,27 @@ export function PricingContent() {
                 </div>
               </div>
             </div>
-          </TooltipProvider>
-        )}
+          </section>
+        </TooltipProvider>
+      )}
 
-        {/* Custom plan CTA */}
-        <ScrollReveal>
-          <div className="mt-16">
-            <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border bg-card p-8 shadow-sm md:flex-row md:p-10">
-              <div>
-                <h2 className="text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-                  Need higher limits or a custom plan?
-                </h2>
-                <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
-                  Talk to us about enterprise volume, dedicated support, and
-                  custom integrations for your team.
-                </p>
+      {/* Custom plan CTA */}
+      <section className="bg-forest px-4 py-20 text-paper md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-center">
+            <h2 className={`${heading} text-4xl md:text-6xl`}>Need higher limits or a custom plan?</h2>
+            <div className="md:justify-self-end">
+              <p className="max-w-md text-lg leading-8 text-paper/75">
+                Talk to us about volume, dedicated support and integrations
+                for your team.
+              </p>
+              <div className="mt-6">
+                <WalkthroughButton tone="light" />
               </div>
-              <Button
-                size="lg"
-                className="group h-12 shrink-0 rounded-lg px-7 text-sm font-semibold shadow-lg shadow-primary/15"
-                onClick={openBookDemo}
-              >
-                Book Live Demo
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
             </div>
           </div>
-        </ScrollReveal>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

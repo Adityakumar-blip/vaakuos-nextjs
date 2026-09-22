@@ -1,64 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { Check, ChevronDown } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import {
-  Loader2,
-  ArrowRight,
-  PlugZap,
-  Webhook,
-  GitBranch,
-  Check,
-  CheckCircle2,
-} from "lucide-react";
 
 interface IntegrationRequestFormProps {
   onSuccess?: () => void;
   isPage?: boolean;
 }
 
+type FormData = {
+  name: string;
+  email: string;
+  company: string;
+  toolName: string;
+  website: string;
+  category: string;
+  useCase: string;
+};
+
 const categories = [
-  "E-commerce / Storefront",
+  "E-commerce / storefront",
   "CRM",
-  "Marketing / Email & SMS",
-  "Helpdesk / Support",
-  "Automation / Workflow",
-  "Analytics / Data",
+  "Marketing / email & SMS",
+  "Helpdesk / support",
+  "Automation / workflow",
+  "Analytics / data",
   "Other",
 ];
 
-const inputCls =
-  "h-11 rounded-lg border-input bg-background px-3.5 text-sm transition-colors placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:ring-offset-0 focus-visible:border-primary/50";
-
-const labelCls = "mb-1.5 block text-sm font-medium text-foreground";
-
 const perks = [
-  { icon: PlugZap, text: "Native plugin or OAuth connector" },
-  { icon: Webhook, text: "Signed webhooks and retry queues" },
-  { icon: GitBranch, text: "Routed signals into your stack" },
+  "Native plugin or OAuth connector",
+  "Signed webhooks and retry queues",
+  "Routed into the tools you already run",
 ];
 
-export const IntegrationRequestForm = ({
-  onSuccess,
-  isPage = false,
-}: IntegrationRequestFormProps) => {
+// what to ask for when a required field is empty
+const fieldLabel: Record<string, string> = {
+  name: "your full name",
+  email: "a work email",
+  toolName: "the tool you want to connect",
+  category: "a category",
+};
+
+function messageFor(el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  if (el.validity.valueMissing) return `Enter ${fieldLabel[el.name] ?? "this field"}.`;
+  if (el.validity.typeMismatch && el.name === "email") return "Enter a valid email address.";
+  if (el.validity.typeMismatch && el.name === "website") return "Enter a full URL, like https://example.com.";
+  return "Check this field and try again.";
+}
+
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inputCls = `h-11 w-full rounded-lg border border-line bg-paper px-3.5 text-base text-ink placeholder:text-ink/40 transition-colors focus:border-forest focus:outline-none ${focusRing}`;
+const labelCls = "mb-1.5 block text-sm font-semibold text-ink";
+const errorCls = "mt-1.5 text-sm font-semibold text-ink";
+
+export function IntegrationRequestForm({ onSuccess, isPage = false }: IntegrationRequestFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     company: "",
@@ -68,13 +72,35 @@ export const IntegrationRequestForm = ({
     useCase: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const setField =
+    (field: keyof FormData) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+      setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+    };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+
+    if (!form.checkValidity()) {
+      const nextErrors: Partial<Record<keyof FormData, string>> = {};
+      Array.from(form.elements).forEach((el) => {
+        if (
+          (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) &&
+          el.name &&
+          !el.checkValidity()
+        ) {
+          nextErrors[el.name as keyof FormData] = messageFor(el);
+        }
+      });
+      setErrors(nextErrors);
+      return;
+    }
+
+    setErrors({});
     setIsSubmitting(true);
     try {
-      const baseUrl = (
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-      ).replace(/\/+$/, "");
+      const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000").replace(/\/+$/, "");
       const response = await fetch(`${baseUrl}/integration-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -90,7 +116,7 @@ export const IntegrationRequestForm = ({
       setSubmitted(true);
     } catch {
       setIsSubmitting(false);
-      toast.error("Oops! Something went wrong.", {
+      toast.error("Something went wrong.", {
         description: "Please try again later or contact support.",
       });
     }
@@ -98,241 +124,221 @@ export const IntegrationRequestForm = ({
 
   return (
     <div
-      className={cn(
-        "flex flex-col overflow-hidden md:min-h-[560px] md:flex-row",
-        isPage &&
-          "mx-auto max-w-[900px] rounded-2xl border border-border bg-card shadow-xl shadow-foreground/[0.04]",
-      )}
+      className={`flex flex-col overflow-hidden border border-line md:min-h-[560px] md:flex-row ${
+        isPage ? "mx-auto max-w-[900px] rounded-2xl" : ""
+      }`}
     >
-      {/* ── Summary panel ── */}
-      <aside className="relative flex shrink-0 flex-col gap-4 border-b border-border bg-muted/40 p-5 md:w-[300px] md:gap-6 md:border-b-0 md:border-r md:p-7">
+      <aside className="flex shrink-0 flex-col gap-5 border-b border-line bg-mint-soft p-6 md:w-[280px] md:border-b-0 md:border-r md:p-8">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-border md:h-11 md:w-11">
-            <Image
-              src="/images/green.svg"
-              alt="VaakuOS"
-              width={24}
-              height={24}
-              className="h-6 w-6 md:h-7 md:w-7"
-            />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white">
+            <Image src="/images/green.svg" alt="" width={22} height={22} aria-hidden="true" />
           </div>
-          <div className="leading-tight">
-            <p className="text-sm font-semibold text-foreground">
-              VaakuOS Integrations
-            </p>
-            <p className="text-xs text-muted-foreground">Connector Team</p>
-          </div>
+          <p className="text-sm font-semibold text-ink">VaakuOS integrations</p>
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold leading-snug tracking-tight text-foreground md:text-xl">
-            Request an integration
-          </h2>
-          <p className="mt-1.5 hidden text-sm leading-relaxed text-muted-foreground md:block">
-            Tell us which tool you want to connect. We&apos;ll scope it and get
-            back to you with a path to go live.
+          <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">Request an integration</h2>
+          <p className="mt-2 hidden text-sm leading-6 text-ink/70 md:block">
+            Tell us which tool you want to connect. We&rsquo;ll scope it and
+            get back to you with a path to go live.
           </p>
         </div>
 
-        <ul className="flex flex-col gap-3 text-sm text-foreground">
-          {perks.map((perk) => {
-            const Icon = perk.icon;
-            return (
-              <li key={perk.text} className="flex items-start gap-2.5 md:gap-3">
-                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span className="leading-snug text-muted-foreground">
-                  {perk.text}
-                </span>
-              </li>
-            );
-          })}
+        <ul className="space-y-3 text-sm text-ink/80">
+          {perks.map((perk) => (
+            <li key={perk} className="border-t border-ink/10 pt-3 first:border-t-0 first:pt-0">
+              {perk}
+            </li>
+          ))}
         </ul>
 
-        <div className="rounded-xl border border-primary/20 bg-primary/[0.06] p-3.5 md:mt-auto">
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
-            Typical turnaround
-          </p>
-          <p className="text-sm font-medium text-foreground">
-            We respond within one business day.
-          </p>
-        </div>
+        <p className="mt-auto text-sm font-semibold text-forest">We respond within one business day.</p>
       </aside>
 
-      {/* ── Interaction panel ── */}
-      <div className="relative flex flex-1 flex-col bg-card">
+      <div className="flex flex-1 flex-col bg-paper">
         {submitted ? (
-          <SuccessState
-            toolName={formData.toolName}
-            isPage={isPage}
-            onDone={onSuccess}
-          />
+          <SuccessState toolName={formData.toolName} isPage={isPage} onDone={onSuccess} />
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-            <div className="border-b border-border px-5 py-4 md:px-7">
-              <h3 className="text-base font-semibold tracking-tight text-foreground">
-                Tell us what to connect
-              </h3>
-              <p className="text-xs text-muted-foreground">
-                The more detail you share, the faster we can scope it.
-              </p>
+          <form noValidate onSubmit={handleSubmit} className="flex flex-1 flex-col">
+            <div className="border-b border-line px-6 py-5 md:px-8">
+              <h3 className="font-display text-lg font-bold tracking-[-0.01em] text-ink">Tell us what to connect</h3>
+              <p className="text-sm text-ink/65">The more detail you share, the faster we can scope it.</p>
             </div>
 
-            <div className="flex-1 space-y-5 p-5 text-left md:p-7">
+            <div className="flex-1 space-y-5 p-6 md:p-8">
               <div>
-                <Label htmlFor="ir-name" className={labelCls}>
-                  Full name <span className="text-accent">*</span>
-                </Label>
-                <Input
+                <label htmlFor="ir-name" className={labelCls}>
+                  Full name
+                </label>
+                <input
                   id="ir-name"
-                  placeholder="John Doe"
+                  name="name"
+                  placeholder="Jane Doe"
                   required
                   className={inputCls}
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                  onChange={setField("name")}
+                  aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? "ir-name-error" : undefined}
                 />
+                {errors.name && (
+                  <p id="ir-name-error" className={errorCls}>
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="ir-email" className={labelCls}>
-                    Work email <span className="text-accent">*</span>
-                  </Label>
-                  <Input
+                  <label htmlFor="ir-email" className={labelCls}>
+                    Work email
+                  </label>
+                  <input
                     id="ir-email"
+                    name="email"
                     type="email"
-                    placeholder="john@company.com"
+                    placeholder="jane@company.com"
                     required
                     className={inputCls}
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={setField("email")}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? "ir-email-error" : undefined}
                   />
+                  {errors.email && (
+                    <p id="ir-email-error" className={errorCls}>
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="ir-company" className={labelCls}>
-                    Company / store
-                  </Label>
-                  <Input
+                  <label htmlFor="ir-company" className={labelCls}>
+                    Company or store
+                  </label>
+                  <input
                     id="ir-company"
-                    placeholder="Acme Store"
+                    name="company"
+                    placeholder="Acme Co"
                     className={inputCls}
                     value={formData.company}
-                    onChange={(e) =>
-                      setFormData({ ...formData, company: e.target.value })
-                    }
+                    onChange={setField("company")}
                   />
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="ir-tool" className={labelCls}>
-                    Tool / app to integrate{" "}
-                    <span className="text-accent">*</span>
-                  </Label>
-                  <Input
+                  <label htmlFor="ir-tool" className={labelCls}>
+                    Tool or app to integrate
+                  </label>
+                  <input
                     id="ir-tool"
+                    name="toolName"
                     placeholder="e.g. Gorgias, Klaviyo"
                     required
                     className={inputCls}
                     value={formData.toolName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, toolName: e.target.value })
-                    }
+                    onChange={setField("toolName")}
+                    aria-invalid={Boolean(errors.toolName)}
+                    aria-describedby={errors.toolName ? "ir-tool-error" : undefined}
                   />
+                  {errors.toolName && (
+                    <p id="ir-tool-error" className={errorCls}>
+                      {errors.toolName}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="ir-website" className={labelCls}>
+                  <label htmlFor="ir-website" className={labelCls}>
                     Tool website
-                  </Label>
-                  <Input
+                  </label>
+                  <input
                     id="ir-website"
+                    name="website"
                     type="url"
                     placeholder="https://"
                     className={inputCls}
                     value={formData.website}
-                    onChange={(e) =>
-                      setFormData({ ...formData, website: e.target.value })
-                    }
+                    onChange={setField("website")}
+                    aria-invalid={Boolean(errors.website)}
+                    aria-describedby={errors.website ? "ir-website-error" : undefined}
                   />
+                  {errors.website && (
+                    <p id="ir-website-error" className={errorCls}>
+                      {errors.website}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="ir-category" className={labelCls}>
-                  Category <span className="text-accent">*</span>
-                </Label>
-                <Select
-                  required
-                  value={formData.category}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, category: value })
-                  }
-                >
-                  <SelectTrigger
+                <label htmlFor="ir-category" className={labelCls}>
+                  Category
+                </label>
+                <div className="relative">
+                  <select
                     id="ir-category"
-                    className="h-11 rounded-lg border-input focus:ring-2 focus:ring-primary/25 focus:ring-offset-0"
+                    name="category"
+                    required
+                    className={`${inputCls} appearance-none pr-10`}
+                    value={formData.category}
+                    onChange={setField("category")}
+                    aria-invalid={Boolean(errors.category)}
+                    aria-describedby={errors.category ? "ir-category-error" : undefined}
                   >
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
+                    <option value="" disabled>
+                      Select a category
+                    </option>
                     {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
+                      <option key={category} value={category}>
                         {category}
-                      </SelectItem>
+                      </option>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </select>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50"
+                  />
+                </div>
+                {errors.category && (
+                  <p id="ir-category-error" className={errorCls}>
+                    {errors.category}
+                  </p>
+                )}
               </div>
 
               <div>
-                <Label htmlFor="ir-usecase" className={labelCls}>
-                  What&apos;s your use case?
-                </Label>
-                <Textarea
+                <label htmlFor="ir-usecase" className={labelCls}>
+                  What&rsquo;s your use case?
+                </label>
+                <textarea
                   id="ir-usecase"
-                  placeholder="Which data should sync, and what workflow should it power?"
-                  className="min-h-[96px] resize-none rounded-lg border-input bg-background px-3.5 py-3 text-sm leading-relaxed transition-colors placeholder:text-muted-foreground/50 focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:ring-offset-0 focus-visible:border-primary/50"
+                  name="useCase"
+                  placeholder="Which data should sync, and what should it trigger?"
+                  className={`${inputCls} h-24 resize-none py-3`}
                   value={formData.useCase}
-                  onChange={(e) =>
-                    setFormData({ ...formData, useCase: e.target.value })
-                  }
+                  onChange={setField("useCase")}
                 />
               </div>
 
-              <Button
+              <button
                 type="submit"
-                size="lg"
-                className="group h-12 w-full rounded-lg text-sm font-semibold shadow-lg shadow-primary/15"
                 disabled={isSubmitting}
+                className={`inline-flex h-12 w-full items-center justify-center rounded-full bg-forest px-8 text-base font-semibold text-paper transition-colors hover:bg-ink disabled:opacity-60 ${focusRing}`}
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting…
-                  </>
-                ) : (
-                  <>
-                    Submit request
-                    <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </>
-                )}
-              </Button>
+                {isSubmitting ? "Submitting…" : "Submit request"}
+              </button>
             </div>
 
-            <div className="mt-auto flex items-center gap-1.5 border-t border-border px-5 py-3.5 text-xs text-muted-foreground md:px-7">
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" />
-              No commitment · We respond within one business day.
+            <div className="mt-auto border-t border-line px-6 py-4 text-sm text-ink/65 md:px-8">
+              No commitment. We respond within one business day.
             </div>
           </form>
         )}
       </div>
     </div>
   );
-};
+}
 
 function SuccessState({
   toolName,
@@ -345,25 +351,29 @@ function SuccessState({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-8 py-16 text-center">
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-success/10 ring-8 ring-success/5">
-        <Check className="h-10 w-10 text-success" />
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-mint-soft">
+        <Check className="h-8 w-8 text-forest" aria-hidden="true" />
       </div>
-      <h3 className="mb-3 text-2xl font-semibold tracking-tight">
-        Request received!
-      </h3>
-      <p className="mb-8 max-w-sm leading-relaxed text-muted-foreground">
+      <h3 className="font-display text-2xl font-bold tracking-[-0.01em] text-ink">Request received</h3>
+      <p className="mt-3 max-w-sm leading-relaxed text-ink/70">
         Thanks for flagging {toolName ? <strong>{toolName}</strong> : "this"}.
-        Our team will review your request and let you know if it makes our
-        product roadmap.
+        We&rsquo;ll review it and let you know if it makes our roadmap.
       </p>
       {isPage ? (
-        <Button variant="outline" className="rounded-lg" asChild>
-          <Link href="/integrations">← Back to integrations</Link>
-        </Button>
+        <Link
+          href="/integrations"
+          className={`mt-8 text-base font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`}
+        >
+          Browse integrations
+        </Link>
       ) : (
-        <Button className="rounded-lg" onClick={onDone}>
+        <button
+          type="button"
+          onClick={onDone}
+          className={`mt-8 inline-flex h-11 items-center rounded-full bg-forest px-6 text-sm font-semibold text-paper hover:bg-ink ${focusRing}`}
+        >
           Done
-        </Button>
+        </button>
       )}
     </div>
   );

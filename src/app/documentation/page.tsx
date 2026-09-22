@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Developer Documentation",
@@ -10,56 +11,32 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`;
+
 export default function DocumentationPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Documentation
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get started with VaakuOS API, webhooks, and integrations.
+    <div className="min-h-screen bg-paper font-display text-ink">
+      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+        <h1 className="max-w-2xl text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[2rem]">
+          Documentation
+        </h1>
+        <div className="mt-10 max-w-prose space-y-5 border-t border-line pt-10 text-base leading-7 text-ink/70">
+          <p>Developer API docs aren&rsquo;t published here yet.</p>
+          <p>
+            The setup guide covers connecting channels, importing customers
+            and switching on your first automated follow-up. For anything
+            about the API or webhooks, write to us directly.
           </p>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="p-6 rounded-xl border border-border bg-card" id="getting-started">
-            <h3 className="text-lg font-bold mb-2">Getting Started</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Learn the basics of VaakuOS API and authentication.
-            </p>
-            <a href="#getting-started" className="text-sm text-primary hover:underline">
-              Read the guide →
-            </a>
-          </div>
-          <div className="p-6 rounded-xl border border-border bg-card" id="api-reference">
-            <h3 className="text-lg font-bold mb-2">API Reference</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Complete reference for all VaakuOS API endpoints.
-            </p>
-            <a href="#api-reference" className="text-sm text-primary hover:underline">
-              View reference →
-            </a>
-          </div>
-          <div className="p-6 rounded-xl border border-border bg-card" id="webhooks">
-            <h3 className="text-lg font-bold mb-2">Webhooks</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Set up real-time event notifications.
-            </p>
-            <a href="#webhooks" className="text-sm text-primary hover:underline">
-              Learn more →
-            </a>
-          </div>
-          <div className="p-6 rounded-xl border border-border bg-card" id="sdks">
-            <h3 className="text-lg font-bold mb-2">SDKs & Libraries</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Official SDKs for Node.js, Python, and more.
-            </p>
-            <a href="#sdks" className="text-sm text-primary hover:underline">
-              Browse SDKs →
-            </a>
-          </div>
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-lg">
+          <Link href="/docs" className={inlineLink}>
+            Read the setup guide
+          </Link>
+          <Link href="/contact" className={inlineLink}>
+            Ask the team directly
+          </Link>
         </div>
       </div>
     </div>

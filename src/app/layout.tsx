@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { SiteChrome } from "@/components/site-chrome";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 
-const inter = Inter({ subsets: ["latin"] });
+const display = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: {
-    default: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
+    default: "VaakuOS | Customer Messaging on WhatsApp, Email, Instagram & Messenger",
     template: "%s | VaakuOS",
   },
   description:
-    "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
+    "One inbox and one customer record across WhatsApp, email, Instagram and Messenger. Automate follow-ups, run campaigns and see which messages led to a sale, booking or payment.",
   keywords: [
+    "WhatsApp Business API",
+    "omnichannel inbox",
+    "Instagram DM automation",
+    "customer messaging platform",
     "abandoned cart recovery",
-    "e-commerce",
-    "WhatsApp marketing",
-    "customer engagement",
-    "AI-powered messaging",
   ],
   authors: [{ name: "VaakuOS" }],
   creator: "VaakuOS",
@@ -40,23 +40,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://vaakuos.com",
     siteName: "VaakuOS",
-    title: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
+    title: "VaakuOS | Customer Messaging on WhatsApp, Email, Instagram & Messenger",
     description:
-      "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
+      "One inbox and one customer record across WhatsApp, email, Instagram and Messenger. Automate follow-ups, run campaigns and see which messages led to a sale, booking or payment.",
     images: [
       {
         url: "/og-image.png",
         width: 1024,
         height: 1024,
-        alt: "VaakuOS - WhatsApp Marketing & Abandoned Cart Recovery",
+        alt: "VaakuOS - Customer messaging across WhatsApp, email, Instagram and Messenger",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "VaakuOS | WhatsApp Marketing & Cart Recovery for E-commerce",
+    title: "VaakuOS | Customer Messaging on WhatsApp, Email, Instagram & Messenger",
     description:
-      "WhatsApp marketing platform for Shopify & WooCommerce brands. Recover abandoned carts, send broadcasts, automate order updates and track revenue per message.",
+      "One inbox and one customer record across WhatsApp, email, Instagram and Messenger. Automate follow-ups, run campaigns and see which messages led to a sale, booking or payment.",
     images: ["/og-image.png"],
     creator: "@useVaakuos",
   },
@@ -87,7 +87,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${display.className} ${display.variable} bg-paper text-ink`}>
         <Providers>
           <SiteChrome>{children}</SiteChrome>
         </Providers>

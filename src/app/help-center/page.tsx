@@ -14,36 +14,30 @@ export const metadata: Metadata = {
 
 const faqs = [
   {
-    question: "How does VaakuOS work?",
+    question: "Which channels does VaakuOS support?",
     answer:
-      "VaakuOS tracks user intent signals in real-time. When a shopper shows high-intent behavior (like adding items to cart but not checking out), our AI engine automatically triggers personalized re-engagement messages across WhatsApp, Instagram, or email.",
+      "WhatsApp, email, Instagram and Messenger. Messages from all four arrive in one inbox, and each customer keeps a single record no matter which channel they used.",
   },
   {
-    question: "What channels does VaakuOS support?",
+    question: "How do I connect VaakuOS to my store?",
     answer:
-      "VaakuOS supports WhatsApp, Instagram Direct Messages, Facebook Messenger, SMS, and Email. You can run campaigns across all channels simultaneously or focus on one.",
+      "We offer native integrations with Shopify and WooCommerce, plus a Google Sheets import for contacts. Other tools can push events in through the API.",
   },
   {
-    question: "How do I integrate VaakuOS with my store?",
+    question: "Do I need a developer to set it up?",
     answer:
-      "We offer native integrations with Shopify, WooCommerce, BigCommerce, and Magento 2. For other platforms, we provide a universal webhook integration. Setup typically takes 5-10 minutes.",
+      "No. Channels connect through their official sign-in flows, and no code is required unless you want to send custom events from your own software.",
   },
   {
-    question: "What's included in the free trial?",
+    question: "How do automated follow-ups stop?",
     answer:
-      "The 14-day free trial includes full access to all Growth plan features: up to 1,000 messages, all integrations, priority support, and API access.",
-  },
-  {
-    question: "Can I cancel anytime?",
-    answer:
-      "Yes, you can cancel your subscription at any time. There&apos;s no long-term commitment required.",
-  },
-  {
-    question: "How do you measure revenue recovery?",
-    answer:
-      "We track every recovered sale through attributed analytics. You&apos;ll see exactly how much revenue VaakuOS has recovered for you in the real-time dashboard.",
+      "Every follow-up has a stop condition. When the customer buys, books, pays or replies, the sequence for that person ends.",
   },
 ];
+
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`;
 
 export default function HelpCenterPage() {
   return (
@@ -62,37 +56,31 @@ export default function HelpCenterPage() {
           })),
         }}
       />
-      <div className="min-h-screen pt-32 pb-20">
-        <div className="container mx-auto max-w-4xl px-4">
-          <div className="mb-16 text-center">
-            <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl">
-              Help Center
-            </h1>
-            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
-              Find answers to common questions about VaakuOS.
-            </p>
-          </div>
+      <div className="min-h-screen bg-paper font-display text-ink">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+          <h1 className="max-w-2xl text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[2rem]">
+            Help center
+          </h1>
+          <p className="mt-6 max-w-md text-lg leading-8 text-ink/70">
+            A full help center isn&rsquo;t live yet. Here are the questions
+            people ask most before setup.
+          </p>
 
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="rounded-xl border border-border bg-card p-6">
-                <h3 className="mb-2 text-lg font-bold">{faq.question}</h3>
-                <p className="text-muted-foreground">{faq.answer}</p>
-              </div>
+          <ul className="mt-14 divide-y divide-line border-t border-ink">
+            {faqs.map((faq) => (
+              <li key={faq.question} className="py-6">
+                <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">{faq.question}</h2>
+                <p className="mt-2 max-w-prose text-base leading-7 text-ink/70">{faq.answer}</p>
+              </li>
             ))}
-          </div>
+          </ul>
 
-          <div className="mt-16 text-center">
-            <p className="mb-4 text-muted-foreground">
-              Can&apos;t find what you&apos;re looking for?
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
-            >
-              Contact Support
+          <p className="mt-10 text-lg text-ink/70">
+            Anything else?{" "}
+            <Link href="/contact" className={inlineLink}>
+              Ask the team directly
             </Link>
-          </div>
+          </p>
         </div>
       </div>
     </>

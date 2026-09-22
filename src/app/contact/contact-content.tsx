@@ -2,29 +2,20 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useBookDemo } from "@/contexts/book-demo-context";
-import {
-  ArrowRight,
-  Check,
-  CheckCircle2,
-  Calendar,
-  MessageSquare,
-  LifeBuoy,
-  Mail,
-  ChevronRight,
-  ChevronDown,
-  Zap,
-  Clock,
-  Users,
-} from "lucide-react";
+import { Calendar, MessageSquare, LifeBuoy, Mail, ChevronRight, ChevronDown, Check, Clock } from "lucide-react";
 import Link from "next/link";
 
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+
 const intents = [
-  { id: "support", label: "Get support" },
-  { id: "demo",    label: "Book a demo" },
-  { id: "sales",   label: "Pricing & sales" },
-  { id: "other",   label: "General inquiry" },
+  { id: "support", label: "Get help" },
+  { id: "demo", label: "Book a walkthrough" },
+  { id: "sales", label: "Pricing & plans" },
+  { id: "other", label: "Something else" },
 ] as const;
 
 type IntentId = (typeof intents)[number]["id"];
@@ -32,37 +23,25 @@ type IntentId = (typeof intents)[number]["id"];
 const channels = [
   {
     icon: Calendar,
-    title: "Book a live demo",
-    desc: "A 30-minute guided walkthrough with our team.",
+    title: "Book a walkthrough",
+    desc: "A 15-minute call about your channels and your follow-ups.",
     action: "demo" as const,
     intent: "demo" as IntentId,
-    iconCls: "text-primary",
-    iconBg: "bg-primary/10",
   },
   {
     icon: MessageSquare,
     title: "Talk to sales",
-    desc: "Pricing, custom plans, and enterprise setup.",
+    desc: "Pricing, plans and what fits your team.",
     action: "form" as const,
     intent: "sales" as IntentId,
-    iconCls: "text-accent",
-    iconBg: "bg-accent/10",
   },
   {
     icon: LifeBuoy,
-    title: "Technical support",
-    desc: "WABA onboarding, integrations, and platform help.",
+    title: "Get help",
+    desc: "Setting up a channel, an integration, or something that isn't working.",
     action: "form" as const,
     intent: "support" as IntentId,
-    iconCls: "text-info",
-    iconBg: "bg-info/10",
   },
-];
-
-const trustItems = [
-  { icon: Zap,   text: "Typically responds within 2 hours" },
-  { icon: Clock, text: "Mon – Fri, 9 am – 6 pm IST" },
-  { icon: Users, text: "500+ brands already on VaakuOS" },
 ];
 
 // ── Self-contained dropdown (avoids Radix + Lenis portal conflicts) ──
@@ -95,26 +74,29 @@ function IntentDropdown({
 
   return (
     <div ref={ref} className="relative">
+      <span id="intent-label" className="mb-1.5 block text-sm font-medium text-ink">
+        I&apos;m reaching out about
+      </span>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex h-11 w-full items-center justify-between rounded-lg border border-input bg-background px-3.5 text-sm transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25"
+        aria-labelledby="intent-label"
+        className={`flex h-11 w-full items-center justify-between rounded-lg border border-line bg-white px-3.5 text-sm text-ink transition-colors ${focusRing}`}
       >
-        <span className="text-foreground">{selected.label}</span>
+        <span>{selected.label}</span>
         <ChevronDown
-          className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform duration-200",
-            open && "rotate-180"
-          )}
+          className={cn("h-4 w-4 text-ink/50 transition-transform duration-200", open && "rotate-180")}
+          aria-hidden="true"
         />
       </button>
 
       {open && (
         <ul
           role="listbox"
-          className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-lg shadow-foreground/5"
+          aria-labelledby="intent-label"
+          className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-lg border border-line bg-white p-1 shadow-[0_1px_0_rgb(var(--ink)/0.06),0_20px_40px_-20px_rgb(var(--ink)/0.35)]"
         >
           {intents.map((item) => {
             const active = item.id === value;
@@ -128,13 +110,11 @@ function IntentDropdown({
                   }}
                   className={cn(
                     "flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors",
-                    active
-                      ? "bg-primary/[0.07] font-medium text-foreground"
-                      : "text-muted-foreground hover:bg-muted"
+                    active ? "bg-mint-soft font-semibold text-ink" : "text-ink/70 hover:bg-paper",
                   )}
                 >
                   {item.label}
-                  {active && <Check className="h-4 w-4 text-primary" />}
+                  {active && <Check className="h-4 w-4 text-forest" aria-hidden="true" />}
                 </button>
               </li>
             );
@@ -147,34 +127,77 @@ function IntentDropdown({
 
 function SuccessState() {
   return (
-    <div className="flex flex-col items-center justify-center text-center py-16">
-      <div className="h-20 w-20 rounded-full bg-success/10 flex items-center justify-center mb-6 ring-8 ring-success/5">
-        <Check className="h-10 w-10 text-success" />
-      </div>
-      <h3 className="text-2xl font-semibold tracking-tight mb-3">Message sent!</h3>
-      <p className="text-muted-foreground max-w-xs leading-relaxed mb-8">
-        We&apos;ll get back to you within one business day. Watch your inbox.
+    <div className="flex flex-col items-start py-6 text-left">
+      <span className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-mint-soft">
+        <Check className="h-8 w-8 text-forest" aria-hidden="true" />
+      </span>
+      <h3 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink">Message sent.</h3>
+      <p className="mt-3 max-w-sm text-base leading-7 text-ink/70">
+        We&apos;ll read it and reply within one business day, from a real person on the team.
       </p>
-      <Button variant="outline" className="rounded-lg" asChild>
-        <Link href="/">← Back to home</Link>
-      </Button>
+      <Link
+        href="/"
+        className={`mt-8 text-base font-semibold text-forest underline decoration-forest/30 underline-offset-4 transition-colors hover:decoration-forest ${focusRing}`}
+      >
+        Back to home
+      </Link>
     </div>
   );
 }
 
+type FieldName = "firstName" | "lastName" | "email" | "message";
+
+function fieldMessage(field: FieldName, validity: ValidityState) {
+  if (validity.valueMissing) {
+    return {
+      firstName: "Enter your first name.",
+      lastName: "Enter your last name.",
+      email: "Enter your work email.",
+      message: "Tell us what you need help with.",
+    }[field];
+  }
+  if (validity.typeMismatch && field === "email") return "Enter a valid email, like you@company.com.";
+  if (validity.tooLong && field === "message") return "Keep it under 500 characters.";
+  return "Check this field and try again.";
+}
+
 export function ContactContent() {
   const { openBookDemo } = useBookDemo();
-  const [intent, setIntent]       = useState<IntentId>("support");
+  const [intent, setIntent] = useState<IntentId>("support");
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [message, setMessage]     = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sendFailed, setSendFailed] = useState(false);
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const formRef = useRef<HTMLDivElement>(null);
   const MAX = 500;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const data = new FormData(e.currentTarget);
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1400);
+    setSendFailed(false);
+    try {
+      const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.vaakuos.com").replace(/\/+$/, "");
+      const response = await fetch(`${baseUrl}/contact-queries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: data.get("firstName"),
+          lastName: data.get("lastName"),
+          email: data.get("email"),
+          company: data.get("company") || undefined,
+          intent,
+          message: data.get("message"),
+        }),
+      });
+      if (!response.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      setSendFailed(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleChannel(ch: (typeof channels)[number]) {
@@ -186,199 +209,273 @@ export function ContactContent() {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  const inputCls =
-    "w-full h-11 rounded-lg border border-input bg-background px-3.5 text-sm transition-colors placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/50";
+  function handleInvalid<E extends HTMLInputElement | HTMLTextAreaElement>(field: FieldName) {
+    return (e: React.FormEvent<E>) => {
+      e.preventDefault();
+      setErrors((prev) => ({ ...prev, [field]: fieldMessage(field, e.currentTarget.validity) }));
+    };
+  }
+
+  function clearError(field: FieldName) {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  const inputCls = (field: FieldName) =>
+    cn(
+      "h-11 rounded-lg border bg-white px-3.5 text-base text-ink placeholder:text-ink/40 md:text-sm",
+      "focus-visible:ring-0 focus-visible:ring-offset-0",
+      focusRing,
+      errors[field] ? "border-error" : "border-line",
+    );
 
   return (
-    <section className="relative isolate overflow-hidden px-4 pb-24 pt-32">
-      {/* ── Background — matches hero section ── */}
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_58%,hsl(var(--background))_100%)]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_18%,hsl(var(--tertiary)/0.46),transparent_30%),radial-gradient(circle_at_88%_10%,hsl(var(--primary)/0.20),transparent_28%),linear-gradient(120deg,transparent_0%,hsl(var(--accent)/0.08)_45%,transparent_70%)]" />
-      <div className="absolute inset-0 -z-10 opacity-[0.22] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
-
-      <div className="container relative z-10 mx-auto max-w-6xl">
-
-        {/* ── Header ── */}
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-primary">
-            Contact us
-          </p>
-          <h1 className="mb-5 text-4xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-            Let&apos;s talk recovery.
+    <section className="bg-paper px-4 pb-20 pt-28 font-display text-ink md:pb-28 md:pt-36">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-5 md:grid-cols-[1.2fr_1fr] md:items-end md:gap-12">
+          <h1 className="font-display text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-ink md:text-6xl">
+            Talk to the team.
           </h1>
-          <p className="mx-auto max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
-            Book a demo, ask about pricing, or get technical help. We respond to
-            every message within two business hours.
+          <p className="max-w-md text-lg leading-8 text-ink/70 md:justify-self-end">
+            Book a walkthrough, ask about pricing, or get help setting up WhatsApp, email,
+            Instagram or Messenger. Tell us what you need and we&apos;ll route it to the right person.
           </p>
         </div>
 
-        {/* ── Two-column ── */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-
+        <div className="mt-14 grid gap-10 border-t border-line pt-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           {/* ── Left: channels + trust ── */}
-          <div className="space-y-3">
-            {channels.map((ch) => {
-              const Icon = ch.icon;
-              return (
-                <button
-                  key={ch.title}
-                  type="button"
-                  onClick={() => handleChannel(ch)}
-                  className="group w-full rounded-2xl border border-border bg-card/80 p-5 text-left backdrop-blur-sm transition-all duration-200 hover:border-foreground/15 hover:shadow-sm"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={cn("mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105", ch.iconBg)}>
-                      <Icon className={cn("h-5 w-5", ch.iconCls)} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="font-semibold leading-snug text-foreground">{ch.title}</p>
-                        <ChevronRight className={cn("h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5", ch.iconCls)} />
-                      </div>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{ch.desc}</p>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+          <div>
+            <ul className="divide-y divide-line border-y border-line">
+              {channels.map((ch) => {
+                const Icon = ch.icon;
+                return (
+                  <li key={ch.title}>
+                    <button
+                      type="button"
+                      onClick={() => handleChannel(ch)}
+                      className={`group flex w-full items-start gap-4 py-6 text-left ${focusRing}`}
+                    >
+                      <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mint-soft text-forest">
+                        <Icon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="font-display text-lg font-bold tracking-[-0.01em] text-ink">
+                            {ch.title}
+                          </span>
+                          <ChevronRight
+                            className="h-4 w-4 shrink-0 text-ink/40 transition-transform group-hover:translate-x-0.5"
+                            aria-hidden="true"
+                          />
+                        </span>
+                        <span className="mt-1 block text-sm leading-relaxed text-ink/70">{ch.desc}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
 
-            {/* Trust strip */}
-            <div className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur-sm">
-              <div className="space-y-3">
-                {trustItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={item.text} className="flex items-center gap-3">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <Icon className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <p className="text-sm text-muted-foreground">{item.text}</p>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 flex items-center gap-3 border-t border-border pt-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    Direct email
-                  </p>
-                  <a
-                    href="mailto:info@vaakuos.com"
-                    className="text-sm font-medium text-foreground transition-colors hover:text-primary"
-                  >
-                    info@vaakuos.com
-                  </a>
-                </div>
-              </div>
+            <div className="mt-8 space-y-4">
+              <p className="flex items-center gap-2 text-sm text-ink/70">
+                <Clock className="h-4 w-4 shrink-0 text-ink/50" aria-hidden="true" />
+                We respond within one business day, Mon&ndash;Fri, 9am&ndash;6pm IST.
+              </p>
+              <p className="flex items-center gap-2 text-sm text-ink/70">
+                <Mail className="h-4 w-4 shrink-0 text-ink/50" aria-hidden="true" />
+                <a
+                  href="mailto:info@vaakuos.com"
+                  className={`font-semibold text-ink underline decoration-ink/25 underline-offset-4 transition-colors hover:decoration-ink ${focusRing}`}
+                >
+                  info@vaakuos.com
+                </a>
+              </p>
             </div>
           </div>
 
-          {/* ── Right: form card ── */}
-          <div ref={formRef} className="scroll-mt-28 rounded-2xl border border-border bg-card p-7 shadow-sm md:p-8">
+          {/* ── Right: form ── */}
+          <div
+            ref={formRef}
+            className="scroll-mt-28 rounded-3xl border border-line bg-white p-7 shadow-[0_1px_0_rgb(var(--ink)/0.06),0_28px_56px_-28px_rgb(var(--ink)/0.3)] md:p-8"
+          >
             {submitted ? (
               <SuccessState />
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} noValidate={false} className="space-y-5">
                 <div className="mb-1">
-                  <h2 className="text-xl font-semibold tracking-tight">Send us a message</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    We&apos;ll route it to the right person on our team.
-                  </p>
+                  <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">
+                    Send us a message
+                  </h2>
+                  <p className="mt-1 text-sm text-ink/70">We&apos;ll route it to the right person on our team.</p>
                 </div>
 
-                {/* Intent dropdown */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium">
-                    I&apos;m reaching out about <span className="text-accent">*</span>
-                  </label>
-                  <IntentDropdown value={intent} onChange={setIntent} />
-                </div>
+                <IntentDropdown value={intent} onChange={setIntent} />
 
-                {/* Name */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      First name <span className="text-accent">*</span>
+                    <label htmlFor="firstName" className="mb-1.5 block text-sm font-medium text-ink">
+                      First name
                     </label>
-                    <input required type="text" placeholder="John" className={inputCls} />
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      required
+                      type="text"
+                      placeholder="John"
+                      className={inputCls("firstName")}
+                      aria-invalid={!!errors.firstName}
+                      aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                      onInvalid={handleInvalid<HTMLInputElement>("firstName")}
+                      onChange={() => clearError("firstName")}
+                    />
+                    {errors.firstName && (
+                      <p id="firstName-error" role="alert" className="mt-1.5 text-sm text-error">
+                        {errors.firstName}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      Last name <span className="text-accent">*</span>
+                    <label htmlFor="lastName" className="mb-1.5 block text-sm font-medium text-ink">
+                      Last name
                     </label>
-                    <input required type="text" placeholder="Doe" className={inputCls} />
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      required
+                      type="text"
+                      placeholder="Doe"
+                      className={inputCls("lastName")}
+                      aria-invalid={!!errors.lastName}
+                      aria-describedby={errors.lastName ? "lastName-error" : undefined}
+                      onInvalid={handleInvalid<HTMLInputElement>("lastName")}
+                      onChange={() => clearError("lastName")}
+                    />
+                    {errors.lastName && (
+                      <p id="lastName-error" role="alert" className="mt-1.5 text-sm text-error">
+                        {errors.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                {/* Email + Company */}
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      Work email <span className="text-accent">*</span>
+                    <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
+                      Work email
                     </label>
-                    <input required type="email" placeholder="john@company.com" className={inputCls} />
+                    <Input
+                      id="email"
+                      name="email"
+                      required
+                      type="email"
+                      placeholder="john@company.com"
+                      className={inputCls("email")}
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "email-error" : undefined}
+                      onInvalid={handleInvalid<HTMLInputElement>("email")}
+                      onChange={() => clearError("email")}
+                    />
+                    {errors.email && (
+                      <p id="email-error" role="alert" className="mt-1.5 text-sm text-error">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      Company{" "}
-                      <span className="text-xs font-normal text-muted-foreground">(optional)</span>
+                    <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-ink">
+                      Company <span className="font-normal text-ink/50">(optional)</span>
                     </label>
-                    <input type="text" placeholder="Acme Inc." className={inputCls} />
+                    <Input
+                      id="company"
+                      name="company"
+                      type="text"
+                      placeholder="Acme Inc."
+                      className={cn(
+                        "h-11 rounded-lg border border-line bg-white px-3.5 text-base text-ink placeholder:text-ink/40 md:text-sm",
+                        "focus-visible:ring-0 focus-visible:ring-offset-0",
+                        focusRing,
+                      )}
+                    />
                   </div>
                 </div>
 
-                {/* Message */}
                 <div>
-                  <div className="mb-2 flex items-baseline justify-between">
-                    <label className="text-sm font-medium">
-                      Message <span className="text-accent">*</span>
+                  <div className="mb-1.5 flex items-baseline justify-between">
+                    <label htmlFor="message" className="text-sm font-medium text-ink">
+                      Message
                     </label>
-                    <span className={cn(
-                      "text-xs tabular-nums transition-colors",
-                      message.length > MAX * 0.9 ? "text-destructive" : "text-muted-foreground"
-                    )}>
+                    <span
+                      className={cn(
+                        "text-xs tabular-nums transition-colors",
+                        message.length > MAX * 0.9 ? "text-error" : "text-ink/50",
+                      )}
+                    >
                       {message.length}/{MAX}
                     </span>
                   </div>
                   <textarea
+                    id="message"
+                    name="message"
                     required
+                    maxLength={MAX}
                     value={message}
-                    onChange={(e) => setMessage(e.target.value.slice(0, MAX))}
+                    onChange={(e) => {
+                      setMessage(e.target.value.slice(0, MAX));
+                      clearError("message");
+                    }}
+                    onInvalid={handleInvalid<HTMLTextAreaElement>("message")}
                     rows={5}
-                    placeholder="Tell us about your store, team size, and what you're hoping to solve…"
-                    className="w-full resize-none rounded-lg border border-input bg-background px-3.5 py-3 text-sm leading-relaxed transition-colors placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25"
+                    placeholder="Tell us about your business, team size, and what you're hoping to solve…"
+                    aria-invalid={!!errors.message}
+                    aria-describedby={errors.message ? "message-error" : undefined}
+                    className={cn(
+                      "w-full resize-none rounded-lg border bg-white px-3.5 py-3 text-base leading-relaxed text-ink placeholder:text-ink/40 md:text-sm",
+                      focusRing,
+                      errors.message ? "border-error" : "border-line",
+                    )}
                   />
+                  {errors.message && (
+                    <p id="message-error" role="alert" className="mt-1.5 text-sm text-error">
+                      {errors.message}
+                    </p>
+                  )}
                 </div>
 
-                {/* Submit */}
+                {sendFailed && (
+                  <p role="alert" className="rounded-lg border border-error/40 bg-error/5 px-4 py-3 text-sm leading-6 text-error">
+                    That didn&rsquo;t send. Check your connection and try again, or
+                    email us at info@vaakuos.com and we&rsquo;ll pick it up there.
+                  </p>
+                )}
+
                 <Button
                   type="submit"
-                  size="lg"
                   disabled={loading}
-                  className="group h-12 w-full rounded-lg text-sm font-semibold shadow-lg shadow-primary/15"
+                  className={cn(
+                    "h-12 w-full rounded-full bg-forest text-base font-semibold text-paper shadow-none hover:bg-ink",
+                    focusRing,
+                  )}
                 >
                   {loading ? (
                     <>
-                      <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+                      <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-paper/30 border-t-paper" />
                       Sending…
                     </>
                   ) : (
-                    <>
-                      Send Message
-                      <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </>
+                    "Send message"
                   )}
                 </Button>
 
-                <p className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
-                  We respond within one business day. By submitting you agree to our{" "}
-                  <Link href="/privacy-policy" className="underline underline-offset-2 transition-colors hover:text-foreground">
+                <p className="text-xs leading-relaxed text-ink/60">
+                  By submitting you agree to our{" "}
+                  <Link href="/privacy-policy" className={`underline underline-offset-2 hover:text-ink ${focusRing}`}>
                     Privacy Policy
-                  </Link>.
+                  </Link>
+                  .
                 </p>
               </form>
             )}

@@ -30,7 +30,7 @@ export const organizationSchema = {
   },
   image: `${SITE_URL}/og-image.png`,
   description:
-    "VaakuOS is an AI-powered omnichannel communication platform for e-commerce. It tracks shopper intent in real time and re-engages shoppers across WhatsApp and other channels to recover abandoned carts.",
+    "VaakuOS is a customer messaging platform that brings WhatsApp, email, Instagram and Messenger into one inbox and one record per customer. Businesses use it to reply from one place, automate follow-ups and see which messages led to a sale, booking or payment.",
   sameAs: SAME_AS,
 };
 
@@ -52,7 +52,7 @@ export const softwareApplicationSchema = {
   operatingSystem: "Web",
   url: SITE_URL,
   description:
-    "AI-powered omnichannel abandoned-cart recovery platform for e-commerce. Tracks intent, triggers timed WhatsApp-first recovery sequences, and attributes recovered revenue per workflow.",
+    "Customer messaging platform for WhatsApp, email, Instagram and Messenger. One inbox and one record per customer, automated follow-ups triggered by what customers do, and reporting from sent to delivered, read, replied and converted.",
   publisher: { "@id": ORGANIZATION_ID },
   offers: {
     "@type": "Offer",

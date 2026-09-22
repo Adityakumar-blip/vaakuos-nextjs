@@ -2,6 +2,8 @@ import type { Integration } from "./integration-data";
 
 type PluginLogoProps = Pick<Integration, "logo" | "name"> & {
   className?: string;
+  /** Above-the-fold usage (e.g. a detail page hero) skips native lazy-loading. */
+  priority?: boolean;
 };
 
 const svgPath: Partial<Record<Integration["logo"], string>> = {
@@ -11,6 +13,7 @@ const svgPath: Partial<Record<Integration["logo"], string>> = {
   magento: "/icons/brands/magento.svg",
   hubspot: "/icons/brands/hubspot.svg",
   salesforce: "/icons/brands/salesforce.svg",
+  klaviyo: "/icons/brands/klaviyo.svg",
   zapier: "/icons/brands/zapier.svg",
   slack: "/icons/brands/slack.svg",
   sheets: "/icons/brands/googlesheets.svg",
@@ -25,37 +28,35 @@ const invertedLogos = new Set<Integration["logo"]>([
   "magento",
   "hubspot",
   "salesforce",
+  "klaviyo",
   "zapier",
   "sheets",
   "wix",
   "webflow",
 ]);
 
-export function PluginLogo({ logo, name, className = "" }: PluginLogoProps) {
-  const styles: Record<Integration["logo"], string> = {
-    shopify: "bg-[#95BF47] text-[#173300]",
-    woocommerce: "bg-[#7F54B3] text-white",
-    bigcommerce: "bg-[#121118] text-white",
-    magento: "bg-[#F26322] text-white",
-    hubspot: "bg-[#FF5C35] text-white",
-    salesforce: "bg-[#00A1E0] text-white",
-    klaviyo: "bg-[#111111] text-white",
-    zapier: "bg-[#FF4F00] text-white",
-    slack: "bg-white text-[#1D1C1D]",
-    sheets: "bg-[#0F9D58] text-white",
-    wix: "bg-[#0C0C0C] text-white",
-    webflow: "bg-[#146EF5] text-white",
-  };
+const styles: Record<Integration["logo"], string> = {
+  shopify: "bg-[#95BF47] text-[#173300]",
+  woocommerce: "bg-[#7F54B3] text-white",
+  bigcommerce: "bg-[#121118] text-white",
+  magento: "bg-[#F26322] text-white",
+  hubspot: "bg-[#FF5C35] text-white",
+  salesforce: "bg-[#00A1E0] text-white",
+  klaviyo: "bg-[#111111] text-white",
+  zapier: "bg-[#FF4F00] text-white",
+  slack: "bg-white text-[#1D1C1D]",
+  sheets: "bg-[#0F9D58] text-white",
+  wix: "bg-[#0C0C0C] text-white",
+  webflow: "bg-[#146EF5] text-white",
+};
 
+export function PluginLogo({ logo, name, className = "", priority = false }: PluginLogoProps) {
   const src = svgPath[logo];
-  const filter = invertedLogos.has(logo)
-    ? "brightness(0) invert(1)"
-    : "brightness(0)";
+  const filter = invertedLogos.has(logo) ? "brightness(0) invert(1)" : "brightness(0)";
 
   return (
     <div
       className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-black/10 shadow-sm ${styles[logo]} ${className}`.trim()}
-      aria-hidden="true"
     >
       {src ? (
         <img
@@ -63,13 +64,16 @@ export function PluginLogo({ logo, name, className = "" }: PluginLogoProps) {
           alt=""
           width={32}
           height={32}
+          loading={priority ? "eager" : "lazy"}
           style={{ filter }}
           draggable={false}
         />
       ) : (
-        // Klaviyo: no open-source SVG available, use letter mark
-        <span className="text-2xl font-bold">K</span>
+        <span aria-hidden="true" className="text-2xl font-bold">
+          K
+        </span>
       )}
+      {/* the wrapper is not aria-hidden, so this is the logo's accessible name */}
       <span className="sr-only">{name} logo</span>
     </div>
   );

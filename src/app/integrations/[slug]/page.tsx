@@ -1,22 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  DatabaseZap,
-  KeyRound,
-  PlugZap,
-  ShieldCheck,
-} from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { getIntegration, integrations } from "../integration-data";
-import { PluginLogo } from "../plugin-logo";
+import { WalkthroughButton } from "@/components/walkthrough-button";
 import { JsonLd } from "@/components/json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
+import { getIntegration, integrations, type IntegrationStatus } from "../integration-data";
+import { PluginLogo } from "../plugin-logo";
 
 type IntegrationDetailPageProps = {
   params: {
@@ -30,9 +19,7 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({
-  params,
-}: IntegrationDetailPageProps): Metadata {
+export function generateMetadata({ params }: IntegrationDetailPageProps): Metadata {
   const integration = getIntegration(params.slug);
 
   if (!integration) {
@@ -42,7 +29,7 @@ export function generateMetadata({
   }
 
   return {
-    title: `${integration.name} integration setup`,
+    title: `${integration.name} integration`,
     description: integration.longDescription,
     alternates: {
       canonical: `/integrations/${integration.slug}`,
@@ -50,20 +37,25 @@ export function generateMetadata({
   };
 }
 
-export default function IntegrationDetailPage({
-  params,
-}: IntegrationDetailPageProps) {
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold underline underline-offset-4 transition-colors ${focusRing}`;
+
+const statusTone: Record<IntegrationStatus, string> = {
+  Live: "text-forest",
+  Beta: "text-ink/70",
+  "Coming soon": "text-ink/65",
+};
+
+export default function IntegrationDetailPage({ params }: IntegrationDetailPageProps) {
   const integration = getIntegration(params.slug);
 
   if (!integration) {
     notFound();
   }
 
-  const relatedIntegrations = integrations
-    .filter(
-      (item) =>
-        item.category === integration.category && item.slug !== integration.slug,
-    )
+  const related = integrations
+    .filter((item) => item.category === integration.category && item.slug !== integration.slug)
     .slice(0, 3);
 
   const breadcrumb = breadcrumbSchema([
@@ -73,254 +65,120 @@ export default function IntegrationDetailPage({
   ]);
 
   return (
-    <div className="min-h-screen bg-background pt-24 text-foreground">
+    <>
       <JsonLd data={breadcrumb} />
-      <section className="border-b border-border/70">
-        <div className="container mx-auto max-w-7xl px-4 py-10 md:py-14">
-          <Link
-            href="/integrations#plugins"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to integrations
+
+      <section className="px-4 pb-16 pt-28 md:pb-24 md:pt-36">
+        <div className="mx-auto max-w-6xl">
+          <Link href="/integrations" className={`text-sm text-ink/65 decoration-ink/25 hover:decoration-ink ${inlineLink}`}>
+            Browse integrations
           </Link>
 
-          <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
+          <div className="mt-8 flex flex-wrap items-center gap-5">
+            <PluginLogo logo={integration.logo} name={integration.name} className="h-16 w-16" priority />
             <div>
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                <PluginLogo
-                  logo={integration.logo}
-                  name={integration.name}
-                  className="h-16 w-16"
-                />
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                      {integration.category}
-                    </span>
-                    <span
-                      className={`rounded-full px-3 py-1 text-sm font-semibold ${
-                        integration.status === "Live"
-                          ? "bg-tertiary text-foreground"
-                          : integration.status === "Beta"
-                            ? "bg-accent/10 text-accent"
-                            : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {integration.status}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm font-semibold text-muted-foreground">
-                    {integration.authMethod}
-                  </p>
-                </div>
-              </div>
-
-              <h1 className="max-w-4xl text-4xl font-bold leading-tight md:text-5xl">
-                {integration.name} integration guide
-              </h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-                {integration.longDescription}
+              <p className="text-sm text-ink/65">
+                {integration.category} &middot; {integration.flow}
               </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="xl" className="rounded-2xl">
-                  <Link href="/demo">
-                    Book setup walkthrough
-                    <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="xl"
-                  className="rounded-2xl border-primary/20 bg-white/60"
-                >
-                  <Link href="/contact">Ask about this integration</Link>
-                </Button>
-              </div>
+              <p className={`text-sm font-semibold ${statusTone[integration.status]}`}>{integration.status}</p>
             </div>
+          </div>
 
-            <aside className="border-l border-border pl-0 lg:pl-6">
-              <div className="divide-y divide-border rounded-2xl border border-border bg-white/35">
-                {[
-                  {
-                    icon: Clock3,
-                    label: "Setup time",
-                    value: integration.setupTime,
-                  },
-                  {
-                    icon: KeyRound,
-                    label: "Auth method",
-                    value: integration.authMethod,
-                  },
-                  {
-                    icon: DatabaseZap,
-                    label: "Sync mode",
-                    value: integration.sync,
-                  },
-                ].map((item) => {
-                  const Icon = item.icon;
+          <h1 className="mt-6 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-ink md:text-6xl">
+            Connect {integration.name} to VaakuOS
+          </h1>
+          <p className="mt-6 max-w-prose text-lg leading-8 text-ink/70">{integration.longDescription}</p>
 
-                  return (
-                    <div
-                      key={item.label}
-                      className="flex items-start gap-3 p-4"
-                    >
-                      <span className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Icon className="h-5 w-5" />
-                      </span>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                          {item.label}
-                        </p>
-                        <p className="mt-1 font-semibold">{item.value}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </aside>
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <WalkthroughButton />
+            <Link
+              href="/request-integration"
+              className={`self-start text-base text-ink decoration-ink/25 hover:decoration-ink sm:self-auto ${inlineLink}`}
+            >
+              Request an integration
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="container mx-auto grid max-w-7xl gap-12 px-4 py-14 lg:grid-cols-[minmax(0,760px)_1fr]">
-        <article>
-          <section className="border-b border-border pb-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-              Overview
-            </p>
-            <h2 className="mt-3 text-2xl font-bold">What this integration does</h2>
-            <p className="mt-4 leading-8 text-muted-foreground">
-              {integration.name} sends the operational data VaakuOS needs to
-              identify abandoned intent, personalize recovery, and close the
-              loop when revenue is recovered. The connection is designed to stay
-              close to your existing stack, so your team can keep using current
-              commerce, CRM, or workflow tools while VaakuOS handles recovery
-              orchestration.
-            </p>
-          </section>
-
-          <section className="py-10">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-                Setup steps
-              </p>
-              <h2 className="mt-3 text-2xl font-bold">Launch checklist</h2>
-              <p className="mt-3 leading-7 text-muted-foreground">
-                Follow these steps in order. For beta or waitlist integrations,
-                the VaakuOS team will confirm access before production traffic
-                is enabled.
-              </p>
-            </div>
-
-            <ol className="mt-8 border-l border-border">
-            {integration.setupSteps.map((step, index) => (
-              <li
-                key={step}
-                className="relative pb-8 pl-8 last:pb-0"
-              >
-                <span className="absolute -left-[17px] top-0 flex h-8 w-8 items-center justify-center rounded-full border border-primary/20 bg-background text-sm font-semibold text-primary">
-                  {index + 1}
-                </span>
-                <p className="pt-0.5 leading-7 text-muted-foreground">{step}</p>
-              </li>
-            ))}
-            </ol>
-          </section>
-        </article>
-
-        <aside className="space-y-8 lg:pt-2">
-          <section>
-            <div className="mb-4 flex items-center gap-3">
-              <DatabaseZap className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-bold">Data synced</h2>
-            </div>
-            <div className="divide-y divide-border border-y border-border">
-              {integration.dataSynced.map((item) => (
-                <div key={item} className="flex items-center gap-3 py-3">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {item}
+      <section className="px-4 py-20 md:py-28">
+        <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[1.2fr_1fr]">
+          <div>
+            <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-ink md:text-4xl">Setup steps</h2>
+            <ol className="mt-8 border-l border-line">
+              {integration.setupSteps.map((step, index) => (
+                <li key={step} className="relative pb-8 pl-8 last:pb-0">
+                  <span className="absolute -left-5 top-0 flex h-10 w-10 items-center justify-center rounded-full bg-forest font-display text-sm font-bold text-paper">
+                    {index + 1}
                   </span>
+                  <p className="pt-1 leading-7 text-ink/70">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="space-y-10">
+            <div>
+              <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">Data synced</h2>
+              <ul className="mt-4 divide-y divide-line border-y border-line">
+                {integration.dataSynced.map((item) => (
+                  <li key={item} className="py-3 text-base text-ink/70">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">Setup details</h2>
+              <dl className="mt-4 space-y-3 text-sm">
+                <div className="flex justify-between gap-4 border-b border-line pb-3">
+                  <dt className="text-ink/65">Setup time</dt>
+                  <dd className="font-semibold text-ink">{integration.setupTime}</dd>
                 </div>
-              ))}
+                <div className="flex justify-between gap-4 border-b border-line pb-3">
+                  <dt className="text-ink/65">Auth method</dt>
+                  <dd className="font-semibold text-ink">{integration.authMethod}</dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-ink/65">Sync mode</dt>
+                  <dd className="font-semibold text-ink">{integration.sync}</dd>
+                </div>
+              </dl>
             </div>
-          </section>
 
-          <section>
-            <div className="mb-4 flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-bold">Best for</h2>
+            <div>
+              <h2 className="font-display text-xl font-bold tracking-[-0.01em] text-ink">Best for</h2>
+              <p className="mt-4 text-base leading-7 text-ink/70">{integration.bestFor.join(", ")}</p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {integration.bestFor.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full bg-muted px-3 py-1.5 text-sm font-semibold text-muted-foreground"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </section>
-
-          <section className="border-t border-border pt-8">
-            <div className="mb-4 flex items-center gap-3">
-              <PlugZap className="h-5 w-5 text-primary" />
-              <h2 className="text-xl font-bold">Need help?</h2>
-            </div>
-            <p className="text-sm leading-7 text-muted-foreground">
-              Share your current stack and we will confirm the right setup path,
-              permissions, and launch checklist for your workspace.
-            </p>
-            <Button asChild variant="outline" className="mt-5 rounded-2xl">
-              <Link href="/contact">Talk to support</Link>
-            </Button>
-          </section>
-        </aside>
+          </div>
+        </div>
       </section>
 
-      {relatedIntegrations.length > 0 && (
-        <section className="border-t border-border bg-white/35">
-          <div className="container mx-auto max-w-7xl px-4 py-14">
-            <div className="mb-6 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-                  Related
-                </p>
-                <h2 className="mt-2 text-2xl font-bold">
-                  More {integration.category} integrations
-                </h2>
-              </div>
-              <Button asChild variant="outline" className="hidden rounded-2xl md:inline-flex">
-                <Link href="/integrations#plugins">View all</Link>
-              </Button>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {relatedIntegrations.map((item) => (
-                <Link
-                  key={item.slug}
-                  href={`/integrations/${item.slug}`}
-                  className="group rounded-3xl border border-border bg-background p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
-                >
-                  <PluginLogo logo={item.logo} name={item.name} />
-                  <h3 className="mt-5 text-xl font-bold">{item.name}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {item.description}
-                  </p>
-                  <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-primary">
-                    View setup
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </Link>
+      {related.length > 0 && (
+        <section className="border-t border-line px-4 py-20 md:py-28">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="font-display text-3xl font-bold tracking-[-0.02em] text-ink md:text-4xl">
+              More {integration.category.toLowerCase()} integrations
+            </h2>
+            <ul className="mt-8">
+              {related.map((item) => (
+                <li key={item.slug} className="border-t border-line py-6 first:border-t-0">
+                  <Link href={`/integrations/${item.slug}`} className={`group flex items-center gap-5 rounded-lg ${focusRing}`}>
+                    <PluginLogo logo={item.logo} name={item.name} />
+                    <div>
+                      <p className="font-display text-xl font-bold tracking-[-0.02em] text-ink group-hover:underline">
+                        {item.name}
+                      </p>
+                      <p className="mt-1 text-sm text-ink/65">{item.description}</p>
+                    </div>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
       )}
-    </div>
+    </>
   );
 }

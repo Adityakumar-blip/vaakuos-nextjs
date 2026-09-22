@@ -1,129 +1,78 @@
-"use client";
-
-import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Clock3 } from "lucide-react";
-
 import type { Integration } from "./integration-data";
 import { PluginLogo } from "./plugin-logo";
 
-type PluginDirectoryProps = {
-  integrations: Integration[];
+type Group = { title: string; categories: string[] };
+
+// order integrations are grouped in on the directory page
+const groups: Group[] = [
+  { title: "Commerce platforms", categories: ["Commerce"] },
+  { title: "CRM and marketing", categories: ["CRM", "Marketing"] },
+  { title: "Automation, ops and data", categories: ["Automation", "Ops", "Data", "Sites"] },
+];
+
+const statusTone: Record<Integration["status"], string> = {
+  Live: "text-forest",
+  Beta: "text-ink/70",
+  "Coming soon": "text-ink/65",
 };
 
-export function PluginDirectory({ integrations }: PluginDirectoryProps) {
-  const [selectedCategory, setSelectedCategory] = useState("All plugins");
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
 
-  const categories = useMemo(() => {
-    const counts = integrations.reduce<Record<string, number>>((acc, integration) => {
-      acc[integration.category] = (acc[integration.category] || 0) + 1;
-      return acc;
-    }, {});
+function slugify(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
 
-    return [
-      { name: "All plugins", count: integrations.length },
-      ...Object.entries(counts).map(([name, count]) => ({ name, count })),
-    ];
-  }, [integrations]);
-
-  const filteredIntegrations = useMemo(() => {
-    if (selectedCategory === "All plugins") {
-      return integrations;
-    }
-
-    return integrations.filter(
-      (integration) => integration.category === selectedCategory,
-    );
-  }, [integrations, selectedCategory]);
-
+export function PluginDirectory({ integrations }: { integrations: Integration[] }) {
   return (
-    <section id="plugins" className="container mx-auto max-w-7xl px-4 py-16 sm:py-20 md:py-24">
-      <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-            Plugin library
-          </p>
-          <h2 className="mt-3 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-            Modern connectors with the details your team needs.
-          </h2>
-        </div>
-
-        <label className="w-full max-w-sm">
-          <span className="mb-2 block text-sm font-semibold text-muted-foreground">
-            Filter by category
-          </span>
-          <span className="relative block">
-            <select
-              value={selectedCategory}
-              onChange={(event) => setSelectedCategory(event.target.value)}
-              className="h-12 w-full appearance-none rounded-2xl border border-border bg-white/70 px-4 pr-11 text-sm font-semibold text-foreground shadow-sm outline-none transition-colors hover:border-primary/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
-              aria-label="Filter plugins by category"
-            >
-              {categories.map((category) => (
-                <option key={category.name} value={category.name}>
-                  {category.name} ({category.count})
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </span>
-        </label>
-      </div>
-
-      <div className="mb-5 flex items-center justify-between gap-4 text-sm text-muted-foreground">
-        <span>
-          Showing {filteredIntegrations.length} of {integrations.length} plugins
-        </span>
-        <span className="font-semibold text-foreground">{selectedCategory}</span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-        {filteredIntegrations.map((integration) => (
-          <Link
-            key={integration.name}
-            href={`/integrations/${integration.slug}`}
-            className="group flex flex-col items-center gap-3 rounded-3xl border border-border bg-card p-4 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl sm:items-stretch sm:gap-0 sm:p-5 sm:text-left"
+    <div>
+      <nav aria-label="Jump to a group" className="flex flex-wrap gap-x-6 gap-y-2 border-b border-line pb-8">
+        {groups.map((group) => (
+          <a
+            key={group.title}
+            href={`#${slugify(group.title)}`}
+            className={`text-sm font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`}
           >
-            <div className="flex w-full items-center justify-center sm:items-start sm:justify-between sm:gap-4">
-              <PluginLogo logo={integration.logo} name={integration.name} />
-              <span
-                className={`hidden items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold sm:inline-flex ${
-                  integration.status === "Live"
-                    ? "bg-tertiary text-foreground"
-                    : integration.status === "Beta"
-                      ? "bg-accent/10 text-accent"
-                      : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {integration.status === "Live" && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-foreground/70" />
-                )}
-                {integration.status}
-              </span>
-            </div>
-            <div className="sm:mt-5">
-              <div className="flex items-center justify-center gap-2 sm:justify-start">
-                <h3 className="text-sm font-bold sm:text-xl">
-                  {integration.name}
-                </h3>
-                <span className="hidden rounded-full bg-muted px-2.5 py-1 text-xs font-bold text-muted-foreground sm:inline-block">
-                  {integration.category}
-                </span>
-              </div>
-              <p className="mt-3 hidden min-h-[3rem] text-sm leading-6 text-muted-foreground sm:block">
-                {integration.description}
-              </p>
-            </div>
-            <div className="mt-5 hidden w-full items-center justify-between border-t border-border pt-4 sm:flex">
-              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
-                <Clock3 className="h-4 w-4 text-primary" />
-                {integration.sync}
-              </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-            </div>
-          </Link>
+            {group.title}
+          </a>
         ))}
-      </div>
-    </section>
+      </nav>
+
+      {groups.map((group) => {
+        const items = integrations.filter((integration) => group.categories.includes(integration.category));
+        if (items.length === 0) return null;
+
+        return (
+          <div key={group.title} id={slugify(group.title)} className="scroll-mt-28 border-b border-line py-12 last:border-b-0">
+            <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink md:text-3xl">{group.title}</h2>
+            <ul className="mt-6">
+              {items.map((integration) => (
+                <li key={integration.slug} className="border-t border-line py-6 first:border-t-0">
+                  <Link
+                    href={`/integrations/${integration.slug}`}
+                    className={`group grid gap-4 rounded-lg md:grid-cols-[auto_1fr_auto] md:items-center md:gap-6 ${focusRing}`}
+                  >
+                    <PluginLogo logo={integration.logo} name={integration.name} />
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <h3 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink group-hover:underline">
+                          {integration.name}
+                        </h3>
+                        <span className="text-sm text-ink/65">{integration.flow}</span>
+                      </div>
+                      <p className="mt-2 max-w-prose text-base leading-7 text-ink/70">{integration.description}</p>
+                    </div>
+                    <span className={`text-sm font-semibold ${statusTone[integration.status]} md:justify-self-end`}>
+                      {integration.status}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
   );
 }

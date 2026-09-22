@@ -10,18 +10,19 @@ export type DocEntry = {
   meta?: string;
 };
 
-// Add a doc here and it appears on /docs automatically. New `category`
-// values create their own section, ordered by first appearance below.
+// Add a doc here and it appears in the sidebar, on /docs, and in the prev/next
+// pager automatically. A new `category` creates its own section, in the order
+// it first appears below.
 export const docs: DocEntry[] = [
   {
     href: "/docs/plugin/woocommerce",
     title: "WooCommerce plugin",
     description:
-      "Install the connector, configure your API key, and stream abandoned carts, orders, and customer events for WhatsApp-first recovery.",
-    category: "Plugins & connectors",
+      "Install the connector, add your API key, and start sending carts, orders and customer events to VaakuOS.",
+    category: "Plugins and connectors",
     icon: Store,
     badge: "WordPress",
-    meta: "~5 min setup",
+    meta: "About 5 minutes",
   },
 ];
 
@@ -36,4 +37,10 @@ export function groupedDocs(): { category: string; entries: DocEntry[] }[] {
     byCategory.get(doc.category)!.push(doc);
   }
   return order.map((category) => ({ category, entries: byCategory.get(category)! }));
+}
+
+export function docNeighbours(href: string): { previous?: DocEntry; next?: DocEntry } {
+  const index = docs.findIndex((doc) => doc.href === href);
+  if (index === -1) return {};
+  return { previous: docs[index - 1], next: docs[index + 1] };
 }

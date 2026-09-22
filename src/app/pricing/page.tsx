@@ -6,7 +6,7 @@ import { softwareApplicationSchema, breadcrumbSchema } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Pricing plans that scale with you",
   description:
-    "Compare VaakuOS pricing plans for abandoned-cart recovery. Start free and upgrade as you grow—automate WhatsApp messaging, recovery flows, and revenue attribution.",
+    "Compare VaakuOS pricing plans for customer messaging on WhatsApp, email, Instagram and Messenger. Start free and upgrade as you grow—automate follow-ups and track revenue per message.",
   alternates: {
     canonical: "/pricing",
   },

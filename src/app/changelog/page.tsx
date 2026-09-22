@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "What's New in VaakuOS",
@@ -9,63 +10,31 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-const changes = [
-  {
-    date: "May 15, 2026",
-    type: "Feature",
-    title: "Advanced A/B Testing",
-    description: "New capabilities for testing message variations, timing, and personalization.",
-  },
-  {
-    date: "May 1, 2026",
-    type: "Improvement",
-    title: "Dashboard Performance",
-    description: "Reduced dashboard load time by 40% for accounts with large datasets.",
-  },
-  {
-    date: "April 20, 2026",
-    type: "Feature",
-    title: "WhatsApp Business API v3",
-    description: "Updated to support the latest WhatsApp Business API features.",
-  },
-  {
-    date: "April 5, 2026",
-    type: "Fix",
-    title: "Notification Improvements",
-    description: "Fixed issues with email notifications for recovered conversions.",
-  },
-];
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`;
 
 export default function ChangelogPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-          What&apos;s New
+    <div className="min-h-screen bg-paper font-display text-ink">
+      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+        <h1 className="max-w-2xl text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[2rem]">
+          What&rsquo;s new
         </h1>
-        <p className="text-xl text-muted-foreground mb-16">
-          The latest updates, features, and improvements to VaakuOS.
-        </p>
-
-        <div className="space-y-8">
-          {changes.map((change, index) => (
-            <div key={index} className="flex gap-4">
-              <div className="w-32 shrink-0">
-                <time className="text-sm text-muted-foreground">{change.date}</time>
-              </div>
-              <div className="flex-1">
-                <span className={`inline-block text-xs font-bold px-2 py-1 rounded mb-2 ${
-                  change.type === "Feature" ? "bg-primary/10 text-primary" :
-                  change.type === "Improvement" ? "bg-green-100 text-green-700" :
-                  "bg-yellow-100 text-yellow-700"
-                }`}>
-                  {change.type}
-                </span>
-                <h3 className="text-lg font-bold mb-1">{change.title}</h3>
-                <p className="text-muted-foreground">{change.description}</p>
-              </div>
-            </div>
-          ))}
+        <div className="mt-10 max-w-prose space-y-5 border-t border-line pt-10 text-base leading-7 text-ink/70">
+          <p>We haven&rsquo;t published a changelog here yet.</p>
+          <p>
+            For now, the fastest way to see what&rsquo;s changed is to ask us
+            directly, or read the setup guide for how the product works today.
+          </p>
+        </div>
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-lg">
+          <Link href="/contact" className={inlineLink}>
+            Ask the team directly
+          </Link>
+          <Link href="/docs" className={inlineLink}>
+            Read the setup guide
+          </Link>
         </div>
       </div>
     </div>

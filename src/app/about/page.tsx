@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { JsonLd } from "@/components/json-ld";
 import { organizationSchema, breadcrumbSchema } from "@/lib/seo";
+import { WalkthroughButton } from "@/components/walkthrough-button";
 
 export const metadata: Metadata = {
   title: "About VaakuOS",
@@ -16,128 +18,112 @@ const breadcrumb = breadcrumbSchema([
   { name: "About", path: "/about" },
 ]);
 
+const heading = "font-display font-bold leading-[1.02] tracking-[-0.03em]";
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`;
+
 export default function AboutPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <div className="bg-paper font-display text-ink">
       <JsonLd data={[organizationSchema, breadcrumb]} />
-      <div className="container mx-auto max-w-6xl px-4 text-center mb-24">
-        <h1 className="text-4xl md:text-7xl font-bold mb-8">
-          Our mission is to end <span className="text-primary italic">abandonment</span>.
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          VaakuOS was founded with a single goal: to help businesses build better relationships
-          with their customers by being there at the right time, with the right message.
-        </p>
-      </div>
 
-      {/* Story Section */}
-      <section className="bg-muted/30 py-24 mb-32">
-        <div className="container mx-auto max-w-6xl px-4">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">The VaakuOS Story</h2>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                It started in a small home office where we noticed a recurring problem:
-                brands were losing nearly 70% of their potential sales at the last mile of the checkout.
-              </p>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Existing solutions were intrusive, annoying, and often did more harm than good.
-                We saw an opportunity to use AI not to spam, but to understand intent and offer genuine value.
-              </p>
-              <div className="grid grid-cols-2 gap-8 mt-12">
-                <div>
-                  <div className="text-4xl font-bold text-primary mb-2">500+</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Brands Trusted</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-primary mb-2">$150M+</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-widest font-bold">Revenue Recovered</div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl border border-border flex items-center justify-center p-12">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🚀</div>
-                  <p className="text-xl font-bold italic text-foreground">
-                    &ldquo;Building the future of intent-based commerce.&rdquo;
-                  </p>
-                </div>
-              </div>
-            </div>
+      <section className="px-4 pb-20 pt-28 md:pb-28 md:pt-36">
+        <div className="mx-auto max-w-6xl">
+          <h1 className="max-w-3xl text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[2rem]">
+            About VaakuOS
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/70">
+            VaakuOS is customer messaging software: one inbox and one customer
+            record across WhatsApp, email, Instagram and Messenger, for any
+            business whose customers reach out by message.
+          </p>
+        </div>
+      </section>
+
+      <section className="px-4 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-5 md:grid-cols-[1.2fr_1fr] md:items-end md:gap-12">
+            <h2 className={`${heading} text-4xl text-ink md:text-6xl`}>
+              Why we built it.
+            </h2>
+            <p className="max-w-md text-lg leading-8 text-ink/70 md:justify-self-end">
+              Recovery comes from messaging with shared customer context at
+              the right moment, not from more reminders across apps that
+              don&rsquo;t talk to each other.
+            </p>
+          </div>
+          <div className="mt-14 max-w-prose space-y-5 border-t border-line pt-10 text-base leading-7 text-ink/70">
+            <p>
+              A customer who messages on WhatsApp, emails a question and later
+              writes in on Instagram is one person, not three conversations.
+              Most tools treat them as three, so the same question gets asked
+              twice and nobody sees the full picture.
+            </p>
+            <p>
+              VaakuOS keeps one record per customer across all four channels,
+              and lets you set up follow-ups that trigger on what a customer
+              does, not on a fixed schedule: a form filled, a cart left, an
+              appointment booked, a payment falling due.
+            </p>
+            <p>
+              We&rsquo;re a small team building for Shopify and WooCommerce
+              brands first, and expanding to any business that talks to
+              customers by message.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <div className="container mx-auto max-w-6xl px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Values that drive us</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Our core beliefs shape every line of code we write and every brand we partner with.
-          </p>
+      <section className="px-4 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <h2 className={`${heading} text-4xl text-ink md:text-6xl`}>What we believe.</h2>
+          <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-x-12 md:gap-y-10">
+            {values.map((v) => (
+              <div key={v.title} className="border-t border-ink pt-6">
+                <h3 className="font-display text-2xl font-bold leading-tight tracking-[-0.02em] text-ink">{v.title}</h3>
+                <p className="mt-3 max-w-prose text-base leading-7 text-ink/70">{v.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {values.map((v) => (
-            <div key={v.title} className="p-8 rounded-3xl border border-border bg-card flex gap-6">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                <v.icon className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2">{v.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{v.desc}</p>
-              </div>
-            </div>
-          ))}
+      <section className="bg-forest px-4 py-20 text-paper md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <h2 className={`${heading} max-w-3xl text-4xl leading-[1.12] md:text-6xl md:leading-[1.08]`}>
+            Curious how it would work for your business?
+          </h2>
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <WalkthroughButton tone="light" />
+            <Link
+              href="/contact"
+              className={`self-start text-base font-semibold text-paper underline decoration-paper/40 underline-offset-4 hover:decoration-paper sm:self-auto ${focusRing} outline-paper`}
+            >
+              Ask the team directly
+            </Link>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
 
 const values = [
   {
-    icon: (props: { className?: string }) => (
-      <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 8v4l2 2" />
-      </svg>
-    ),
-    title: "Precision Focused",
-    desc: "We don't believe in spray-and-pray. Every interaction is calculated for maximum impact and relevance.",
+    title: "One record, not three",
+    desc: "A customer's history follows them across channels. Nobody on your team starts a conversation from zero.",
   },
   {
-    icon: (props: { className?: string }) => (
-      <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    title: "Customer Obsessed",
-    desc: "Our platform is built on the philosophy that if you treat customers with respect, they will return the favor.",
+    title: "Triggered by behaviour, not a calendar",
+    desc: "Follow-ups start when a customer does something, and stop the moment they buy, book, pay or reply.",
   },
   {
-    icon: (props: { className?: string }) => (
-      <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-        <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-      </svg>
-    ),
-    title: "Always Innovating",
-    desc: "The e-commerce landscape changes weekly. Our AI engine evolves daily to stay ahead of the curve.",
+    title: "No invented numbers",
+    desc: "We don't publish recovery rates or customer counts we haven't earned. What we show you is what your account actually did.",
   },
   {
-    icon: (props: { className?: string }) => (
-      <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    ),
-    title: "Transparency First",
-    desc: "No hidden fees, no complex attribution. We show you exactly how much revenue we recover and how.",
+    title: "Shopify and WooCommerce first",
+    desc: "We build for D2C operations on those platforms first, then bring the same building blocks to other kinds of business.",
   },
 ];

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { fraunces } from "@/components/auth/auth-fonts";
+import { authHeading } from "@/components/auth/auth-fonts";
 import { AuthPasswordField } from "@/components/auth/auth-fields";
 import { authService } from "@/services/auth-service";
 
@@ -62,7 +62,7 @@ export function ResetPasswordForm() {
           <span className="text-lg font-bold tracking-tight">VaakuOS</span>
         </Link>
 
-        <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+        <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
           This link looks broken.
         </h1>
         <p className="mt-2.5 text-[0.95rem] leading-7 text-muted-foreground">
@@ -92,7 +92,7 @@ export function ResetPasswordForm() {
           <CheckCircle2 className="h-6 w-6" />
         </div>
 
-        <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+        <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
           All set.
         </h1>
         <p className="mt-2.5 text-[0.95rem] leading-7 text-muted-foreground">
@@ -117,7 +117,7 @@ export function ResetPasswordForm() {
         <span className="text-lg font-bold tracking-tight">VaakuOS</span>
       </Link>
 
-      <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+      <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
         Set a new password.
       </h1>
       <p className="mt-2.5 text-[0.95rem] leading-7 text-muted-foreground">

@@ -20,8 +20,21 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
+        display: ["var(--font-display)", "var(--font-sans)"],
       },
       colors: {
+        // homepage-only palette; values live on .home in globals.css
+        paper: "rgb(var(--paper) / <alpha-value>)",
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        forest: "rgb(var(--forest) / <alpha-value>)",
+        mint: "rgb(var(--mint) / <alpha-value>)",
+        "mint-soft": "rgb(var(--mint-soft) / <alpha-value>)",
+        line: "rgb(var(--line) / <alpha-value>)",
+        error: "rgb(var(--error) / <alpha-value>)",
+        "ch-whatsapp": "rgb(var(--ch-whatsapp) / <alpha-value>)",
+        "ch-email": "rgb(var(--ch-email) / <alpha-value>)",
+        "ch-instagram": "rgb(var(--ch-instagram) / <alpha-value>)",
+        "ch-messenger": "rgb(var(--ch-messenger) / <alpha-value>)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

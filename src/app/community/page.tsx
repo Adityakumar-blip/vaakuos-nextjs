@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -9,50 +10,31 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 hover:decoration-forest ${focusRing}`;
+
 export default function CommunityPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Join our community
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Connect with other e-commerce professionals, share strategies, and learn from experts.
+    <div className="min-h-screen bg-paper font-display text-ink">
+      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+        <h1 className="max-w-2xl text-2xl font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[2rem]">
+          Community
+        </h1>
+        <div className="mt-10 max-w-prose space-y-5 border-t border-line pt-10 text-base leading-7 text-ink/70">
+          <p>We don&rsquo;t have a public community group running yet.</p>
+          <p>
+            If you want to talk to the people building VaakuOS, write to us
+            directly, or book a walkthrough and ask them anything.
           </p>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="whatsapp">
-            <div className="text-4xl mb-4">💬</div>
-            <h3 className="text-lg font-bold mb-2">WhatsApp Community</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Join our WhatsApp group for real-time discussions and support.
-            </p>
-            <a href="#whatsapp" className="text-sm text-primary hover:underline">
-              Join Now →
-            </a>
-          </div>
-          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="telegram">
-            <div className="text-4xl mb-4">📱</div>
-            <h3 className="text-lg font-bold mb-2">Telegram Channel</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Get updates, tips, and best practices delivered to your phone.
-            </p>
-            <a href="#telegram" className="text-sm text-primary hover:underline">
-              Join Now →
-            </a>
-          </div>
-          <div className="text-center p-8 rounded-2xl border border-border bg-card" id="office-hours">
-            <div className="text-4xl mb-4">🎓</div>
-            <h3 className="text-lg font-bold mb-2">Office Hours</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Weekly live sessions with our team and product experts.
-            </p>
-            <a href="#office-hours" className="text-sm text-primary hover:underline">
-              Register →
-            </a>
-          </div>
+        <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-lg">
+          <Link href="/contact" className={inlineLink}>
+            Ask the team directly
+          </Link>
+          <Link href="/demo" className={inlineLink}>
+            Book a walkthrough
+          </Link>
         </div>
       </div>
     </div>

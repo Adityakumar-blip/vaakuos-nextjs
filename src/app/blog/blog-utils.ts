@@ -1,9 +1,10 @@
 // Shared helpers for blog index + detail pages
 
-export const COVER_PALETTES = [
-  "bg-[radial-gradient(circle_at_28%_22%,hsl(var(--tertiary)/0.95),hsl(var(--primary))_78%)]",
-  "bg-[radial-gradient(circle_at_72%_24%,hsl(var(--accent)/0.85),hsl(var(--primary))_80%)]",
-  "bg-[radial-gradient(circle_at_24%_78%,hsl(var(--primary)),hsl(152_39%_14%)_85%)]",
+/** Solid-tone placeholder covers for posts without a featured image (no gradients). */
+export const COVER_PALETTES: { bg: string; mark: string }[] = [
+  { bg: "bg-forest", mark: "text-paper/20" },
+  { bg: "bg-ink", mark: "text-paper/15" },
+  { bg: "bg-mint-soft", mark: "text-ink/15" },
 ];
 
 export const hashSlug = (slug: string) =>

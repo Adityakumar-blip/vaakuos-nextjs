@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BookDemoForm } from "@/components/BookDemoForm";
 
 export const metadata: Metadata = {
-  title: "Book a Free Demo",
+  title: "Book a walkthrough",
   description:
-    "See VaakuOS in action. Book a personalized demo to see how we recover abandoned revenue for your store.",
+    "Book a walkthrough with the VaakuOS team. We'll look at the channels your customers use — WhatsApp, email, Instagram and Messenger — and set up your first follow-up together.",
   alternates: {
     canonical: "/demo",
   },
@@ -13,28 +13,20 @@ export const metadata: Metadata = {
 
 export default function DemoPage() {
   return (
-    <section className="relative isolate overflow-hidden px-4 pb-16 pt-28 md:pb-24 md:pt-32">
-      {/* ── Background — matches hero & contact sections ── */}
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted))_58%,hsl(var(--background))_100%)]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_16%_18%,hsl(var(--tertiary)/0.46),transparent_30%),radial-gradient(circle_at_88%_10%,hsl(var(--primary)/0.20),transparent_28%),linear-gradient(120deg,transparent_0%,hsl(var(--accent)/0.08)_45%,transparent_70%)]" />
-      <div className="absolute inset-0 -z-10 opacity-[0.22] [background-image:linear-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
-
-      <div className="container relative z-10 mx-auto max-w-5xl">
-        {/* ── Header ── */}
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-primary">
-            Book a demo
-          </p>
-          <h1 className="mb-5 text-3xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-            See VaakuOS in action.
+    <section className="bg-paper px-4 pb-20 pt-28 font-display text-ink md:pb-28 md:pt-36">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-5 md:grid-cols-[1.1fr_1fr] md:items-end md:gap-12">
+          <h1 className="font-display text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-ink md:text-6xl">
+            Book a walkthrough.
           </h1>
-          <p className="mx-auto max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
-            Book a personalized walkthrough and see exactly how we recover
-            abandoned revenue for stores like yours.
+          <p className="max-w-md text-lg leading-8 text-ink/70 md:justify-self-end">
+            A walkthrough is a 15-minute call with our team. We&apos;ll look at the channels
+            your customers already use — WhatsApp, email, Instagram or Messenger — and set
+            up your first follow-up together.
           </p>
         </div>
 
-        <div className="mt-8 md:mt-14">
+        <div className="mt-14 md:mt-20">
           <BookDemoForm isPage={true} />
         </div>
       </div>

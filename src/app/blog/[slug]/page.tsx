@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Clock3 } from "lucide-react";
 import { blogService } from "@/services/blog-service";
-import { readingTimeMinutes } from "@/lib/reading-time";
 import { COVER_PALETTES, formatDate, hashSlug, initials } from "../blog-utils";
 import { NewsletterCta } from "../newsletter-cta";
 import { ReadingProgress } from "./reading-progress";
 import type { BlogPost } from "@/types/blog";
 import { JsonLd } from "@/components/json-ld";
 import { SITE_URL, ORGANIZATION_ID, breadcrumbSchema } from "@/lib/seo";
+
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline underline-offset-4 decoration-forest/30 transition-colors hover:decoration-forest ${focusRing}`;
 
 function articleSchema(post: BlogPost) {
   const authorName = post.author?.name || "VaakuOS Team";
@@ -93,12 +95,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function SideThumb({ post }: { post: BlogPost }) {
   if (post.featured_image) {
     return (
-      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border border-foreground/10 bg-muted">
+      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-line/40">
         <Image
           src={post.featured_image}
           alt={post.title}
           fill
           sizes="80px"
+          loading="lazy"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
@@ -106,13 +109,8 @@ function SideThumb({ post }: { post: BlogPost }) {
   }
   const palette = COVER_PALETTES[hashSlug(post.slug) % COVER_PALETTES.length];
   return (
-    <div
-      className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg ${palette}`}
-    >
-      <span
-        aria-hidden
-        className="absolute -bottom-[0.3em] left-1.5 select-none text-3xl font-bold leading-none text-white/20"
-      >
+    <div className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg ${palette.bg}`}>
+      <span aria-hidden="true" className={`absolute -bottom-[0.3em] left-1.5 select-none text-3xl font-bold leading-none ${palette.mark}`}>
         {post.title.charAt(0)}
       </span>
     </div>
@@ -123,41 +121,29 @@ function OtherReads({ posts }: { posts: BlogPost[] }) {
   if (posts.length === 0) return null;
   return (
     <aside className="lg:sticky lg:top-28 lg:self-start">
-      <div className="mb-5 flex items-center gap-4">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-muted-foreground">
-          Other reads
-        </h2>
-        <span className="h-px flex-1 bg-foreground/10" />
-      </div>
-      <div className="space-y-5">
+      <h2 className="border-t border-ink pt-4 text-sm font-semibold text-ink">Other reads</h2>
+      <div className="mt-5 space-y-5">
         {posts.map((post) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group flex items-start gap-3.5"
+            className={`group flex items-start gap-3.5 rounded-lg ${focusRing}`}
           >
             <SideThumb post={post} />
             <div className="min-w-0">
-              <h3 className="line-clamp-2 text-sm font-bold leading-snug tracking-tight transition-colors group-hover:text-primary">
+              <h3 className="line-clamp-2 text-sm font-bold leading-snug tracking-[-0.01em] text-ink transition-colors group-hover:text-forest">
                 {post.title}
               </h3>
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                <time dateTime={post.created_at}>
-                  {formatDate(post.created_at)}
-                </time>
-                <span className="mx-1.5 text-muted-foreground/60">·</span>
-                {post.author?.name || "VaakuOS Team"}
+              <p className="mt-1.5 flex flex-wrap items-center gap-x-2 text-xs text-ink/65">
+                <time dateTime={post.created_at}>{formatDate(post.created_at)}</time>
+                <span>{post.author?.name || "VaakuOS Team"}</span>
               </p>
             </div>
           </Link>
         ))}
       </div>
-      <Link
-        href="/blog"
-        className="group mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary"
-      >
+      <Link href="/blog" className={`mt-7 inline-block text-sm ${inlineLink}`}>
         View all posts
-        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
       </Link>
     </aside>
   );
@@ -175,8 +161,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const authorName = post.author?.name || "VaakuOS Team";
-  const readingTime = readingTimeMinutes(post.content ?? "");
-  const formattedDate = formatDate(post.created_at);
+  const publishedDate = formatDate(post.created_at);
+  const wasUpdated = post.updated_at && post.updated_at !== post.created_at;
 
   const breadcrumb = breadcrumbSchema([
     { name: "Home", path: "/" },
@@ -185,63 +171,46 @@ export default async function BlogPostPage({ params }: PageProps) {
   ]);
 
   return (
-    <div className="relative min-h-screen overflow-hidden pb-24 pt-32">
+    <div className="bg-paper pb-20 pt-28 font-display text-ink md:pb-28 md:pt-36">
       <JsonLd data={[articleSchema(post), breadcrumb]} />
       <ReadingProgress />
 
-      {/* Atmosphere */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[420px] w-[800px] max-w-[150vw] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,hsl(var(--tertiary)/0.28),transparent)] blur-2xl" />
-        <div className="absolute inset-0 opacity-[0.15] [background-image:linear-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_45%)]" />
-      </div>
-
-      <div className="container mx-auto max-w-6xl px-4">
-        <Link
-          href="/blog"
-          className="group mb-10 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-card/70 px-4 py-2 text-sm font-semibold text-muted-foreground backdrop-blur-sm transition-all hover:border-primary/40 hover:text-primary"
-        >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-          Back to the Journal
+      <div className="mx-auto max-w-6xl px-4">
+        <Link href="/blog" className={`mb-10 inline-block text-sm ${inlineLink}`}>
+          Back to the blog
         </Link>
 
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_280px] xl:gap-16">
           <article className="min-w-0">
             <header className="mb-10 md:mb-12">
-              <span className="inline-block rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
-                {post.category?.name || "General"}
-              </span>
+              <p className="text-sm text-ink/65">{post.category?.name || "General"}</p>
 
-              <h1 className="mt-6 text-3xl font-bold leading-[1.1] tracking-tight md:text-4xl lg:text-5xl">
+              <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-ink md:text-6xl">
                 {post.title}
               </h1>
 
               {post.excerpt && (
-                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+                <p className="mt-5 max-w-prose text-lg leading-8 text-ink/70">
                   {post.excerpt}
                 </p>
               )}
 
-              <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-tertiary text-xs font-bold text-tertiary-foreground">
-                    {initials(authorName)}
-                  </span>
-                  <span className="font-semibold text-foreground">
-                    {authorName}
-                  </span>
+              <div className="mt-7 flex flex-wrap items-center gap-3 text-sm text-ink/65">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-xs font-bold text-paper">
+                  {initials(authorName)}
                 </span>
-                <span className="text-muted-foreground/50">·</span>
-                <time dateTime={post.created_at}>{formattedDate}</time>
-                <span className="text-muted-foreground/50">·</span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Clock3 className="h-3.5 w-3.5" />
-                  {readingTime} min read
-                </span>
+                <span className="font-semibold text-ink">{authorName}</span>
+                <time dateTime={post.created_at}>Published {publishedDate}</time>
+                {wasUpdated && (
+                  <time dateTime={post.updated_at}>
+                    Updated {formatDate(post.updated_at)}
+                  </time>
+                )}
               </div>
             </header>
 
             {post.featured_image && (
-              <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-foreground/10 shadow-xl shadow-primary/10 md:mb-12">
+              <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-line/40 md:mb-12">
                 <Image
                   src={post.featured_image}
                   alt={post.title}
@@ -254,30 +223,31 @@ export default async function BlogPostPage({ params }: PageProps) {
             )}
 
             <div
-              className="prose prose-lg max-w-none
-                prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground
-                prose-p:leading-relaxed prose-p:text-foreground/80
-                prose-a:font-semibold prose-a:text-primary prose-a:decoration-accent/40 prose-a:underline-offset-4 hover:prose-a:decoration-accent
-                prose-strong:text-foreground
-                prose-blockquote:border-l-accent prose-blockquote:text-xl prose-blockquote:italic prose-blockquote:text-foreground
-                prose-li:text-foreground/80
-                prose-img:rounded-2xl prose-img:border prose-img:border-foreground/10
-                prose-hr:border-border"
+              className="prose prose-lg max-w-[68ch]
+                prose-headings:font-display prose-headings:font-bold prose-headings:tracking-[-0.02em] prose-headings:text-ink
+                prose-p:leading-8 prose-p:text-ink/80
+                prose-a:font-semibold prose-a:text-forest prose-a:no-underline prose-a:underline-offset-4 hover:prose-a:underline
+                prose-strong:text-ink
+                prose-blockquote:border-l-forest prose-blockquote:font-normal prose-blockquote:not-italic prose-blockquote:text-ink/80
+                prose-li:text-ink/80 prose-li:marker:text-ink/40
+                prose-code:rounded prose-code:bg-mint-soft prose-code:px-1.5 prose-code:py-0.5 prose-code:text-ink prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-ink prose-pre:text-paper
+                prose-img:rounded-2xl
+                prose-hr:border-line"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            <footer className="mt-14">
-              <div className="flex items-center gap-4 rounded-2xl border border-foreground/10 bg-card p-6">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-tertiary text-base font-bold text-tertiary-foreground">
+            <footer className="mt-14 border-t border-line pt-8">
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-forest text-base font-bold text-paper">
                   {initials(authorName)}
                 </span>
                 <div>
-                  <p className="text-lg font-bold tracking-tight">
+                  <p className="font-display text-lg font-bold tracking-[-0.01em] text-ink">
                     Written by {authorName}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Insights on cart recovery, retention, and conversion from
-                    the VaakuOS team.
+                  <p className="text-sm text-ink/65">
+                    From the team building VaakuOS.
                   </p>
                 </div>
               </div>

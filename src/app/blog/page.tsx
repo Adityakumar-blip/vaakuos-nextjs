@@ -7,9 +7,9 @@ import { BlogIndexContent, type BlogPreview } from "./blog-index-content";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog: Conversion and Recovery Insights",
+  title: "Blog — playbooks for customer messaging",
   description:
-    "Read VaakuOS insights, case studies, and playbooks on recovering abandoned sales and scaling e-commerce revenue.",
+    "Guides and playbooks on messaging customers over WhatsApp, email, Instagram and Messenger, from the team building VaakuOS.",
   alternates: {
     canonical: "/blog",
   },
@@ -39,20 +39,21 @@ export default async function BlogPage() {
   }));
 
   return (
-    <div className="min-h-screen pb-24 pt-32 md:pt-36">
-      <div className="container mx-auto max-w-6xl px-4">
-        {/* Page header — minimal, left-aligned */}
-        <header className="hero-fade-item hero-delay-1 mb-12 md:mb-16">
-          <h1 className="text-4xl font-bold leading-[1.08] tracking-tight md:text-5xl">
+    <div className="bg-paper pb-20 pt-28 font-display text-ink md:pb-28 md:pt-36">
+      <div className="mx-auto max-w-6xl px-4">
+        <header className="grid gap-5 md:grid-cols-[1.2fr_1fr] md:items-end md:gap-12">
+          <h1 className="text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-ink md:text-6xl">
             From the team
           </h1>
-          <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground md:text-lg">
-            Announcements, playbooks, and no-nonsense guides on recovering
-            abandoned sales from the team building VaakuOS.
+          <p className="max-w-md text-lg leading-8 text-ink/70 md:justify-self-end">
+            Playbooks and guides on messaging customers over WhatsApp, email,
+            Instagram and Messenger.
           </p>
         </header>
 
-        <BlogIndexContent posts={previews} />
+        <div className="mt-14 md:mt-20">
+          <BlogIndexContent posts={previews} />
+        </div>
       </div>
     </div>
   );

@@ -3,9 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Loader2, Check } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { fraunces } from "@/components/auth/auth-fonts";
+import { authHeading } from "@/components/auth/auth-fonts";
 import {
   AuthField,
   AuthPasswordField,
@@ -65,7 +65,7 @@ export function SignupForm() {
         <span className="text-lg font-bold tracking-tight">VaakuOS</span>
       </Link>
 
-      <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+      <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
         Let&apos;s get you set up.
       </h1>
       <div className="mt-3.5 flex flex-wrap gap-x-4 gap-y-1.5">
@@ -105,7 +105,7 @@ export function SignupForm() {
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="you@yourstore.com"
+          placeholder="you@yourbusiness.com"
           value={formData.email}
           onChange={(e) => setFormData((f) => ({ ...f, email: e.target.value }))}
           required
@@ -158,7 +158,6 @@ export function SignupForm() {
           ) : (
             <>
               Start free trial
-              <ArrowRight className="h-[18px] w-[18px] transition-transform group-hover:translate-x-0.5" />
             </>
           )}
         </button>

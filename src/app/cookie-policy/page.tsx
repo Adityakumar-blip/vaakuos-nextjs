@@ -1,53 +1,28 @@
 import type { Metadata } from "next";
+import { LegalDocument } from "@/components/legal-document";
+import { getLegalPage, legalPageDate } from "@/services/legal-service";
+import { LEGAL_FALLBACK_DATE, cookiePolicyFallback } from "../legal-fallbacks";
 
-export const metadata: Metadata = {
-  title: "Cookie Policy",
-  description: "VaakuOS cookie policy and tracking technologies.",
-  alternates: {
-    canonical: "/cookie-policy",
-  },
-};
+const SLUG = "cookie-policy" as const;
+const FALLBACK_TITLE = "Cookie Policy";
 
-export default function CookiePolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getLegalPage(SLUG);
+  return {
+    title: page?.meta_title || page?.title || FALLBACK_TITLE,
+    description: page?.meta_description || "How VaakuOS uses cookies and similar tracking technologies.",
+    alternates: { canonical: "/cookie-policy" },
+  };
+}
+
+export default async function CookiePolicyPage() {
+  const page = await getLegalPage(SLUG);
   return (
-    <div className="min-h-screen pt-32 pb-20">
-      <div className="container mx-auto max-w-4xl px-4">
-        <h1 className="text-4xl font-bold mb-8">Cookie Policy</h1>
-        <div className="prose max-w-none text-muted-foreground">
-          <p>Last updated: March 4, 2026</p>
-
-          <p>
-            This Cookie Policy explains how VaakuOS uses cookies and similar tracking
-            technologies when you visit our website.
-          </p>
-
-          <h2>What Are Cookies?</h2>
-          <p>
-            Cookies are small text files that are stored on your device when you
-            visit a website. They help websites remember your preferences and
-            understand how you use the site.
-          </p>
-
-          <h2>How We Use Cookies</h2>
-          <p>We use cookies for:</p>
-          <ul>
-            <li><strong>Essential cookies:</strong> Required for the website to function</li>
-            <li><strong>Analytics cookies:</strong> Help us understand how visitors use our site</li>
-            <li><strong>Marketing cookies:</strong> Track your activity across websites for advertising</li>
-          </ul>
-
-          <h2>Managing Cookies</h2>
-          <p>
-            You can control cookies through your browser settings. Disabling certain
-            cookies may affect website functionality.
-          </p>
-
-          <h2>Contact</h2>
-          <p>
-            Questions about our use of cookies? Contact us at privacy@vaakuos.com
-          </p>
-        </div>
-      </div>
-    </div>
+    <LegalDocument
+      title={page?.title || FALLBACK_TITLE}
+      lastUpdated={legalPageDate(page, LEGAL_FALLBACK_DATE)}
+      html={page?.content || cookiePolicyFallback}
+      contactEmail="privacy@vaakuos.com"
+    />
   );
 }

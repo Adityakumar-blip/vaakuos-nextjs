@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BookOpen } from "lucide-react";
 import { NewsletterCta } from "./newsletter-cta";
 import { COVER_PALETTES, formatDate, hashSlug } from "./blog-utils";
 
@@ -18,31 +17,32 @@ export interface BlogPreview {
   image?: string;
 }
 
-function Cover({ post, sizes }: { post: BlogPreview; sizes: string }) {
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+
+function Cover({ post, sizes, priority = false }: { post: BlogPreview; sizes: string; priority?: boolean }) {
   if (post.image) {
     return (
-      <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-foreground/10 bg-muted">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-line/40">
         <Image
           src={post.image}
           alt={post.title}
           fill
           sizes={sizes}
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
         />
       </div>
     );
   }
 
-  // Generative brand cover for posts without a featured image
   const palette = COVER_PALETTES[hashSlug(post.slug) % COVER_PALETTES.length];
   return (
-    <div
-      className={`relative aspect-[16/9] overflow-hidden rounded-xl ${palette}`}
-    >
-      <div className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(hsl(0_0%_100%/0.55)_1px,transparent_1px)] [background-size:18px_18px]" />
+    <div className={`relative aspect-[16/9] overflow-hidden rounded-xl ${palette.bg}`}>
       <span
-        aria-hidden
-        className="absolute -bottom-[0.28em] left-4 select-none text-[7rem] font-bold leading-none tracking-tight text-white/15 transition-transform duration-500 ease-out group-hover:-translate-y-1.5"
+        aria-hidden="true"
+        className={`absolute -bottom-[0.28em] left-4 select-none text-[7rem] font-bold leading-none ${palette.mark}`}
       >
         {post.title.charAt(0)}
       </span>
@@ -52,10 +52,9 @@ function Cover({ post, sizes }: { post: BlogPreview; sizes: string }) {
 
 function PostMeta({ post }: { post: BlogPreview }) {
   return (
-    <p className="text-sm text-muted-foreground">
+    <p className="flex flex-wrap items-center gap-x-3 text-sm text-ink/65">
       <time dateTime={post.date}>{formatDate(post.date)}</time>
-      <span className="mx-1.5 text-muted-foreground/60">·</span>
-      {post.author}
+      <span>{post.author}</span>
     </p>
   );
 }
@@ -76,20 +75,15 @@ export function BlogIndexContent({ posts }: { posts: BlogPreview[] }) {
       ? others
       : others.filter((post) => post.category === active);
 
-  /* Empty state — no posts at all */
   if (posts.length === 0) {
     return (
       <>
-        <div className="hero-fade-item hero-delay-3 rounded-2xl border border-dashed border-foreground/20 bg-card/60 px-8 py-20 text-center md:py-28">
-          <span className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-tertiary/40 text-primary">
-            <BookOpen className="h-6 w-6" />
-          </span>
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-            The first story is being written.
+        <div className="border-t border-line px-4 py-20 text-center md:py-28">
+          <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink md:text-3xl">
+            The first post is being written.
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
-            Our playbooks on cart recovery, retention, and conversion land here
-            soon. Subscribe below so you don&apos;t miss the first issue.
+          <p className="mx-auto mt-3 max-w-md text-base leading-7 text-ink/70">
+            Subscribe below so you don&rsquo;t miss it.
           </p>
         </div>
         <NewsletterCta />
@@ -100,47 +94,41 @@ export function BlogIndexContent({ posts }: { posts: BlogPreview[] }) {
   return (
     <>
       {/* Featured post */}
-      <section className="hero-fade-item hero-delay-2">
-        <p className="mb-5 text-sm font-semibold text-muted-foreground">
-          Featured post
-        </p>
-        <Link href={`/blog/${featured.slug}`} className="group block">
+      <section>
+        <p className="mb-5 text-sm font-semibold text-ink/65">Featured post</p>
+        <Link
+          href={`/blog/${featured.slug}`}
+          className={`group block rounded-lg ${focusRing}`}
+        >
           <div className="grid items-center gap-6 md:grid-cols-2 md:gap-10">
-            <Cover
-              post={featured}
-              sizes="(min-width: 768px) 50vw, 100vw"
-            />
+            <Cover post={featured} sizes="(min-width: 768px) 50vw, 100vw" priority />
             <div>
               <PostMeta post={featured} />
-              <h2 className="mt-3 text-2xl font-bold leading-[1.15] tracking-tight transition-colors group-hover:text-primary md:text-3xl lg:text-4xl">
+              <h2 className="mt-3 font-display text-2xl font-bold leading-[1.15] tracking-[-0.02em] text-ink transition-colors group-hover:text-forest md:text-3xl lg:text-4xl">
                 {featured.title}
               </h2>
               {featured.excerpt && (
-                <p className="mt-4 line-clamp-3 text-base leading-relaxed text-muted-foreground">
+                <p className="mt-4 line-clamp-3 text-base leading-7 text-ink/70">
                   {featured.excerpt}
                 </p>
               )}
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                Read post
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
             </div>
           </div>
         </Link>
       </section>
 
-      {/* Divider + category tabs */}
-      <div className="hero-fade-item hero-delay-3 mt-14 border-t border-border md:mt-20">
+      {/* Category filter */}
+      <div className="mt-14 border-t border-line md:mt-20">
         {others.length > 0 && categories.length > 2 && (
-          <div className="-mb-px flex flex-wrap gap-x-7 gap-y-1 pt-0">
+          <div className="-mb-px flex flex-wrap gap-x-7 gap-y-1">
             {categories.map((name) => (
               <button
                 key={name}
                 onClick={() => setActive(name)}
-                className={`-mt-px border-t-2 pb-1 pt-4 text-sm font-semibold transition-colors ${
+                className={`-mt-px border-t-2 pb-1 pt-4 text-sm font-semibold transition-colors ${focusRing} ${
                   active === name
-                    ? "border-primary text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    ? "border-forest text-ink"
+                    : "border-transparent text-ink/65 hover:text-ink"
                 }`}
               >
                 {name}
@@ -150,22 +138,15 @@ export function BlogIndexContent({ posts }: { posts: BlogPreview[] }) {
         )}
       </div>
 
-      {/* Post grid */}
+      {/* Post list */}
       {others.length > 0 &&
         (filtered.length > 0 ? (
-          <section
-            key={active}
-            className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 md:mt-12"
-          >
-            {filtered.map((post, index) => (
+          <section key={active} className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
+            {filtered.map((post) => (
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group block animate-fade-in"
-                style={{
-                  animationDelay: `${Math.min(index, 8) * 60}ms`,
-                  animationFillMode: "backwards",
-                }}
+                className={`group block rounded-lg ${focusRing}`}
               >
                 <Cover
                   post={post}
@@ -173,11 +154,11 @@ export function BlogIndexContent({ posts }: { posts: BlogPreview[] }) {
                 />
                 <div className="mt-4">
                   <PostMeta post={post} />
-                  <h3 className="mt-2 text-lg font-bold leading-snug tracking-tight transition-colors group-hover:text-primary md:text-xl">
+                  <h3 className="mt-2 font-display text-lg font-bold leading-snug tracking-[-0.01em] text-ink transition-colors group-hover:text-forest md:text-xl">
                     {post.title}
                   </h3>
                   {post.excerpt && (
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-ink/70">
                       {post.excerpt}
                     </p>
                   )}
@@ -186,13 +167,13 @@ export function BlogIndexContent({ posts }: { posts: BlogPreview[] }) {
             ))}
           </section>
         ) : (
-          <div className="mt-10 rounded-2xl border border-dashed border-foreground/20 bg-card/60 px-8 py-14 text-center md:mt-12">
-            <h3 className="text-lg font-bold tracking-tight">
+          <div className="mt-10 border-t border-line px-4 py-14 text-center md:mt-12">
+            <h3 className="font-display text-lg font-bold tracking-[-0.01em] text-ink">
               Nothing in {active} yet.
             </h3>
             <button
               onClick={() => setActive("All")}
-              className="mt-3 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+              className={`mt-3 text-sm font-semibold text-forest underline underline-offset-4 ${focusRing}`}
             >
               View all posts
             </button>

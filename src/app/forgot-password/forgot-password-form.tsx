@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Loader2, MailCheck } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
-import { fraunces } from "@/components/auth/auth-fonts";
+import { authHeading } from "@/components/auth/auth-fonts";
 import { AuthField } from "@/components/auth/auth-fields";
 import { authService } from "@/services/auth-service";
 
@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
           <MailCheck className="h-6 w-6" />
         </div>
 
-        <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+        <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
           Check your email.
         </h1>
         <p className="mt-2.5 text-[0.95rem] leading-7 text-muted-foreground">
@@ -83,7 +83,7 @@ export function ForgotPasswordForm() {
         <span className="text-lg font-bold tracking-tight">VaakuOS</span>
       </Link>
 
-      <h1 className={`${fraunces.className} text-[2.1rem] font-normal leading-[1.05] tracking-tight text-foreground`}>
+      <h1 className={`${authHeading} text-[2.1rem] leading-[1.08] text-ink`}>
         Forgot your password?
       </h1>
       <p className="mt-2.5 text-[0.95rem] leading-7 text-muted-foreground">
@@ -96,7 +96,7 @@ export function ForgotPasswordForm() {
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="you@yourstore.com"
+          placeholder="you@yourbusiness.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

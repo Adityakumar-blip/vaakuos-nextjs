@@ -1,177 +1,115 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BookOpen, Sparkles } from "lucide-react";
-
 import { JsonLd } from "@/components/json-ld";
-import { SITE_URL, breadcrumbSchema } from "@/lib/seo";
-import { docs, groupedDocs } from "./docs-registry";
+import { breadcrumbSchema } from "@/lib/seo";
+import { groupedDocs } from "./docs-registry";
 
 export const metadata: Metadata = {
-  title: "Docs — plugins, connectors & developer guides",
+  title: "Documentation",
   description:
-    "Everything you need to connect your store to Vaakuos and run WhatsApp-first recovery: plugin setup guides, event references, payloads, and developer hooks.",
+    "Set up VaakuOS: connect your store or tools, send customer events, and start automated follow-ups on WhatsApp, email, Instagram and Messenger.",
   alternates: {
     canonical: "/docs",
   },
 };
 
-const itemListSchema = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Vaakuos documentation",
-  itemListElement: docs.map((doc, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    name: doc.title,
-    url: `${SITE_URL}${doc.href}`,
-  })),
-};
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest";
+const inlineLink = `font-semibold text-forest underline decoration-forest/30 underline-offset-4 transition-colors hover:decoration-forest ${focusRing}`;
 
-function anchorFor(category: string) {
-  return category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
+const startHere = [
+  {
+    title: "Connect a store or tool",
+    body: "Install a plugin or connect an app so VaakuOS knows when an order, booking or lead happens.",
+    href: "/integrations",
+    linkText: "Browse integrations",
+  },
+  {
+    title: "Send your own events",
+    body: "No plugin for your stack? Post events straight to the API with a token from your dashboard.",
+    href: "/contact",
+    linkText: "Ask for API access",
+  },
+];
 
-export default function DocsIndexPage() {
-  const groups = groupedDocs();
-  const breadcrumb = breadcrumbSchema([
-    { name: "Home", path: "/" },
-    { name: "Docs", path: "/docs" },
-  ]);
-
+export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-background pt-24 text-foreground">
-      <JsonLd data={[itemListSchema, breadcrumb]} />
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Docs", path: "/docs" },
+        ])}
+      />
 
-      {/* Hero */}
-      <section className="relative border-b border-border/70">
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(115deg,rgba(42,97,68,0.14),transparent_32%,rgba(238,90,41,0.10)_64%,transparent)]" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_25%,rgba(130,193,159,0.35),transparent_26%),radial-gradient(circle_at_80%_10%,rgba(238,90,41,0.14),transparent_22%)]" />
+      <div className="max-w-3xl">
+        <h1 className="text-4xl font-bold leading-[1.05] tracking-[-0.03em] md:text-5xl">Documentation</h1>
+        <p className="mt-5 text-lg leading-8 text-ink/70">
+          Guides for connecting VaakuOS to the tools you already run, so an order,
+          a booking or a new lead can start a follow-up on WhatsApp, email,
+          Instagram or Messenger.
+        </p>
+      </div>
 
-        <div className="container mx-auto max-w-7xl px-4 py-16 md:py-20">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/50 px-3 py-1.5 text-sm font-semibold text-primary shadow-sm backdrop-blur">
-            <Sparkles className="h-4 w-4" />
-            Documentation
-          </div>
-          <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-5xl">
-            Build on Vaakuos
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            Setup guides, event references, and developer hooks for every plugin
-            and connector. Pick a doc below to get streaming events in minutes.
-          </p>
+      <section className="mt-14">
+        <h2 className="text-sm font-bold text-ink">Start here</h2>
+        <div className="mt-4 grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2">
+          {startHere.map((item) => (
+            <div key={item.title} className="bg-white p-6">
+              <h3 className="text-lg font-bold tracking-[-0.01em]">{item.title}</h3>
+              <p className="mt-2 text-base leading-7 text-ink/70">{item.body}</p>
+              <Link href={item.href} className={`mt-4 inline-block text-base ${inlineLink}`}>
+                {item.linkText}
+              </Link>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Index */}
-      <div className="container mx-auto grid max-w-7xl gap-12 px-4 py-14 lg:grid-cols-[220px_minmax(0,1fr)]">
-        {/* Category rail */}
-        <aside className="hidden lg:block">
-          <nav className="sticky top-28 space-y-1">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Categories
-            </p>
-            {groups.map(({ category, entries }) => (
-              <a
-                key={category}
-                href={`#${anchorFor(category)}`}
-                className="flex items-center justify-between rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {category}
-                <span className="text-xs tabular-nums text-muted-foreground/70">
-                  {entries.length}
-                </span>
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        <div className="max-w-3xl">
-          {groups.map(({ category, entries }) => (
-            <section
-              key={category}
-              id={anchorFor(category)}
-              className="mb-14 scroll-mt-28 last:mb-0"
-            >
-              <div className="flex items-baseline justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-                  {category}
-                </h2>
-                <span className="text-xs font-medium text-muted-foreground">
-                  {entries.length} {entries.length === 1 ? "guide" : "guides"}
-                </span>
-              </div>
-
-              <div className="mt-5 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-white/35">
-                {entries.map((doc) => {
-                  const Icon = doc.icon;
-                  return (
-                    <Link
-                      key={doc.href}
-                      href={doc.href}
-                      className="group relative flex items-center gap-5 p-5 transition-colors hover:bg-muted/50"
-                    >
-                      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Icon className="h-5 w-5" />
+      {groupedDocs().map((group) => (
+        <section key={group.category} className="mt-14">
+          <h2 className="text-sm font-bold text-ink">{group.category}</h2>
+          <ul className="mt-4 border-t border-line">
+            {group.entries.map((entry) => (
+              <li key={entry.href} className="border-b border-line">
+                <Link
+                  href={entry.href}
+                  className={`group flex flex-col gap-1 py-5 transition-colors hover:bg-ink/[0.03] sm:px-2 ${focusRing}`}
+                >
+                  <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="text-lg font-bold tracking-[-0.01em] text-ink group-hover:text-forest">
+                      {entry.title}
+                    </span>
+                    {entry.badge && (
+                      <span className="rounded-full bg-mint-soft px-2.5 py-0.5 text-sm font-semibold text-forest">
+                        {entry.badge}
                       </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-                          <h3 className="font-bold">{doc.title}</h3>
-                          {doc.badge && (
-                            <span className="rounded-full border border-border bg-background px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                              {doc.badge}
-                            </span>
-                          )}
-                          {doc.meta && (
-                            <span className="text-xs font-medium text-muted-foreground">
-                              · {doc.meta}
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-                          {doc.description}
-                        </p>
-                      </div>
-                      <ArrowRight className="h-5 w-5 flex-shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+                    )}
+                    {entry.meta && <span className="text-sm text-ink/65">{entry.meta}</span>}
+                  </span>
+                  <span className="max-w-2xl text-base leading-7 text-ink/70">{entry.description}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
-          {/* Help nudge */}
-          <div className="mt-4 rounded-2xl border border-border bg-muted/30 p-6">
-            <div className="flex items-start gap-4">
-              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <BookOpen className="h-5 w-5" />
-              </span>
-              <div className="flex-1">
-                <h3 className="font-bold">Can&apos;t find what you need?</h3>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Request a connector or reach out — our team will point you to
-                  the right setup.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
-                  <Link
-                    href="/request-integration"
-                    className="inline-flex items-center gap-1.5 text-primary hover:underline"
-                  >
-                    Request an integration
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-1.5 text-primary hover:underline"
-                  >
-                    Talk to support
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section className="mt-16 rounded-2xl border border-line bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold tracking-[-0.02em]">Can&rsquo;t find what you need?</h2>
+        <p className="mt-2 max-w-xl text-base leading-7 text-ink/70">
+          These are the guides we&rsquo;ve published so far. Tell us which platform
+          you run and we&rsquo;ll point you at the right setup, or write the guide.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-6">
+          <Link href="/request-integration" className={`text-base ${inlineLink}`}>
+            Request an integration
+          </Link>
+          <Link href="/contact" className={`text-base ${inlineLink}`}>
+            Talk to support
+          </Link>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
