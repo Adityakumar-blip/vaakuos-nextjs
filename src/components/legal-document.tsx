@@ -11,6 +11,19 @@ function slugify(text: string) {
     .replace(/^-|-$/g, "");
 }
 
+// Pasted documents often repeat the page title and date we already render, and
+// use h1 for sections; shift those down so sections style and anchor as h2.
+function normalizeLegalHtml(html: string) {
+  let out = html
+    .trim()
+    .replace(/^<h1[^>]*>[\s\S]*?<\/h1>\s*/i, "")
+    .replace(/^<p[^>]*>(?:(?!<\/p>)[\s\S])*last\s+updated(?:(?!<\/p>)[\s\S])*<\/p>\s*/i, "");
+  if (/<h1[\s>]/i.test(out)) {
+    out = out.replace(/<(\/?)h([1-5])(?=[\s>])/gi, (_m, slash: string, level: string) => `<${slash}h${Number(level) + 1}`);
+  }
+  return out;
+}
+
 // Headings arrive from the editor without ids, so anchor them here and collect
 // the same list the contents rail renders.
 function anchorHeadings(html: string) {
@@ -29,6 +42,8 @@ function anchorHeadings(html: string) {
 const prose = [
   "[&>h2]:mt-12 [&>h2]:scroll-mt-28 [&>h2]:font-display [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:tracking-[-0.02em] [&>h2]:text-ink",
   "[&>h3]:mt-8 [&>h3]:scroll-mt-28 [&>h3]:font-display [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-ink",
+  "[&>h4]:mt-6 [&>h4]:font-display [&>h4]:text-lg [&>h4]:font-semibold [&>h4]:text-ink",
+  "[&>hr]:mt-10 [&>hr]:border-line",
   "[&>p]:mt-4 [&>p]:text-base [&>p]:leading-8 [&>p]:text-ink/70",
   "[&>ul]:mt-4 [&>ul]:list-disc [&>ul]:space-y-2 [&>ul]:pl-5 [&>ul]:text-base [&>ul]:leading-8 [&>ul]:text-ink/70",
   "[&>ol]:mt-4 [&>ol]:list-decimal [&>ol]:space-y-2 [&>ol]:pl-5 [&>ol]:text-base [&>ol]:leading-8 [&>ol]:text-ink/70",
@@ -48,7 +63,7 @@ export function LegalDocument({
   html: string;
   contactEmail?: string;
 }) {
-  const { html: content, headings } = anchorHeadings(html);
+  const { html: content, headings } = anchorHeadings(normalizeLegalHtml(html));
 
   return (
     <div className="bg-paper font-display text-ink">

@@ -17,7 +17,7 @@ export type LegalPage = {
 export async function getLegalPage(slug: LegalSlug): Promise<LegalPage | null> {
   try {
     const res = await fetch(`${API_URL}/legal-pages/${slug}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 300 },
     });
     if (!res.ok) return null;
     const body = await res.json();
